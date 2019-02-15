@@ -631,23 +631,37 @@ public enum Gmm {
   /* NGA-East for USGS */
 
   /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS(
+      NgaEastUsgs_2017.Usgs17.class,
+      NgaEastUsgs_2017.Usgs17.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_EPRI(
-      NgaEastUsgs_2017.Usgs17_Sigma_Epri.class,
-      NgaEastUsgs_2017.Usgs17_Sigma_Epri.NAME,
+      NgaEastUsgs_2017.Usgs17_SigmaEpri.class,
+      NgaEastUsgs_2017.Usgs17_SigmaEpri.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_PANEL(
-      NgaEastUsgs_2017.Usgs17_Sigma_Panel.class,
-      NgaEastUsgs_2017.Usgs17_Sigma_Panel.NAME,
+      NgaEastUsgs_2017.Usgs17_SigmaPanel.class,
+      NgaEastUsgs_2017.Usgs17_SigmaPanel.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+  
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_SITE_IMPEDANCE(
+      NgaEastUsgs_2017.Usgs17_SiteImpedance.class,
+      NgaEastUsgs_2017.Usgs17_SiteImpedance.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS(
-      NgaEastUsgs_2017.Usgs17.class,
-      NgaEastUsgs_2017.Usgs17.NAME,
+  NGA_EAST_USGS_SITE_GRADIENT(
+      NgaEastUsgs_2017.Usgs17_SiteGradient.class,
+      NgaEastUsgs_2017.Usgs17_SiteGradient.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
@@ -783,6 +797,27 @@ public enum Gmm {
   NGA_EAST_USGS_SEEDS_EPRI(
       NgaEastUsgs_2017.UsgsSeedsEpri.class,
       NgaEastUsgs_2017.UsgsSeedsEpri.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_SEEDS_PANEL(
+      NgaEastUsgs_2017.UsgsSeedsPanel.class,
+      NgaEastUsgs_2017.UsgsSeedsPanel.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_SEEDS_SITE_IMPEDANCE(
+      NgaEastUsgs_2017.UsgsSeedsSiteImpedance.class,
+      NgaEastUsgs_2017.UsgsSeedsSiteImpedance.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** @see NgaEastUsgs_2017 */
+  NGA_EAST_USGS_SEEDS_SITE_GRADIENT(
+      NgaEastUsgs_2017.UsgsSeedsSiteGradient.class,
+      NgaEastUsgs_2017.UsgsSeedsSiteGradient.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
@@ -1473,11 +1508,16 @@ public enum Gmm {
     NGA_EAST(
         "NGA-East USGS Combined",
         ImmutableList.of(
+            NGA_EAST_USGS,
             NGA_EAST_USGS_EPRI,
             NGA_EAST_USGS_PANEL,
-            NGA_EAST_USGS,
+            NGA_EAST_USGS_SITE_IMPEDANCE,
+            NGA_EAST_USGS_SITE_GRADIENT,
             NGA_EAST_USGS_SEEDS,
-            NGA_EAST_USGS_SEEDS_EPRI)),
+            NGA_EAST_USGS_SEEDS_EPRI,
+            NGA_EAST_USGS_SEEDS_PANEL,
+            NGA_EAST_USGS_SEEDS_SITE_IMPEDANCE,
+            NGA_EAST_USGS_SEEDS_SITE_GRADIENT)),
 
     NGA_EAST_SIGMA_SITE(
         "NGA-East USGS Sigma & Site Studies",

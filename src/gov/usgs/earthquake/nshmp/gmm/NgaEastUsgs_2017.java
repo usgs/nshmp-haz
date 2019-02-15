@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.io.Resources.getResource;
 import static com.google.common.io.Resources.readLines;
 import static gov.usgs.earthquake.nshmp.data.Data.checkWeights;
-import static gov.usgs.earthquake.nshmp.gmm.CombinedGmm.CEUS_2014_FAULT;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
@@ -19,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
@@ -33,7 +31,6 @@ import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable.Position;
-import gov.usgs.earthquake.nshmp.gmm.NgaEastUsgs_2017.SiteAmp.Value;
 import gov.usgs.earthquake.nshmp.internal.Parsing;
 import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 import gov.usgs.earthquake.nshmp.util.Maths;
@@ -427,7 +424,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         Imt imt,
         double[] weights,
         GroundMotionTable[] tables,
-        GroundMotionTable[] pgaTables) {
+        GroundMotionTable[] pgaTables,
+        SiteAmp.Model model) {
 
       super(imt);
       checkArgument(
@@ -436,7 +434,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       this.weights = weights;
       this.tables = tables;
       this.pgaTables = pgaTables;
-      this.siteAmp = new SiteAmp(imt);
+      this.siteAmp = new SiteAmp(imt, model);
     }
 
     @Override
@@ -464,18 +462,23 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     static final String NAME = BASE_NAME + " : 3 σ-LogicTree";
 
     Usgs17(Imt imt) {
+      this(imt, SiteAmp.Model.LOGIC_TREE);
+    }
+
+    Usgs17(Imt imt, SiteAmp.Model model) {
       super(
           imt,
           GroundMotionTables.getNgaEastWeights(imt),
           GroundMotionTables.getNgaEast(imt),
-          GroundMotionTables.getNgaEast(Imt.PGA));
+          GroundMotionTables.getNgaEast(Imt.PGA),
+          model);
     }
   }
 
-  static class Usgs17_Sigma_Epri extends Usgs17 {
+  static class Usgs17_SigmaEpri extends Usgs17 {
     static final String NAME = Usgs17.BASE_NAME + " : 1 σ-EPRI";
 
-    Usgs17_Sigma_Epri(Imt imt) {
+    Usgs17_SigmaEpri(Imt imt) {
       super(imt);
     }
 
@@ -485,16 +488,32 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Usgs17_Sigma_Panel extends Usgs17 {
+  static class Usgs17_SigmaPanel extends Usgs17 {
     static final String NAME = Usgs17.BASE_NAME + " : 2 σ-Panel";
 
-    Usgs17_Sigma_Panel(Imt imt) {
+    Usgs17_SigmaPanel(Imt imt) {
       super(imt);
     }
 
     @Override
     SigmaSet calcSigma(GmmInput in) {
       return sigmaSetPanel(in.Mw, in.vs30);
+    }
+  }
+
+  static class Usgs17_SiteImpedance extends Usgs17 {
+    static final String NAME = Usgs17.BASE_NAME + " : site-impedance";
+
+    Usgs17_SiteImpedance(Imt imt) {
+      super(imt, SiteAmp.Model.IMPEDANCE_ONLY);
+    }
+  }
+
+  static class Usgs17_SiteGradient extends Usgs17 {
+    static final String NAME = Usgs17.BASE_NAME + " : site-gradient";
+
+    Usgs17_SiteGradient(Imt imt) {
+      super(imt, SiteAmp.Model.GRADIENT_ONLY);
     }
   }
 
@@ -532,11 +551,15 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
 
     UsgsSeeds(Imt imt) {
+      this(imt, SiteAmp.Model.LOGIC_TREE);
+    }
+
+    UsgsSeeds(Imt imt, SiteAmp.Model model) {
       super(imt);
       this.tables = GroundMotionTables.getNgaEastSeeds(ids, imt);
       this.pgaTables = GroundMotionTables.getNgaEastSeeds(ids, Imt.PGA);
       this.sp16 = new ShahjoueiPezeshk_2016(imt);
-      this.siteAmp = new SiteAmp(imt);
+      this.siteAmp = new SiteAmp(imt, model);
     }
 
     @Override
@@ -564,7 +587,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   static class UsgsSeedsEpri extends UsgsSeeds {
 
-    static final String NAME = UsgsSeeds.NAME + " : σ-EPRIu";
+    static final String NAME = UsgsSeeds.NAME + " : σ-EPRI";
 
     UsgsSeedsEpri(Imt imt) {
       super(imt);
@@ -574,7 +597,38 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     SigmaSet calcSigma(GmmInput in) {
       return sigmaSetEpri(in.Mw);
     }
+  }
 
+  static class UsgsSeedsPanel extends UsgsSeeds {
+
+    static final String NAME = UsgsSeeds.NAME + " : σ-Panel";
+
+    UsgsSeedsPanel(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    SigmaSet calcSigma(GmmInput in) {
+      return sigmaSetPanel(in.Mw, in.vs30);
+    }
+  }
+
+  static class UsgsSeedsSiteImpedance extends UsgsSeeds {
+
+    static final String NAME = UsgsSeeds.NAME + " : site-impedance";
+
+    UsgsSeedsSiteImpedance(Imt imt) {
+      super(imt, SiteAmp.Model.IMPEDANCE_ONLY);
+    }
+  }
+
+  static class UsgsSeedsSiteGradient extends UsgsSeeds {
+
+    static final String NAME = UsgsSeeds.NAME + " : site-gradient";
+
+    UsgsSeedsSiteGradient(Imt imt) {
+      super(imt, SiteAmp.Model.GRADIENT_ONLY);
+    }
   }
 
   static abstract class Sammons extends NgaEastUsgs_2017 {
@@ -1024,6 +1078,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
     private final Coefficients c;
 
+    private final Model model;
+
     private static final class Coefficients {
 
       final Imt imt;
@@ -1052,7 +1108,18 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
 
     SiteAmp(Imt imt) {
+      this(imt, Model.LOGIC_TREE);
+    }
+
+    SiteAmp(Imt imt, Model model) {
       c = new Coefficients(imt, COEFFS);
+      this.model = model;
+    }
+
+    static enum Model {
+      GRADIENT_ONLY,
+      IMPEDANCE_ONLY,
+      LOGIC_TREE;
     }
 
     SiteAmp.Value calc(double pgaRock, double vs30) {
@@ -1112,6 +1179,16 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         wti = WT_SCALE * log(vs30 / VW2) + WT2;
       }
       double wtg = 1.0 - wti;
+
+      // TODO clean - sensitivity testing
+      if (this.model == Model.GRADIENT_ONLY) {
+        wti = 0.0;
+        wtg = 1.0;
+      } else if (this.model == Model.IMPEDANCE_ONLY) {
+        wti = 1.0;
+        wtg = 0.0;
+      }
+
       double f760 = c.f760i * wti + c.f760g * wtg;
       double f760σ = c.f760iσ * wti + c.f760gσ * wtg;
 

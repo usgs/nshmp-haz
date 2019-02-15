@@ -1,5 +1,6 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
+import gov.usgs.earthquake.nshmp.gmm.NgaEastUsgs_2017.SiteAmp;
 import gov.usgs.earthquake.nshmp.gmm.NgaEastUsgs_2017.SiteAmp.Value;
 
 /**
