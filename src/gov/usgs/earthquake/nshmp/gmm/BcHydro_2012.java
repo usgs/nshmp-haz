@@ -49,7 +49,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * 
  * <li>Treats all sites as forearc; no backarc term is considered.</li>
  * 
- * <li>'zTop' is interpreted as hypocentral depth and is only used for slab
+ * <li>{@code zTop} is interpreted as hypocentral depth and is only used for slab
  * events; it is limited to 120 km, consistent with other subduction
  * models.</li>
  * 

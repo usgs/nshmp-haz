@@ -263,31 +263,31 @@ public enum Gmm {
 
   /** @see AbrahamsonEtAl_2016 */
   AGA_16_INTERFACE(
-      AbrahamsonEtAl_2016.Interface.class,
-      AbrahamsonEtAl_2016.Interface.NAME,
-      AbrahamsonEtAl_2016.COEFFS,
-      AbrahamsonEtAl_2016.CONSTRAINTS),
+      NgaSubductionUsgs_2018.Interface.class,
+      NgaSubductionUsgs_2018.Interface.NAME,
+      NgaSubductionUsgs_2018.COEFFS,
+      NgaSubductionUsgs_2018.CONSTRAINTS),
 
   /** @see AbrahamsonEtAl_2016 */
   AGA_16_SLAB(
-      AbrahamsonEtAl_2016.Slab.class,
-      AbrahamsonEtAl_2016.Slab.NAME,
-      AbrahamsonEtAl_2016.COEFFS,
-      AbrahamsonEtAl_2016.CONSTRAINTS),
+      NgaSubductionUsgs_2018.Slab.class,
+      NgaSubductionUsgs_2018.Slab.NAME,
+      NgaSubductionUsgs_2018.COEFFS,
+      NgaSubductionUsgs_2018.CONSTRAINTS),
 
   /** @see AbrahamsonEtAl_2016 */
   AGA_16_INTERFACE_BASIN_AMP(
-      AbrahamsonEtAl_2016.BasinInterface.class,
-      AbrahamsonEtAl_2016.BasinInterface.NAME,
-      AbrahamsonEtAl_2016.COEFFS,
-      AbrahamsonEtAl_2016.CONSTRAINTS),
+      NgaSubductionUsgs_2018.InterfaceCenter.class,
+      NgaSubductionUsgs_2018.InterfaceCenter.NAME,
+      NgaSubductionUsgs_2018.COEFFS,
+      NgaSubductionUsgs_2018.CONSTRAINTS),
 
   /** @see AbrahamsonEtAl_2016 */
   AGA_16_SLAB_BASIN_AMP(
-      AbrahamsonEtAl_2016.BasinSlab.class,
-      AbrahamsonEtAl_2016.BasinSlab.NAME,
-      AbrahamsonEtAl_2016.COEFFS,
-      AbrahamsonEtAl_2016.CONSTRAINTS),
+      NgaSubductionUsgs_2018.SlabCenter.class,
+      NgaSubductionUsgs_2018.SlabCenter.NAME,
+      NgaSubductionUsgs_2018.COEFFS,
+      NgaSubductionUsgs_2018.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
   BCHYDRO_12_INTERFACE(
