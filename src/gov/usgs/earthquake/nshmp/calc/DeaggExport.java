@@ -744,7 +744,7 @@ final class DeaggExport {
     public String toString() {
       return new StringBuilder("[")
           .append((min == null) ? "-∞" : Double.toString(min))
-          .append(" ‥ ")
+          .append(" .. ")
           .append((max == null) ? "+∞" : Double.toString(max))
           .append((max == null) ? "]" : ")")
           .toString();

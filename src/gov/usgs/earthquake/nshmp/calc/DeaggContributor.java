@@ -187,10 +187,17 @@ abstract class DeaggContributor {
     @Override
     List<JsonContributor> toJson(ContributionFilter filter) {
       ArrayList<JsonContributor> jsonList = new ArrayList<>();
+      double total = total();
+      double rBar = rScaled / total;
+      double mBar = mScaled / total;
+      double εBar = εScaled / total;
       JsonContributor jc = JsonContributor.createMulti(
           sourceSet.name(),
           sourceSet.type(),
-          Maths.round(filter.toPercent(total()), 2));
+          Maths.round(filter.toPercent(total()), 2),
+          rBar,
+          mBar,
+          εBar);
       jsonList.add(jc);
       for (DeaggContributor child : children) {
         if (filter.test(child)) {
@@ -722,13 +729,19 @@ abstract class DeaggContributor {
     static JsonContributor createMulti(
         String name,
         SourceType source,
-        double contribution) {
+        double contribution,
+        double r,
+        double m,
+        double ε) {
 
       JsonContributor jc = new JsonContributor();
       jc.name = name;
       jc.source = source.toString();
       jc.type = JsonContributorType.SET;
       jc.contribution = contribution;
+      jc.r = r;
+      jc.m = m;
+      jc.ε = ε;
       return jc;
     }
 
