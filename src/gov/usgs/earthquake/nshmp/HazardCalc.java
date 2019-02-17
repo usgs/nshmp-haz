@@ -1,7 +1,6 @@
 package gov.usgs.earthquake.nshmp;
 
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
-import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,13 +12,14 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig;
 import gov.usgs.earthquake.nshmp.calc.Hazard;
@@ -153,21 +153,21 @@ public class HazardCalc {
       Sites sites,
       Logger log) throws IOException {
 
-    ExecutorService execSvc = null;
+    ExecutorService exec = null;
     ThreadCount threadCount = config.performance.threadCount;
-    if (threadCount != ThreadCount.ONE) {
-      execSvc = newFixedThreadPool(threadCount.value());
-      log.info("Threads: " + ((ThreadPoolExecutor) execSvc).getCorePoolSize());
-    } else {
+    if (threadCount == ThreadCount.ONE) {
+      exec = MoreExecutors.newDirectExecutorService();
       log.info("Threads: Running on calling thread");
+    } else {
+      exec = Executors.newFixedThreadPool(threadCount.value());
+      log.info("Threads: " + ((ThreadPoolExecutor) exec).getCorePoolSize());
     }
-    Optional<Executor> executor = Optional.ofNullable(execSvc);
 
     log.info(PROGRAM + ": calculating ...");
 
     HazardExport handler = HazardExport.create(config, sites, log);
     for (Site site : sites) {
-      Hazard hazard = HazardCalcs.hazard(model, config, site, executor);
+      Hazard hazard = HazardCalcs.hazard(model, config, site, exec);
       handler.add(hazard, Optional.empty());
       log.fine(hazard.toString());
     }
@@ -177,9 +177,7 @@ public class HazardCalc {
         PROGRAM + ": %s sites completed in %s",
         handler.resultsProcessed(), handler.elapsedTime()));
 
-    if (threadCount != ThreadCount.ONE) {
-      execSvc.shutdown();
-    }
+    exec.shutdown();
     return handler.outputDir();
   }
 

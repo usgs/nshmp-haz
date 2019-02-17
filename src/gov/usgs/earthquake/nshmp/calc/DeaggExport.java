@@ -68,7 +68,8 @@ final class DeaggExport {
       DeaggDataset dd,
       DeaggConfig dc,
       String id,
-      boolean json) {
+      boolean json,
+      boolean εData) {
 
     this.ddTotal = ddTotal;
     this.dd = dd;
@@ -76,7 +77,7 @@ final class DeaggExport {
     this.id = id;
 
     summary = createSummaryElements(ddTotal, dd, dc);
-    data = createDistanceMagnitudeData(ddTotal, dd);
+    data = εData ? createDistanceMagnitudeData(ddTotal, dd) : null;
     sources = json ? createJsonContributorList(ddTotal, dd, dc.contributorLimit) : null;
   }
 
@@ -743,7 +744,7 @@ final class DeaggExport {
     public String toString() {
       return new StringBuilder("[")
           .append((min == null) ? "-∞" : Double.toString(min))
-          .append(" ‥ ")
+          .append(" .. ")
           .append((max == null) ? "+∞" : Double.toString(max))
           .append((max == null) ? "]" : ")")
           .toString();

@@ -18,8 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.LogManager;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -122,10 +126,21 @@ public class PeerTest {
     this.tolerance = tolerance;
   }
 
+  private static ExecutorService EXEC;
+
+  @BeforeClass
+  public static void setUpBeforeClass() throws Exception {
+    EXEC = Executors.newSingleThreadExecutor();
+  }
+
+  @AfterClass
+  public static void tearDownAfterClass() throws Exception {
+    EXEC.shutdown();
+  }
+
   @Test
   public void test() {
-    // System.out.println(site.name);
-    Hazard result = HazardCalcs.hazard(model, model.config(), site, Optional.<Executor> empty());
+    Hazard result = HazardCalcs.hazard(model, model.config(), site, EXEC);
     // compute y-values converting to Poiss prob
     double[] actual = Doubles.toArray(
         FluentIterable.from(result.curves().get(Imt.PGA).yValues())

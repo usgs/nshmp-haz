@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Range;
 
-import gov.usgs.earthquake.nshmp.HazardCalc;
 import gov.usgs.earthquake.nshmp.calc.Transforms.SourceToInputs;
 import gov.usgs.earthquake.nshmp.eq.model.ClusterSourceSet;
 import gov.usgs.earthquake.nshmp.eq.model.GridSourceSet;
@@ -96,8 +95,8 @@ public class HazardCalcs {
    * years). Deaggregation currently runs on a single thread.
    * 
    * <p>Call this method with the {@link Hazard} result of
-   * {@link #hazard(HazardModel, CalcConfig, Site, Optional)} to which
-   * you supply the calculation settings and sites of interest that will also be
+   * {@link #hazard(HazardModel, CalcConfig, Site, Optional)} to which you
+   * supply the calculation settings and sites of interest that will also be
    * used for deaggregation.
    *
    * <p><b>Note:</b> any model initialization settings in {@code config} will be
@@ -111,12 +110,18 @@ public class HazardCalcs {
   public static Deaggregation deaggregation(
       Hazard hazard,
       double returnPeriod,
-      Optional<Imt> imt) {
+      Optional<Imt> imt,
+      Executor exec) {
 
     checkNotNull(hazard);
     checkInRange(rpRange, "Return period", returnPeriod);
 
-    return Deaggregation.atReturnPeriod(hazard, returnPeriod, imt);
+    /*
+     * TODO I'm not sure why we're passing in an optional IMT, doesn't it just
+     * make more sense to pick up the imts from the hazard result.
+     */
+
+    return Deaggregation.atReturnPeriod(hazard, returnPeriod, imt, exec);
   }
 
   /**
@@ -138,7 +143,7 @@ public class HazardCalcs {
       HazardModel model,
       CalcConfig config,
       Site site,
-      Optional<Executor> exec) {
+      Executor exec) {
 
     checkNotNull(model);
     checkNotNull(config);
@@ -146,11 +151,17 @@ public class HazardCalcs {
     checkNotNull(exec);
 
     try {
-      if (exec.isPresent()) {
-        return asyncHazardCurve(model, config, site, exec.get());
+      if (config.performance.threadCount == ThreadCount.ONE) {
+        /*
+         * TODO if threads = 1, we will have passed in a direct executor that
+         * will be ignored here to make use of timing/logging method. Refactor
+         * so that a log-level for this class can be used instead for a single
+         * method.
+         */
+        Logger log = Logger.getLogger(HazardCalcs.class.getName());
+        return hazardCurve(model, config, site, log);
       }
-      Logger log = Logger.getLogger(HazardCalcs.class.getName());
-      return hazardCurve(model, config, site, log);
+      return asyncHazardCurve(model, config, site, exec);
     } catch (ExecutionException | InterruptedException e) {
       throw new RuntimeException(e);
     }
