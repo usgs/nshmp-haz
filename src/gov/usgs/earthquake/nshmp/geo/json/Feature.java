@@ -69,14 +69,14 @@ public class Feature {
   /**
    * The 'id' of this feature as a string.
    */
-  public String idString() {
+  public String idAsString() {
     return (String) id;
   }
 
   /**
    * The 'id' of this feature as an integer.
    */
-  public int idInt() {
+  public int idAsInt() {
     return ((Double) id).intValue();
   }
 

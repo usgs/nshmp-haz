@@ -151,7 +151,7 @@ public class GeoJsonTest {
     assertArrayEquals(BBOX, fc.bbox(), 0.0);
 
     Feature f1 = features.get(0);
-    assertEquals("featureId", f1.idString());
+    assertEquals("featureId", f1.idAsString());
     assertEquals(Type.POINT, f1.type());
     Properties f1Props = f1.properties();
     assertEquals("#ff0080", f1Props.getString("color"));
@@ -159,7 +159,7 @@ public class GeoJsonTest {
     assertEquals(1, f1Props.getInt("id"));
 
     Feature f3 = features.get(2);
-    assertEquals(3, f3.idInt());
+    assertEquals(3, f3.idAsInt());
     assertArrayEquals(BBOX, f3.bbox(), 0.0);
   }
 
