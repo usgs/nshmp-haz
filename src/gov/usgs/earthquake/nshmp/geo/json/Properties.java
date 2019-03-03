@@ -21,9 +21,9 @@ import com.google.common.collect.ImmutableMap;
  * when rendering GeoJSON online.
  * 
  * <p>If a property map contains arrays or other nested objects as values, use
- * {@link #get(String)} and cast to the appropriate type. An array of any type
- * will have been deserialized to a {@code List<?>}; an object will have been
- * deserialized to a {@code Map<String,?>} of its members.
+ * {@link #get(String)} and cast to the appropriate type:<ul><li>Arrays of any
+ * type deserialize to {@code List<?>}</li><li>Objects deserialize to
+ * {@code Map<String,?>}
  * 
  * @author Peter Powers
  * @author Brandon Clayton

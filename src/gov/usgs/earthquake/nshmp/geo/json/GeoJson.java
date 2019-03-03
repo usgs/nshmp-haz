@@ -193,7 +193,7 @@ public final class GeoJson {
   }
 
   /**
-   * Deserialize a GeoJSON {@code FeatureCollection} from a reader. For
+   * Deserialize a GeoJSON {@code FeatureCollection} from a reader.
    * 
    * @param json reader from which to deserialize
    */
