@@ -58,7 +58,7 @@ ext {
   docFooter = '<div style="float: left; font-size: 16px; text-align: right; ' +
     'padding: 10px; width: 100%; box-sizing: border-box; background-color: #f9f9f9">' +
     '<b><a href="https://www.usgs.gov" target="_top">U.S. Geological Survey</a></b> ' + 
-    '– National Seismic Hazard Mapping Project ' +
+    '– National Seismic Hazard Model Project ' +
     '(<a href="https://earthquake.usgs.gov/hazards/" target="_top">NSHMP</a>) ' +
     '– <a href="https://github.com/usgs/nshmp-haz/blob/master/LICENSE.md" ' +
     'target="_top">License</a> | <b>' + gitLink + '</b></div>'
