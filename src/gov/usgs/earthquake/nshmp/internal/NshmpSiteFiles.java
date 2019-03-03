@@ -201,7 +201,7 @@ final class NshmpSiteFiles {
       Path out,
       String name,
       LocationList coords,
-      double spacing,
+      Double spacing,
       LocationList bounds) throws IOException {
 
     GeoJson.Builder b = GeoJson.builder();
