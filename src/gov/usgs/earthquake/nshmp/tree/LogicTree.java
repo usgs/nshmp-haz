@@ -17,8 +17,13 @@ import gov.usgs.earthquake.nshmp.data.Data;
 public interface LogicTree<T> extends Iterable<Branch<T>> {
 
   /*
-   * TODO: For further consideration: serialization=, consider adding
+   * developer notes:
+   * 
+   * For further consideration: serialization=, consider adding
    * LogicTree.asGraph(), see Guava graph classes
+   * 
+   * specialized trees and builders: threePointTree (THREE_POINT
+   * | THREE_POINT_262) takes values (id, T, σ) | (id, double, σ)
    */
 
   /**
