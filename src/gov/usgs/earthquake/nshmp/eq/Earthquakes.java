@@ -29,13 +29,13 @@ public final class Earthquakes {
   /** Supported crustal earthquake depths: {@code [0..40] km}. */
   public static final Range<Double> CRUSTAL_DEPTH_RANGE = Range.closed(0.0, 40.0);
 
-  /** Supported crustal earthquake widths: {@code [0..60] km}. */
+  /** Supported crustal earthquake widths: {@code (0..60] km}. */
   public static final Range<Double> CRUSTAL_WIDTH_RANGE = Range.openClosed(0.0, 60.0);
 
   /** Supported subduction interface earthquake depths: {@code [0..60] km}. */
   public static final Range<Double> INTERFACE_DEPTH_RANGE = Range.closed(0.0, 60.0);
 
-  /** Supported subduction interface earthquake widths: {@code [0..200] km}. */
+  /** Supported subduction interface earthquake widths: {@code (0..200] km}. */
   public static final Range<Double> INTERFACE_WIDTH_RANGE = Range.openClosed(0.0, 200.0);
 
   /** Supported subduction intraslab earthquake depths: {@code [20..700] km}. */
@@ -61,6 +61,7 @@ public final class Earthquakes {
   /**
    * Ensure {@code -5 ≤ depth ≤ 700 km}.
    * 
+   * @see #DEPTH_RANGE
    * @param depth to validate
    * @return the validated depth
    * @throws IllegalArgumentException if {@code depth} is outside the range
@@ -73,6 +74,7 @@ public final class Earthquakes {
   /**
    * Ensure {@code 0 ≤ depth ≤ 40 km}.
    *
+   * @see #CRUSTAL_DEPTH_RANGE
    * @param depth to validate
    * @return the validated depth for use inline
    * @throws IllegalArgumentException if {@code depth} is outside the range
@@ -83,12 +85,13 @@ public final class Earthquakes {
   }
 
   /**
-   * Ensure {@code 0 ≤ width ≤ 60 km}.
+   * Ensure {@code 0 < width ≤ 60 km}.
    *
+   * @see #CRUSTAL_WIDTH_RANGE
    * @param width to validate
    * @return the validated width
    * @throws IllegalArgumentException if {@code width} is outside the range
-   *         {@code [0..60] km}
+   *         {@code (0..60] km}
    */
   public static double checkCrustalWidth(double width) {
     return checkInRange(CRUSTAL_WIDTH_RANGE, "Width", width);
@@ -97,6 +100,7 @@ public final class Earthquakes {
   /**
    * Ensure {@code 0 ≤ depth ≤ 60 km}.
    *
+   * @see #INTERFACE_DEPTH_RANGE
    * @param depth to validate
    * @return the validated depth
    * @throws IllegalArgumentException if {@code depth} is outside the range
@@ -107,12 +111,13 @@ public final class Earthquakes {
   }
 
   /**
-   * Ensure {@code 0 ≤ width ≤ 200 km}.
+   * Ensure {@code 0 < width ≤ 200 km}.
    *
+   * @see #INTERFACE_WIDTH_RANGE
    * @param width to validate
    * @return the validated width
    * @throws IllegalArgumentException if {@code width} is outside the range
-   *         {@code [0..200] km}
+   *         {@code (0..200] km}
    */
   public static double checkInterfaceWidth(double width) {
     return checkInRange(INTERFACE_WIDTH_RANGE, "Subduction Interface Width", width);
@@ -121,6 +126,7 @@ public final class Earthquakes {
   /**
    * Ensure {@code 20 ≤ depth ≤ 700 km}.
    *
+   * @see #SLAB_DEPTH_RANGE
    * @param depth to validate
    * @return the validated depth
    * @throws IllegalArgumentException if {@code depth} is outside the range
@@ -133,6 +139,7 @@ public final class Earthquakes {
   /**
    * Ensure {@code -2.0 ≤ magnitude ≤ 9.7}.
    *
+   * @see #MAG_RANGE
    * @param magnitude to validate
    * @return the validated magnitude
    * @throws IllegalArgumentException if {@code magnitude} value is outside the

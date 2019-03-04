@@ -224,7 +224,6 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @throws IndexOutOfBoundsException if the index is out of range (
    *         {@code index < 0 || index >= size()})
    */
-  @SuppressWarnings("unused")
   public void set(int index, double value) {
     throw new UnsupportedOperationException();
   }
@@ -426,7 +425,6 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @param term to add
    * @return {@code this} sequence, for use inline
    */
-  @SuppressWarnings("unused")
   public XySequence add(double term) {
     throw new UnsupportedOperationException();
   }
@@ -437,7 +435,6 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @param ys y-values to add
    * @return {@code this} sequence, for use inline
    */
-  @SuppressWarnings("unused")
   public XySequence add(double[] ys) {
     throw new UnsupportedOperationException();
   }
@@ -450,7 +447,6 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @throws IllegalArgumentException if
    *         {@code sequence.xValues() != this.xValues()}
    */
-  @SuppressWarnings("unused")
   public XySequence add(XySequence sequence) {
     throw new UnsupportedOperationException();
   }
@@ -461,7 +457,6 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @param scale factor
    * @return {@code this} sequence, for use inline
    */
-  @SuppressWarnings("unused")
   public XySequence multiply(double scale) {
     throw new UnsupportedOperationException();
   }
@@ -475,7 +470,6 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @throws IllegalArgumentException if
    *         {@code sequence.xValues() != this.xValues()}
    */
-  @SuppressWarnings("unused")
   public XySequence multiply(XySequence sequence) {
     throw new UnsupportedOperationException();
   }
@@ -521,7 +515,6 @@ public abstract class XySequence implements Iterable<XyPoint> {
    * @param function for transform
    * @return {@code this} sequence, for use inline
    */
-  @SuppressWarnings("unused")
   public XySequence transform(Function<Double, Double> function) {
     throw new UnsupportedOperationException();
   }

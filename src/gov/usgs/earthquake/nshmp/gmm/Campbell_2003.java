@@ -30,7 +30,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmUtils.CeusSiteClass;
  * {@link GmmUtils#ceusMeanClip(Imt, double)}.
  *
  * <p><b>Reference:</b> Campbell, K.W., 2003, Prediction of strong ground motion
- * using the hybrid empirical method and its use in the devel- opment of
+ * using the hybrid empirical method and its use in the development of
  * ground-motion (attenuation) relations in eastern North America: Bulletin of
  * the Seismological Society of America, v. 93, p. 1012–1033.
  *
