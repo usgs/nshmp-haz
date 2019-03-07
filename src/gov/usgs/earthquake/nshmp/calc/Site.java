@@ -403,7 +403,7 @@ public class Site implements Named {
 
     static double readValue(JsonObject json, String zId) {
       JsonElement e = json.get(zId).getAsJsonObject().get("value");
-      return e.isJsonNull() ? Double.NaN : Maths.round(e.getAsDouble(), 1);
+      return e.isJsonNull() ? Double.NaN : Maths.round(e.getAsDouble(), 3);
     }
   }
 
