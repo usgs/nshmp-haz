@@ -2,12 +2,12 @@ package gov.usgs.earthquake.nshmp.geo.json;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * GeoJSON properties helper class.
@@ -161,7 +161,7 @@ public final class Properties {
      * Return an immutable map reflecting the current contents of this builder.
      */
     public Map<String, Object> build() {
-      return ImmutableMap.copyOf(map);
+      return Collections.unmodifiableMap(new LinkedHashMap<String, Object>(map)); 
     }
   }
 
