@@ -161,7 +161,7 @@ public final class Properties {
      * Return an immutable map reflecting the current contents of this builder.
      */
     public Map<String, Object> build() {
-      return Collections.unmodifiableMap(new LinkedHashMap<String, Object>(map)); 
+      return Collections.unmodifiableMap(new LinkedHashMap<String, Object>(map));
     }
   }
 

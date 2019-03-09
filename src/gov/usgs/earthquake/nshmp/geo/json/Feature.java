@@ -204,7 +204,7 @@ public class Feature {
      * @return this builder
      */
     public Builder properties(Map<String, Object> properties) {
-      this.properties = Collections.unmodifiableMap(new LinkedHashMap<String, Object>(properties)); 
+      this.properties = Collections.unmodifiableMap(new LinkedHashMap<String, Object>(properties));
       return this;
     }
 
