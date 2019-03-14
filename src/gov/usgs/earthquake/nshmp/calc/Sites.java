@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -53,10 +52,14 @@ public abstract class Sites implements Iterable<Site> {
    * @throws IOException if a problem is encountered
    */
   public static Sites fromCsv(Path path, CalcConfig defaults) throws IOException {
-    return readCsv(path, defaults);
+    return fromCsv(path, defaults, false);
+  }
+  
+  public static Sites fromCsv(Path path, CalcConfig defaults, boolean lenient) throws IOException {
+    return readCsv(path, defaults, true);
   }
 
-  private static Sites readCsv(Path path, CalcConfig defaults) throws IOException {
+  private static Sites readCsv(Path path, CalcConfig defaults, boolean lenient) throws IOException {
 
     checkArgument(Files.exists(path), "Site file [%s] does not exist", path);
 
@@ -81,7 +84,9 @@ public abstract class Sites implements Iterable<Site> {
       /* Set up key/column ordering */
       if (firstline) {
         for (String key : values) {
-          checkState(Site.KEYS.contains(key), "Illegal site property key [%s]", key);
+          if (!lenient) {
+            checkState(Site.KEYS.contains(key), "Illegal site property key [%s]", key);
+          }
           keyList.add(key);
         }
         checkState(keyList.contains(Site.Key.LAT), "Site latitudes must be defined");
@@ -118,7 +123,9 @@ public abstract class Sites implements Iterable<Site> {
             siteBuilder.z2p5(value.equals(NULL) ? Double.NaN : Double.parseDouble(value));
             break;
           default:
-            throw new IllegalStateException("Unsupported site key: " + key);
+            if (!lenient) {
+              throw new IllegalStateException("Unsupported site key: " + key);
+            }
         }
         index++;
       }
