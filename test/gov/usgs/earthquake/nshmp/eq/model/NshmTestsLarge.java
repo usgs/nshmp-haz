@@ -104,6 +104,11 @@ public class NshmTestsLarge {
   }
 
   @Test
+  public void testCeus2018() throws Exception {
+    testModel("ceus", 2018, CEUS_SITES);
+  }
+
+  @Test
   public void testWus2008() throws Exception {
     testModel("wus", 2008, WUS_SITES);
   }
@@ -111,6 +116,11 @@ public class NshmTestsLarge {
   @Test
   public void testWus2014() throws Exception {
     testModel("wus", 2014, WUS_SITES);
+  }
+
+  @Test
+  public void testWus2018() throws Exception {
+    testModel("wus", 2018, WUS_SITES);
   }
 
   private static void testModel(
@@ -208,10 +218,13 @@ public class NshmTestsLarge {
     /* Initialize and shut down executor to generate results. */
     setUpBeforeClass();
     
-    writeExpecteds("ceus", 2008, CEUS_SITES);
-    writeExpecteds("ceus", 2014, CEUS_SITES);
-    writeExpecteds("wus", 2008, WUS_SITES);
-    writeExpecteds("wus", 2014, WUS_SITES);
+//    writeExpecteds("ceus", 2008, CEUS_SITES);
+//    writeExpecteds("ceus", 2014, CEUS_SITES);
+//    writeExpecteds("ceus", 2018, CEUS_SITES);
+    
+//    writeExpecteds("wus", 2008, WUS_SITES);
+//    writeExpecteds("wus", 2014, WUS_SITES);
+    writeExpecteds("wus", 2018, WUS_SITES);
     
     tearDownAfterClass();
   }
