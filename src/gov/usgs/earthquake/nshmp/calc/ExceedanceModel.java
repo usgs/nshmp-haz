@@ -184,36 +184,64 @@ public enum ExceedanceModel {
   NSHM_CEUS_MAX_INTENSITY {
     @Override
     double exceedance(double μ, double σ, double n, Imt imt, double value) {
-      double pHi = prob(μ, σ, n, Math.log(maxValue(imt)));
+      double pHi = prob(μ, σ, n, Math.log(ceusMaxValue(imt)));
       return boundedCcdFn(μ, σ, value, pHi, 1.0);
     }
 
     @Override
     XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
-      double pHi = prob(μ, σ, n, Math.log(maxValue(imt)));
+      double pHi = prob(μ, σ, n, Math.log(ceusMaxValue(imt)));
       return boundedCcdFn(μ, σ, sequence, pHi, 1.0);
     }
+  },
 
-    private double maxValue(Imt imt) {
-      /*
-       * Clamping/limiting is turned off at and above 0.75 sec.
-       *
-       * TODO few CEUS Gmms support PGV; only Atkinson 06p and 08p. Revisit as
-       * it may just be more appropriate to throw a UOE.
-       */
-      if (imt.isSA()) {
-        return imt.ordinal() < SA0P75.ordinal() ? 6.0 : Double.MAX_VALUE;
+  /**
+   * Same as {@link NSHM_CEUS_MAX_INTENSITY}, except that {@code n = 3}.
+   * 
+   * <p>Model ignores truncation level, {@code n}, and {@code imt}.
+   */
+  NSHM_CEUS_3SIGMA_MAX_INTENSITY {
+    @Override
+    double exceedance(double μ, double σ, double n, Imt imt, double value) {
+      double lnMaxGm = Math.log(ceusMaxValue(imt));
+      double ln3σGm = μ + 3.0 * σ;
+      if (ln3σGm < lnMaxGm) {
+        return Ccdfs.UPPER_3SIGMA.get(μ, σ, value);
       }
-      if (imt == PGA) {
-        return 3.0;
-      }
-      if (imt == PGV) {
-        return 400.0;
-      }
-      throw new UnsupportedOperationException();
+      double pHi = Maths.normalCcdf(μ, σ, lnMaxGm);
+      return boundedCcdFn(μ, σ, value, pHi, 1.0);
     }
 
+    @Override
+    XySequence exceedance(double μ, double σ, double n, Imt imt, XySequence sequence) {
+      double lnMaxGm = Math.log(ceusMaxValue(imt));
+      double ln3σGm = μ + 3.0 * σ;
+      if (ln3σGm < lnMaxGm) {
+        return Ccdfs.UPPER_3SIGMA.get(μ, σ, sequence);
+      }
+      double pHi = Maths.normalCcdf(μ, σ, lnMaxGm);
+      return boundedCcdFn(μ, σ, sequence, pHi, 1.0);
+    }
   };
+
+  private static double ceusMaxValue(Imt imt) {
+    /*
+     * Clamping/limiting is turned off at and above 0.75 sec.
+     *
+     * TODO few CEUS Gmms support PGV; only Atkinson 06p and 08p. Revisit as it
+     * may just be more appropriate to throw a UOE.
+     */
+    if (imt.isSA()) {
+      return imt.ordinal() < SA0P75.ordinal() ? 6.0 : Double.MAX_VALUE;
+    }
+    if (imt == PGA) {
+      return 3.0;
+    }
+    if (imt == PGV) {
+      return 400.0;
+    }
+    throw new UnsupportedOperationException();
+  }
 
   /**
    * Compute the probability of exceeding a {@code value}.
