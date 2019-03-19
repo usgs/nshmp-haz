@@ -1,19 +1,19 @@
 package gov.usgs.earthquake.nshmp;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -22,8 +22,9 @@ import java.util.logging.Logger;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig;
 import gov.usgs.earthquake.nshmp.calc.Deaggregation;
@@ -38,13 +39,20 @@ import gov.usgs.earthquake.nshmp.internal.Logging;
 
 /**
  * Custom application to support 2018 integration into building codes.
- * Application will process a list of sites for which the risk-targetd respoinse
+ * Application will process a list of sites for which the risk-targetd response
  * spectra is supplied, deaggregating the hazard at each spectral period at the
- * supplied ground motion.
+ * supplied ground motion. The set of IMTs processed is dictated by the set
+ * defined in the sites file.
  *
  * @author Peter Powers
  */
 public class DeaggEpsilon {
+
+  private static final Gson GSON = new GsonBuilder()
+      .setPrettyPrinting()
+      .serializeSpecialFloatingPointValues()
+      .serializeNulls()
+      .create();
 
   /**
    * Entry point for the application.
@@ -81,33 +89,33 @@ public class DeaggEpsilon {
       Path modelPath = Paths.get(args[0]);
       HazardModel model = HazardModel.load(modelPath);
 
+      log.info("");
+      Path siteFile = Paths.get(args[1]);
+      log.info("Site and spectra file: " + siteFile.toAbsolutePath().normalize());
+      checkArgument(siteFile.toString().endsWith(".csv"), "Only *.csv site files supported");
+
+      List<Imt> imts = readImtList(siteFile);
+
       CalcConfig config = model.config();
       if (argCount == 3) {
-        Path userConfigPath = Paths.get(args[3]);
+        Path userConfigPath = Paths.get(args[2]);
         config = CalcConfig.Builder.copyOf(model.config())
             .extend(CalcConfig.Builder.fromFile(userConfigPath))
+            .imts(EnumSet.copyOf(imts))
             .build();
       }
       log.info(config.toString());
-      
-      log.info("");
-      Path siteFile = Paths.get(args[1]);
-      checkArgument(siteFile.endsWith(".csv"), "Only *.csv site files supported");
-      log.info("Site and spectra file: " + siteFile.toAbsolutePath().normalize());
-      
-      List<Imt> imts = readImtList(siteFile);
-      checkState(
-          imts.containsAll(config.hazard.imts),
-          "Config IMTs missing from sites file: " + Sets.intersection(
-              EnumSet.copyOf(imts), 
-              config.hazard.imts));   
-      
+
       List<Site> sites = ImmutableList.copyOf(Sites.fromCsv(siteFile, config, true));
       log.info("Sites: " + sites.size());
-      
+
       List<Map<Imt, Double>> imtImlMaps = readSpectra(siteFile, imts);
+      log.info("Spectra: " + imtImlMaps.size());
+
+      checkArgument(sites.size() == imtImlMaps.size(), "Sites and spectra lists different sizes");
 
       Path out = calc(model, config, sites, imtImlMaps, log);
+
       log.info(PROGRAM + ": finished");
 
       /* Transfer log and write config, windows requires fh.close() */
@@ -132,7 +140,7 @@ public class DeaggEpsilon {
         .map(Imt::valueOf)
         .collect(ImmutableList.toImmutableList());
   }
-  
+
   private static List<Map<Imt, Double>> readSpectra(Path path, List<Imt> imts) throws IOException {
     return Files.lines(path)
         .skip(1)
@@ -140,7 +148,6 @@ public class DeaggEpsilon {
         .collect(ImmutableList.toImmutableList());
   }
 
-  
   private static Map<Imt, Double> readSpectra(List<Imt> imts, String line) {
 
     double[] imls = Splitter.on(',')
@@ -183,30 +190,99 @@ public class DeaggEpsilon {
     }
 
     log.info(PROGRAM + ": calculating ...");
+    Path outDir = createOutputDir(config.output.directory);
+    Path siteDir = outDir.resolve("vs30-" + (int) sites.get(0).vs30);
+    Files.createDirectory(siteDir);
 
-    // HazardExport handler = HazardExport.create(config, sites, log);
+    for (int i = 0; i < sites.size(); i++) {
 
-    for (int i=0; i<sites.size(); i++) {
-      
-      Hazard hazard = HazardCalcs.hazard(model, config, sites.get(i), exec);
-      Deaggregation deagg = Deaggregation.atImls(hazard, rtrSpectra.get(i), exec);
-      
-      //handler.add(hazard, Optional.of(deagg));
-      log.fine(hazard.toString());
+      Site site = sites.get(i);
+      Map<Imt, Double> spectrum = rtrSpectra.get(i);
+
+      Hazard hazard = HazardCalcs.hazard(model, config, site, exec);
+      System.out.println("--------");
+      System.out.println(hazard);
+      System.out.println("--------");
+      Deaggregation deagg = Deaggregation.atImls(hazard, spectrum, exec);
+
+      List<Response> responses = new ArrayList<>(spectrum.size());
+      for (Imt imt : config.hazard.imts) {
+        ResponseData imtMetadata = new ResponseData(
+            ImmutableList.of(),
+            site,
+            imt,
+            spectrum.get(imt));
+        Response response = new Response(imtMetadata, deagg.toJsonCompact(imt));
+        responses.add(response);
+      }
+
+      Result result = new Result(responses);
+
+      String filename = String.format("edeagg_%.2f_%.2f", site.location.lon(), site.location.lat());
+      Path resultPath = siteDir.resolve(filename);
+      Writer writer = Files.newBufferedWriter(resultPath);
+
+      GSON.toJson(result, writer);
+      writer.close();
     }
-    //handler.expire();
-
-//    log.info(String.format(
-//        PROGRAM + ": %s sites completed in %s",
-//        handler.resultsProcessed(), handler.elapsedTime()));
 
     exec.shutdown();
-    return null; //handler.outputDir();
+    return siteDir;
+  }
+
+  private static class Result {
+
+    final List<Response> response;
+
+    Result(List<Response> response) {
+      this.response = response;
+    }
+  }
+
+  private static final class ResponseData {
+
+    final List<String> models;
+    final double longitude;
+    final double latitude;
+    final String imt;
+    final double iml;
+    final double vs30;
+
+    ResponseData(List<String> models, Site site, Imt imt, double iml) {
+      this.models = models;
+      this.longitude = site.location.lon();
+      this.latitude = site.location.lat();
+      this.imt = imt.toString();
+      this.iml = iml;
+      this.vs30 = site.vs30;
+    }
+  }
+
+  private static final class Response {
+
+    final ResponseData metadata;
+    final Object data;
+
+    Response(ResponseData metadata, Object data) {
+      this.metadata = metadata;
+      this.data = data;
+    }
+  }
+
+  static Path createOutputDir(Path dir) throws IOException {
+    int i = 1;
+    Path incrementedDir = dir;
+    while (Files.exists(incrementedDir)) {
+      incrementedDir = incrementedDir.resolveSibling(dir.getFileName() + "-" + i);
+      i++;
+    }
+    Files.createDirectories(incrementedDir);
+    return incrementedDir;
   }
 
   private static final String PROGRAM = DeaggEpsilon.class.getSimpleName();
   private static final String USAGE_COMMAND =
-      "java -cp nshmp-haz.jar gov.usgs.earthquake.nshmp.DeaggEPsilon model sites-spectra [config]";
+      "java -cp nshmp-haz.jar gov.usgs.earthquake.nshmp.DeaggEpsilon model sites-spectra [config]";
 
   private static final String USAGE = new StringBuilder()
       .append(NEWLINE)
@@ -222,7 +298,7 @@ public class DeaggEpsilon {
       .append(NEWLINE)
       .append("     - Header: lon,lat,PGA,SA0P01,SA0P02,...")
       .append(NEWLINE)
-      .append("       (specrtral periods must be ascending)")
+      .append("       (spectral periods must be ascending)")
       .append(NEWLINE)
       .append("  'config' (optional) supplies a calculation configuration")
       .append(NEWLINE)
