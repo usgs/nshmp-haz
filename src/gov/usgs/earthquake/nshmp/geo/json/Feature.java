@@ -3,6 +3,8 @@ package gov.usgs.earthquake.nshmp.geo.json;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -202,7 +204,7 @@ public class Feature {
      * @return this builder
      */
     public Builder properties(Map<String, Object> properties) {
-      this.properties = ImmutableMap.copyOf(properties);
+      this.properties = Collections.unmodifiableMap(new LinkedHashMap<String, Object>(properties));
       return this;
     }
 

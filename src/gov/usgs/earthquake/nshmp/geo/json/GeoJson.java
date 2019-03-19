@@ -121,6 +121,7 @@ public final class GeoJson {
           new Util.Serializer<>(GeoJson.Type.converter()))
       .setPrettyPrinting()
       .disableHtmlEscaping()
+      .serializeNulls()
       .create();
 
   /**
