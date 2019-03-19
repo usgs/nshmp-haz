@@ -68,17 +68,18 @@ final class DeaggExport {
       DeaggDataset dd,
       DeaggConfig dc,
       String id,
-      boolean json,
-      boolean εData) {
+      boolean jsonFlag,
+      boolean εDataFlag,
+      boolean summaryFlag) {
 
     this.ddTotal = ddTotal;
     this.dd = dd;
     this.dc = dc;
     this.id = id;
 
-    summary = createSummaryElements(ddTotal, dd, dc);
-    data = εData ? createDistanceMagnitudeData(ddTotal, dd) : null;
-    sources = json ? createJsonContributorList(ddTotal, dd, dc.contributorLimit) : null;
+    summary = summaryFlag ? createSummaryElements(ddTotal, dd, dc): null;
+    data = εDataFlag ? createDistanceMagnitudeData(ddTotal, dd) : null;
+    sources = jsonFlag ? createJsonContributorList(ddTotal, dd, dc.contributorLimit) : null;
   }
 
   void toFile(Path dir, String site) throws IOException {

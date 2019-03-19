@@ -259,13 +259,13 @@ public final class Deaggregation {
    * @param imt of the deaggregation to retrieve.
    */
   public Object toJson(Imt imt) {
-    return deaggs.get(imt).toJson(true, true, true);
+    return deaggs.get(imt).toJson(true, true, true, true);
   }
 
   /** Experimental */
   @Deprecated
   public Object toJsonCompact(Imt imt) {
-    return deaggs.get(imt).toJson(false, false, false);
+    return deaggs.get(imt).toJson(true, false, false, false);
   }
 
   /**
@@ -351,7 +351,7 @@ public final class Deaggregation {
     public String toString() {
       StringBuilder sb = new StringBuilder();
       sb.append(NEWLINE);
-      for (DeaggExport export : buildExports(false, true, true, true)) {
+      for (DeaggExport export : buildExports(false, true, true, true, true)) {
         sb.append(export.toString());
         sb.append(NEWLINE);
       }
@@ -363,12 +363,13 @@ public final class Deaggregation {
      * structured object that may be serialized directly or added to some other
      * object prior to serialization.
      */
-    Object toJson(boolean gmmDeaggs, boolean typeDeaggs, boolean εData) {
-      return buildExports(true, false, false, εData);
+    Object toJson(boolean summary, boolean gmmDeaggs, boolean typeDeaggs, boolean εData) {
+      return buildExports(true, summary, gmmDeaggs, typeDeaggs, εData);
     }
 
     private List<DeaggExport> buildExports(
         boolean json,
+        boolean summary,
         boolean gmmDeaggs,
         boolean typeDeaggs,
         boolean εData) {
@@ -380,7 +381,8 @@ public final class Deaggregation {
           config,
           TOTAL_COMPONENT,
           json,
-          εData);
+          εData,
+          summary);
       exports.add(total);
       if (gmmDeaggs) {
         for (Entry<Gmm, DeaggDataset> gmmEntry : gmmDatasets.entrySet()) {
@@ -390,7 +392,8 @@ public final class Deaggregation {
               config,
               GMM_COMPONENT + gmmEntry.getKey().toString(),
               json,
-              εData);
+              εData,
+              summary);
           exports.add(gmm);
         }
       }
@@ -402,7 +405,8 @@ public final class Deaggregation {
               config,
               TYPE_COMPONENT + typeEntry.getKey().toString(),
               json,
-              εData);
+              εData,
+              summary);
           exports.add(type);
         }
       }

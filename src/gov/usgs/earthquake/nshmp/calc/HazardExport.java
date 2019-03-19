@@ -458,7 +458,7 @@ public final class HazardExport {
         ImtDeagg imtDeagg = imtEntry.getValue();
         DeaggDataset ddTotal = imtDeagg.totalDataset;
         DeaggConfig dc = imtDeagg.config;
-        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total", false, true);
+        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total", false, true, true);
         Path imtDir = dir.resolve(imtEntry.getKey().name());
         Path totalDir = imtDir.resolve(DEAGG_DIR);
         Files.createDirectories(totalDir);
@@ -471,7 +471,7 @@ public final class HazardExport {
                 .resolve(type.name())
                 .resolve(DEAGG_DIR);
             DeaggDataset ddType = typeEntry.getValue();
-            exporter = new DeaggExport(ddTotal, ddType, dc, type.toString(), false, true);
+            exporter = new DeaggExport(ddTotal, ddType, dc, type.toString(), false, true, true);
             exporter.toFile(typeDir, name);
           }
         }
@@ -483,7 +483,7 @@ public final class HazardExport {
                 .resolve(gmm.name())
                 .resolve(DEAGG_DIR);
             DeaggDataset ddGmm = gmmEntry.getValue();
-            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmm.toString(), false, true);
+            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmm.toString(), false, true, true);
             exporter.toFile(gmmDir, name);
           }
         }
