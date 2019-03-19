@@ -49,7 +49,6 @@ import gov.usgs.earthquake.nshmp.internal.Logging;
 public class DeaggEpsilon {
 
   private static final Gson GSON = new GsonBuilder()
-      .setPrettyPrinting()
       .serializeSpecialFloatingPointValues()
       .serializeNulls()
       .create();
@@ -200,9 +199,6 @@ public class DeaggEpsilon {
       Map<Imt, Double> spectrum = rtrSpectra.get(i);
 
       Hazard hazard = HazardCalcs.hazard(model, config, site, exec);
-      System.out.println("--------");
-      System.out.println(hazard);
-      System.out.println("--------");
       Deaggregation deagg = Deaggregation.atImls(hazard, spectrum, exec);
 
       List<Response> responses = new ArrayList<>(spectrum.size());
@@ -215,13 +211,15 @@ public class DeaggEpsilon {
         Response response = new Response(imtMetadata, deagg.toJsonCompact(imt));
         responses.add(response);
       }
-
       Result result = new Result(responses);
 
-      String filename = String.format("edeagg_%.2f_%.2f", site.location.lon(), site.location.lat());
+      String filename = String.format(
+          "edeagg_%.2f_%.2f.json",
+          site.location.lon(),
+          site.location.lat());
+
       Path resultPath = siteDir.resolve(filename);
       Writer writer = Files.newBufferedWriter(resultPath);
-
       GSON.toJson(result, writer);
       writer.close();
     }
