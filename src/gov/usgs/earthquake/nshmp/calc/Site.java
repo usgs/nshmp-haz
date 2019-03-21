@@ -426,7 +426,7 @@ public class Site implements Named {
   }
 
   /* Json and csv serialization key set */
-  static final Set<String> KEYS = ImmutableSet.of(
+  public static final Set<String> KEYS = ImmutableSet.of(
       Key.NAME,
       Key.LAT,
       Key.LON,

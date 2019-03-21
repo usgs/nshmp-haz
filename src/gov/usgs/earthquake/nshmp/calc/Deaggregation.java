@@ -151,10 +151,11 @@ public final class Deaggregation {
     HazardToDeagg transform = new HazardToDeagg(hazard);
     AsyncList<ImtDeagg> futureImtDeaggs = AsyncList.createWithCapacity(imtsToDeagg.size());
 
+    double lnIml = Math.log(iml);
     for (Imt imt : imtsToDeagg) {
-      double rate = RATE_INTERPOLATER.findY(hazard.totalCurves.get(imt), iml);
+      double rate = RATE_INTERPOLATER.findY(hazard.totalCurves.get(imt), lnIml);
       double returnPeriod = 1.0 / rate;
-      DeaggConfig config = cb.imt(imt).iml(Math.log(iml), rate, returnPeriod).build();
+      DeaggConfig config = cb.imt(imt).iml(lnIml, rate, returnPeriod).build();
       futureImtDeaggs.add(toImtDeagg(transform, config, exec));
     }
 
@@ -182,10 +183,10 @@ public final class Deaggregation {
 
     for (Entry<Imt, Double> imtIml : imtImls.entrySet()) {
       Imt imt = imtIml.getKey();
-      double iml = imtIml.getValue();
-      double rate = RATE_INTERPOLATER.findY(hazard.totalCurves.get(imt), iml);
+      double lnIml = Math.log(imtIml.getValue());
+      double rate = RATE_INTERPOLATER.findY(hazard.totalCurves.get(imt), lnIml);
       double returnPeriod = 1.0 / rate;
-      DeaggConfig config = cb.imt(imt).iml(Math.log(iml), rate, returnPeriod).build();
+      DeaggConfig config = cb.imt(imt).iml(lnIml, rate, returnPeriod).build();
       futureImtDeaggs.add(toImtDeagg(transform, config, exec));
     }
 
@@ -265,7 +266,7 @@ public final class Deaggregation {
   /** Experimental */
   @Deprecated
   public Object toJsonCompact(Imt imt) {
-    return deaggs.get(imt).toJson(true, false, false, false);
+    return deaggs.get(imt).toJson(false, false, false, false);
   }
 
   /**

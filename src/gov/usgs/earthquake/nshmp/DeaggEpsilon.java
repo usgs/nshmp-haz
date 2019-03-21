@@ -11,9 +11,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -21,7 +23,12 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import com.google.common.base.Splitter;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -86,41 +93,52 @@ public class DeaggEpsilon {
 
       log.info(PROGRAM + ": " + HazardCalc.VERSION);
       Path modelPath = Paths.get(args[0]);
-      HazardModel model = HazardModel.load(modelPath);
+      Path wusPath = modelPath.resolve("Western US");
+      Path ceusPath = modelPath.resolve("Central & Eastern US");
+
+      HazardModel wusModel = HazardModel.load(wusPath);
+      HazardModel ceusModel = HazardModel.load(ceusPath);
 
       log.info("");
       Path siteFile = Paths.get(args[1]);
       log.info("Site and spectra file: " + siteFile.toAbsolutePath().normalize());
       checkArgument(siteFile.toString().endsWith(".csv"), "Only *.csv site files supported");
 
-      List<Imt> imts = readImtList(siteFile);
+      int colsToSkip = headerCount(siteFile);
+      List<Imt> imts = readImtList(siteFile, colsToSkip);
 
-      CalcConfig config = model.config();
+      CalcConfig wusConfig = wusModel.config();
+      CalcConfig ceusConfig = ceusModel.config();
       if (argCount == 3) {
         Path userConfigPath = Paths.get(args[2]);
-        config = CalcConfig.Builder.copyOf(model.config())
+        wusConfig = CalcConfig.Builder.copyOf(wusModel.config())
+            .extend(CalcConfig.Builder.fromFile(userConfigPath))
+            .imts(EnumSet.copyOf(imts))
+            .build();
+        ceusConfig = CalcConfig.Builder.copyOf(ceusModel.config())
             .extend(CalcConfig.Builder.fromFile(userConfigPath))
             .imts(EnumSet.copyOf(imts))
             .build();
       }
-      log.info(config.toString());
+      log.info(wusConfig.toString());
 
-      List<Site> sites = ImmutableList.copyOf(Sites.fromCsv(siteFile, config, true));
+      List<Site> sites = ImmutableList.copyOf(Sites.fromCsv(siteFile, wusConfig, true));
       log.info("Sites: " + sites.size());
 
-      List<Map<Imt, Double>> imtImlMaps = readSpectra(siteFile, imts);
+      log.info("Site data columns: " + colsToSkip);
+      List<Map<Imt, Double>> imtImlMaps = readSpectra(siteFile, imts, colsToSkip);
       log.info("Spectra: " + imtImlMaps.size());
 
       checkArgument(sites.size() == imtImlMaps.size(), "Sites and spectra lists different sizes");
 
-      Path out = calc(model, config, sites, imtImlMaps, log);
+      Path out = calc(wusModel, wusConfig, ceusModel, ceusConfig, sites, imtImlMaps, log);
 
       log.info(PROGRAM + ": finished");
 
       /* Transfer log and write config, windows requires fh.close() */
       fh.close();
       Files.move(tmpLog, out.resolve(PROGRAM + ".log"));
-      config.write(out);
+      wusConfig.write(out);
 
       return Optional.empty();
 
@@ -129,31 +147,39 @@ public class DeaggEpsilon {
     }
   }
 
-  private static List<Imt> readImtList(Path path) throws IOException {
+  /* returns the number of site data columns are present. */
+  private static int headerCount(Path path) throws IOException {
+    String header = Files.lines(path).findFirst().get();
+    Set<String> columns = ImmutableSet.copyOf(Splitter.on(',').trimResults().split(header));
+    return Sets.intersection(columns, Site.KEYS).size();
+  }
+
+  private static List<Imt> readImtList(Path path, int colsToSkip) throws IOException {
     String header = Files.lines(path).findFirst().get();
     return Splitter.on(',')
         .trimResults()
         .splitToList(header)
         .stream()
-        .skip(2)
+        .skip(colsToSkip)
         .map(Imt::valueOf)
         .collect(ImmutableList.toImmutableList());
   }
 
-  private static List<Map<Imt, Double>> readSpectra(Path path, List<Imt> imts) throws IOException {
+  private static List<Map<Imt, Double>> readSpectra(Path path, List<Imt> imts, int colsToSkip)
+      throws IOException {
     return Files.lines(path)
         .skip(1)
-        .map(s -> readSpectra(imts, s))
+        .map(s -> readSpectra(imts, s, colsToSkip))
         .collect(ImmutableList.toImmutableList());
   }
 
-  private static Map<Imt, Double> readSpectra(List<Imt> imts, String line) {
+  private static Map<Imt, Double> readSpectra(List<Imt> imts, String line, int colsToSkip) {
 
     double[] imls = Splitter.on(',')
         .trimResults()
         .splitToList(line)
         .stream()
-        .skip(2)
+        .skip(colsToSkip)
         .mapToDouble(Double::valueOf)
         .toArray();
 
@@ -172,14 +198,16 @@ public class DeaggEpsilon {
    * HazardCalc.calc() that will trigger deaggregations if the value is present.
    */
   private static Path calc(
-      HazardModel model,
-      CalcConfig config,
+      HazardModel wusModel,
+      CalcConfig wusConfig,
+      HazardModel ceusModel,
+      CalcConfig ceusConfig,
       List<Site> sites,
       List<Map<Imt, Double>> rtrSpectra,
       Logger log) throws IOException {
 
     ExecutorService exec = null;
-    ThreadCount threadCount = config.performance.threadCount;
+    ThreadCount threadCount = wusConfig.performance.threadCount;
     if (threadCount == ThreadCount.ONE) {
       exec = MoreExecutors.newDirectExecutorService();
       log.info("Threads: Running on calling thread");
@@ -189,7 +217,7 @@ public class DeaggEpsilon {
     }
 
     log.info(PROGRAM + ": calculating ...");
-    Path outDir = createOutputDir(config.output.directory);
+    Path outDir = createOutputDir(wusConfig.output.directory);
     Path siteDir = outDir.resolve("vs30-" + (int) sites.get(0).vs30);
     Files.createDirectory(siteDir);
 
@@ -198,11 +226,24 @@ public class DeaggEpsilon {
       Site site = sites.get(i);
       Map<Imt, Double> spectrum = rtrSpectra.get(i);
 
-      Hazard hazard = HazardCalcs.hazard(model, config, site, exec);
-      Deaggregation deagg = Deaggregation.atImls(hazard, spectrum, exec);
+      Hazard wusHazard = null;
+      if (site.location.lon() <= -100.0) {
+        wusHazard = HazardCalcs.hazard(wusModel, wusConfig, site, exec);
+      }
+      Hazard ceusHazard = null;
+      if (site.location.lon() > -115.0) {
+        ceusHazard = HazardCalcs.hazard(ceusModel, ceusConfig, site, exec);
+      }
+      Hazard cousHazard = (wusHazard == null)
+          ? ceusHazard
+          : (ceusHazard == null)
+              ? wusHazard
+              : Hazard.merge(wusHazard, ceusHazard);
+
+      Deaggregation deagg = Deaggregation.atImls(cousHazard, spectrum, exec);
 
       List<Response> responses = new ArrayList<>(spectrum.size());
-      for (Imt imt : config.hazard.imts) {
+      for (Imt imt : wusConfig.hazard.imts) {
         ResponseData imtMetadata = new ResponseData(
             ImmutableList.of(),
             site,
@@ -222,6 +263,7 @@ public class DeaggEpsilon {
       Writer writer = Files.newBufferedWriter(resultPath);
       GSON.toJson(result, writer);
       writer.close();
+      log.info(String.format("     %s of %s sites",i, sites.size()));
     }
 
     exec.shutdown();
