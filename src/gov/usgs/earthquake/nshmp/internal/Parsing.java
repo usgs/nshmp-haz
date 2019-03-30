@@ -483,7 +483,7 @@ public final class Parsing {
 
     /**
      * Whitespace (' ') delimiter.
-     * @see CharMatcher#WHITESPACE
+     * @see CharMatcher#whitespace()
      */
     SPACE(' ', CharMatcher.whitespace()),
 

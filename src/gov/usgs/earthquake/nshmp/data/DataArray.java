@@ -23,9 +23,9 @@ import static com.google.common.base.Preconditions.checkArgument;
  * instances of this class.
  * 
  * <p>In addition to {@link #iterator()} returning the 
- * {@code double} primitive specialization {@link PrimitiveIterator.OfDouble} 
+ * {@code double} primitive specialization {@link PrimitiveIterator#OfDouble} 
  * implementations of this interface provide streaming support via 
- * {@link #stream()} and {@link parallelStream()}, both of which return 
+ * {@link #stream()} and {@link #parallelStream()}, both of which return 
  * the {@code double} primitive specialization, {@link DoubleStream}. 
  * Note that traditional iteration will incur additional autoboxing overhead.
  * 
@@ -44,7 +44,7 @@ public interface DataArray extends Iterable<Double> {
    */
 
   /**
-   * Return a {@code PrimitiveInterator.ofDouble} iterator.
+   * Return a double iterator.
    */
   @Override
   default PrimitiveIterator.OfDouble iterator() {
