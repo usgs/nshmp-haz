@@ -3,6 +3,7 @@ package gov.usgs.earthquake.nshmp.data;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.PrimitiveIterator;
+import java.util.PrimitiveIterator.OfDouble;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.DoubleUnaryOperator;
@@ -16,18 +17,17 @@ import com.google.common.primitives.Doubles;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-
 /**
  * An interface representing an immutable wrapper around an array of primitive
  * {@code double} values. Use factory constructors or builders to create
  * instances of this class.
  * 
- * <p>In addition to {@link #iterator()} returning the 
- * {@code double} primitive specialization {@link PrimitiveIterator#OfDouble} 
- * implementations of this interface provide streaming support via 
- * {@link #stream()} and {@link #parallelStream()}, both of which return 
- * the {@code double} primitive specialization, {@link DoubleStream}. 
- * Note that traditional iteration will incur additional autoboxing overhead.
+ * <p>In addition to {@link #iterator()} returning the {@code double} primitive
+ * specialization {@link OfDouble} implementations of this interface provide
+ * streaming support via {@link #stream()} and {@link #parallelStream()}, both
+ * of which return the {@code double} primitive specialization,
+ * {@link DoubleStream}. Note that traditional iteration will incur additional
+ * autoboxing overhead.
  * 
  * @author Brandon Clayton
  * @author Peter Powers
@@ -50,11 +50,11 @@ public interface DataArray extends Iterable<Double> {
   default PrimitiveIterator.OfDouble iterator() {
     return Spliterators.iterator(spliterator());
   }
-  
+
   /**
    * Returns a {@code Spliterator.ofDouble} {@code Spliterator}.
    */
-  @Override 
+  @Override
   Spliterator.OfDouble spliterator();
 
   /**
@@ -64,7 +64,7 @@ public interface DataArray extends Iterable<Double> {
    * @return {@code double} at position {@code index}
    */
   double get(int index);
-  
+
   /**
    * Return the number of elements in {@code DataArray}.
    * 
@@ -73,13 +73,13 @@ public interface DataArray extends Iterable<Double> {
   int size();
 
   /**
-   * Returns a new, mutable copy of the {@code DataArray}'s values as
-   *    a primitive {@code double[]}.
-   *    
+   * Returns a new, mutable copy of the {@code DataArray}'s values as a
+   * primitive {@code double[]}.
+   * 
    * @return {@code double[]}
    */
   double[] toArray();
-  
+
   /**
    * Return a parallel {@code DoubleStream} of the {@code DataArray}.
    * 
@@ -89,7 +89,7 @@ public interface DataArray extends Iterable<Double> {
     Boolean isParallel = true;
     return StreamSupport.doubleStream(spliterator(), isParallel);
   }
-  
+
   /**
    * Return a sequential {@code DoubleStream} of the {@code DataArray}.
    * 
@@ -99,7 +99,7 @@ public interface DataArray extends Iterable<Double> {
     Boolean isParallel = false;
     return StreamSupport.doubleStream(spliterator(), isParallel);
   }
-  
+
   /**
    * Create a new {@code DataArray} from the supplied {@code data}.
    * 
@@ -109,7 +109,7 @@ public interface DataArray extends Iterable<Double> {
   static DataArray copyOf(double... data) {
     return builderWithData(data).build();
   }
-  
+
   /**
    * Create a new {@code DataArray} from an {@code Iterable<Double>}.
    * 
@@ -119,22 +119,22 @@ public interface DataArray extends Iterable<Double> {
   static DataArray copyOf(Iterable<Double> data) {
     return builderWithData(data).build();
   }
-  
+
   /**
-   * Return a new {@code DataArray} {@code Builder} initialized with 
-   *    {@code data}.
-   *    
+   * Return a new {@code DataArray} {@code Builder} initialized with
+   * {@code data}.
+   * 
    * @param data to copy
    * @return new {@code Builder}
    */
   static Builder builderWithData(double... data) {
     return new Builder(data);
   }
-  
+
   /**
    * Return a new {@code DataArray} {@code Builder} initialized with
-   *    {@code Iterable<Double>}.
-   *    
+   * {@code Iterable<Double>}.
+   * 
    * @param data to copy
    * @return new {@code Builder}.
    */
@@ -144,15 +144,14 @@ public interface DataArray extends Iterable<Double> {
     }
 
     double[] array = Stream.of(Iterables.toArray(data, Double.class))
-          .mapToDouble(Double::doubleValue)
-          .toArray();
+        .mapToDouble(Double::doubleValue)
+        .toArray();
     return new Builder(array);
   }
- 
+
   /**
-   * Return a new {@code DataArray} {@code Builder} initialized to
-   *    {@code size}.
-   *    
+   * Return a new {@code DataArray} {@code Builder} initialized to {@code size}.
+   * 
    * @param size of the backing array
    * @return new {@code Builder}
    */
@@ -160,22 +159,20 @@ public interface DataArray extends Iterable<Double> {
     checkArgument(size >= 0);
     return new Builder(new double[size]);
   }
-  
+
   /**
-   * A {@code DataArray} builder. Use one of the following to create a new builder:
-   *    <ul> 
-   *      <li> {@link DataArray#builderWithData(double...)} </li>
-   *      <li> {@link DataArray#builderWithData(Iterable)} </li>
-   *      <li> {@link DataArray#builderWithSize(int)} </li>
-   *    </ul> 
+   * A {@code DataArray} builder. Use one of the following to create a new
+   * builder: <ul> <li> {@link DataArray#builderWithData(double...)} </li> <li>
+   * {@link DataArray#builderWithData(Iterable)} </li> <li>
+   * {@link DataArray#builderWithSize(int)} </li> </ul>
    */
   public static class Builder {
     private double[] data;
-    
+
     private Builder(double... data) {
-      this.data = Arrays.copyOf(data, data.length); 
+      this.data = Arrays.copyOf(data, data.length);
     }
-   
+
     /**
      * Return a new {@code DataArray}.
      * 
@@ -184,7 +181,7 @@ public interface DataArray extends Iterable<Double> {
     public DataArray build() {
       return new RegularDataArray(Arrays.copyOf(data, data.length));
     }
-   
+
     /**
      * Set the {@code value} at {@code index} in the {@code DataArray}.
      * 
@@ -197,7 +194,7 @@ public interface DataArray extends Iterable<Double> {
       data[index] = value;
       return this;
     }
-    
+
     /**
      * Transform the {@code DataArray} at all indices.
      * 
@@ -208,7 +205,7 @@ public interface DataArray extends Iterable<Double> {
       Data.transform(function, data);
       return this;
     }
-    
+
     /**
      * Transform the {@code DataArray} at a specified {@code Range}.
      * 
@@ -220,11 +217,11 @@ public interface DataArray extends Iterable<Double> {
       Data.transform(range, function, data);
       return this;
     }
-   
+
     /**
-     * Transform the {@code DataArray} at a specified range, 
-     *    [{@code lower}, {@code upper}).
-     *    
+     * Transform the {@code DataArray} at a specified range, [{@code lower},
+     * {@code upper}).
+     * 
      * @param lower inclusive index
      * @param upper exclusive index
      * @param function to apply to {@code DataArray}
@@ -234,7 +231,7 @@ public interface DataArray extends Iterable<Double> {
       Data.transform(lower, upper, function, data);
       return this;
     }
-   
+
   }
 
 }
