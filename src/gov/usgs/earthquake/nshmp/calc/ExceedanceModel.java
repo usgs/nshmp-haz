@@ -196,7 +196,7 @@ public enum ExceedanceModel {
   },
 
   /**
-   * Same as {@link NSHM_CEUS_MAX_INTENSITY}, except that {@code n = 3}.
+   * Same as {@link #NSHM_CEUS_MAX_INTENSITY}, except that {@code n = 3}.
    * 
    * <p>Model ignores truncation level, {@code n}, and {@code imt}.
    */
