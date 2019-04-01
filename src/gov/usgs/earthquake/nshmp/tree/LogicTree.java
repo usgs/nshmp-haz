@@ -50,7 +50,6 @@ public interface LogicTree<T> extends Iterable<Branch<T>> {
    * Return a new {@code SingleBranchTree}.
    * 
    * @param id the branch identifier
-   * @param weight the branch weight
    * @param value the branch value
    */
   static <T> SingleBranchTree<T> singleBranch(String id, T value) {

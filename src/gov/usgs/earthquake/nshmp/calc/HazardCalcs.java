@@ -95,7 +95,7 @@ public class HazardCalcs {
    * years). Deaggregation currently runs on a single thread.
    * 
    * <p>Call this method with the {@link Hazard} result of
-   * {@link #hazard(HazardModel, CalcConfig, Site, Optional)} to which you
+   * {@link #hazard(HazardModel, CalcConfig, Site, Executor)} to which you
    * supply the calculation settings and sites of interest that will also be
    * used for deaggregation.
    *

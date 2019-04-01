@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,9 +22,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import com.google.common.base.Splitter;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -263,7 +259,7 @@ public class DeaggEpsilon {
       Writer writer = Files.newBufferedWriter(resultPath);
       GSON.toJson(result, writer);
       writer.close();
-      log.info(String.format("     %s of %s sites",i, sites.size()));
+      log.info(String.format("     %s of %s sites", i, sites.size()));
     }
 
     exec.shutdown();
