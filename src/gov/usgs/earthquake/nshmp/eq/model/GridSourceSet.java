@@ -92,7 +92,8 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
     this.magMaster = magMaster;
     this.Δm = Δm;
-    this.optimizable = !Double.isNaN(Δm);
+    /* skip fixed strike grids and single magnitude MFDs */
+    this.optimizable = (sourceType() != FIXED_STRIKE) && !Double.isNaN(Δm);
 
     depthModel = DepthModel.create(magDepthMap, Doubles.asList(magMaster), maxDepth);
   }

@@ -185,8 +185,7 @@ public class HazardCalcs {
 
         case GRID:
           GridSourceSet gss = (GridSourceSet) sourceSet;
-          if (config.performance.optimizeGrids && gss.sourceType() != FIXED_STRIKE &&
-              gss.optimizable()) {
+          if (config.performance.optimizeGrids && gss.optimizable()) {
             gridTables.add(transform(
                 immediateFuture(gss),
                 GridSourceSet.optimizer(site.location)::apply,
@@ -242,7 +241,7 @@ public class HazardCalcs {
       switch (sourceSet.type()) {
         case GRID:
           GridSourceSet gss = (GridSourceSet) sourceSet;
-          if (config.performance.optimizeGrids && gss.sourceType() != FIXED_STRIKE) {
+          if (config.performance.optimizeGrids && gss.optimizable()) {
             sourceSet = GridSourceSet.optimizer(site.location).apply(gss);
             log(log, MSSG_GRID_INIT, sourceSet.name(), duration(swSource));
           }
