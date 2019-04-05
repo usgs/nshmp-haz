@@ -22,6 +22,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -217,6 +218,8 @@ public class DeaggEpsilon {
     Path siteDir = outDir.resolve("vs30-" + (int) sites.get(0).vs30);
     Files.createDirectory(siteDir);
 
+    Stopwatch stopwatch = Stopwatch.createStarted();
+    
     for (int i = 0; i < sites.size(); i++) {
 
       Site site = sites.get(i);
@@ -259,7 +262,9 @@ public class DeaggEpsilon {
       Writer writer = Files.newBufferedWriter(resultPath);
       GSON.toJson(result, writer);
       writer.close();
-      log.info(String.format("     %s of %s sites", i, sites.size()));
+      log.info(String.format(
+          "     %s of %s sites completed in %s",
+          i + 1, sites.size(), stopwatch));
     }
 
     exec.shutdown();
