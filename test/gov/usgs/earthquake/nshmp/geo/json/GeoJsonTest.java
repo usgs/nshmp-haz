@@ -62,7 +62,7 @@ public class GeoJsonTest {
 
   private static final double[] BBOX = new double[] { -118, 34, -116, 38 };
 
-  private static final Builder BUILDER = GeoJson.builder()
+  private static final Builder FC_BUILDER = GeoJson.builder()
       .bbox(BBOX)
       .add(Feature.point(TEST_POINT)
           .id("featureId")
@@ -77,6 +77,13 @@ public class GeoJsonTest {
           .id(3)
           .bbox(BBOX)
           .build());
+
+  private static final Feature.Builder F_BUILDER = Feature.point(TEST_POINT)
+      .id("featureId")
+      .properties(ImmutableMap.of(
+          "id", 1,
+          "title", "Feature Title",
+          "color", "#ff0080"));
 
   @Rule
   public TemporaryFolder testFolder = new TemporaryFolder();
@@ -139,32 +146,6 @@ public class GeoJsonTest {
     assertEquals(TEST_POINT, f.asPoint());
   }
 
-  @Test
-  public void testWrite() throws IOException {
-
-    /* JSON direct from builder. */
-    JsonParser parser = new JsonParser();
-    JsonElement jsonExpected = parser.parse(BUILDER.toJson());
-
-    /* Write to file and read back in. */
-    Path out = testFolder.newFile(TEST_FILENAME).toPath();
-    BUILDER.write(out);
-    JsonElement jsonActual = parser.parse(new String(Files.readAllBytes(out)));
-
-    /*
-     * Note that the JsonObject.equals() is tolerant of object members being
-     * reordered as a Map comparison is taking place under the hood. However, if
-     * JsonArray elements are reordered, equals tests fail because a List is is
-     * being compared.
-     */
-    assertEquals(jsonExpected, jsonActual);
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void testWriteEmptyBuilder() throws URISyntaxException, MalformedURLException {
-    GeoJson.builder().toJson();
-  }
-
   /* This hits most read methods in classes of the json package. */
   private void checkFeatureCollection(FeatureCollection fc) {
 
@@ -185,10 +166,44 @@ public class GeoJsonTest {
     assertArrayEquals(BBOX, f3.bbox(), 0.0);
   }
 
+  @Test
+  public void testWrite() throws IOException {
+
+    /* Feature collection JSON direct from builder. */
+    JsonParser parser = new JsonParser();
+    JsonElement jsonExpected = parser.parse(FC_BUILDER.toJson());
+
+    /* Write to file and read back in. */
+    Path out = testFolder.newFile(TEST_FILENAME).toPath();
+    FC_BUILDER.write(out);
+    JsonElement jsonActual = parser.parse(new String(Files.readAllBytes(out)));
+
+    /*
+     * Note that the JsonObject.equals() is tolerant of object members being
+     * reordered as a Map comparison is taking place under the hood. However, if
+     * JsonArray elements are reordered, equals tests fail because a List is is
+     * being compared.
+     */
+    assertEquals(jsonExpected, jsonActual);
+
+    /* Feature JSON direct from builder. */
+    jsonExpected = parser.parse(F_BUILDER.toJson());
+
+    /* Write to file and read back in. */
+    F_BUILDER.write(out);
+    jsonActual = parser.parse(new String(Files.readAllBytes(out)));
+    assertEquals(jsonExpected, jsonActual);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testWriteEmptyBuilder() throws URISyntaxException, MalformedURLException {
+    GeoJson.builder().toJson();
+  }
+
   /* Test the toFeatureCollection() and Feature.as*() methods. */
   @Test
   public void testFeatureConversion() {
-    FeatureCollection fc = GeoJson.from(BUILDER.toJson()).toFeatureCollection();
+    FeatureCollection fc = GeoJson.from(FC_BUILDER.toJson()).toFeatureCollection();
     List<Feature> features = fc.features();
     assertEquals(TEST_POINT, features.get(0).asPoint());
     assertEquals(TEST_LINE, features.get(1).asLineString());
@@ -251,7 +266,7 @@ public class GeoJsonTest {
     /* Create test files */
     Path out = Paths.get("tmp/json-tests");
     Path path = out.resolve(FEATURE_COLLECTION_FILENAME);
-    BUILDER.write(path);
+    FC_BUILDER.write(path);
   }
 
 }

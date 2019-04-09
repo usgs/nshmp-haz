@@ -3,6 +3,10 @@ package gov.usgs.earthquake.nshmp.geo.json;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,12 +41,6 @@ public class Feature {
     this.geometry = builder.geometry;
     this.properties = builder.properties;
   }
-
-  // @Override
-  // public String toString() {
-  // return geometry.toString();
-  // // + "\n" + geometry.coordinates.getClass()
-  // }
 
   /**
    * Create a single-use point feature builder.
@@ -213,12 +211,32 @@ public class Feature {
     }
 
     /**
-     * Reuturn a new GeoJSON feature.
+     * Return a new GeoJSON feature.
      */
     public Feature build() {
       checkState(!built, "This builder has already been used");
       built = true;
       return new Feature(this);
+    }
+
+    /**
+     * Return the serialized form of a new GeoJSON feature.
+     * 
+     * @throws IllegalStateException if builder is empty
+     */
+    public String toJson() {
+      String json = GeoJson.GSON.toJson(new Feature(this));
+      return Util.cleanPoints(json);
+    }
+
+    /**
+     * Write the serialized form of a new GeoJSON feature to the file at
+     * {@code path}.
+     * 
+     * @throws IllegalStateException if builder is empty
+     */
+    public void write(Path path) throws IOException {
+      Files.write(path, toJson().getBytes(StandardCharsets.UTF_8));
     }
   }
 

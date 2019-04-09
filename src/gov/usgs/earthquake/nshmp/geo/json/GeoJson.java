@@ -22,8 +22,8 @@ import com.google.gson.JsonIOException;
  * Entry point for creating and parsing <a href="http://geojson.org"
  * target="_top">GeoJSON</a> features and feature collections.
  * 
- * <p>To create a GeoJSON string, use a builder and add features per the example
- * below:
+ * <p>To create a GeoJSON feature collection string, use a builder and add
+ * features per the example below:
  * 
  * <pre>
  * String geojson = GeoJson.builder()
@@ -82,11 +82,17 @@ import com.google.gson.JsonIOException;
  * }
  * </pre>
  * 
+ * <p>Note in the example above that features have their own geometry-specific
+ * builders. Feature builders also supply {@link Feature.Builder#toJson()
+ * toJson()} and {@link Feature.Builder#write(Path) write(Path)} methods to
+ * output single-feature GeoJSON directly.
+ * 
  * <p>Parse GeoJSON to a feature or feature collection using static
  * {@code from*} methods as follows:
  * 
  * <pre>
  * Feature f = GeoJson.from(stringOrPathOrUrl).toFeature();
+ * FeatureCollection fc = GeoJson.from(stringOrPathOrUrl).toFeatureCollection();
  * </pre>
  * 
  * <p>Once parsed, the feature geometry may be accessed as objects in the
