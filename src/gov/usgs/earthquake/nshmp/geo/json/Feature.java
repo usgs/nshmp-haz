@@ -7,8 +7,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
-
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
 import gov.usgs.earthquake.nshmp.geo.json.GeoJson.Type;
@@ -39,6 +37,12 @@ public class Feature {
     this.geometry = builder.geometry;
     this.properties = builder.properties;
   }
+
+  // @Override
+  // public String toString() {
+  // return geometry.toString();
+  // // + "\n" + geometry.coordinates.getClass()
+  // }
 
   /**
    * Create a single-use point feature builder.

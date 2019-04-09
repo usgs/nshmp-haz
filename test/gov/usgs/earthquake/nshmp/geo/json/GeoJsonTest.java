@@ -1,11 +1,19 @@
 package gov.usgs.earthquake.nshmp.geo.json;
 
-import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.*;
+import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.DESCRIPTION;
+import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.FILL;
+import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.FILL_OPACITY;
+import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.MARKER_COLOR;
+import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.MARKER_SIZE;
+import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.MARKER_SYMBOL;
+import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.STROKE;
+import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.STROKE_OPACITY;
+import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.STROKE_WIDTH;
+import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.TITLE;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -30,17 +38,17 @@ import com.google.gson.JsonParser;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
-import gov.usgs.earthquake.nshmp.geo.json.Feature;
-import gov.usgs.earthquake.nshmp.geo.json.FeatureCollection;
-import gov.usgs.earthquake.nshmp.geo.json.GeoJson;
 import gov.usgs.earthquake.nshmp.geo.json.GeoJson.Builder;
 import gov.usgs.earthquake.nshmp.geo.json.GeoJson.Type;
-import gov.usgs.earthquake.nshmp.geo.json.Properties;
 
 @SuppressWarnings("javadoc")
 public class GeoJsonTest {
 
-  private static final String EXAMPLE_FILENAME = "example.geojson";
+  // TODO test that single Feature creation geometry is not null?
+  // currently disallowinng empty feature collections
+
+  private static final String FEATURE_COLLECTION_FILENAME = "feature-collection.geojson";
+  private static final String FEATURE_FILENAME = "feature.geojson";
   private static final String TEST_FILENAME = "test.geojson";
   private static final String NOFILE_FILENAME = "nofile.geojson";
 
@@ -78,7 +86,7 @@ public class GeoJsonTest {
   public void testReadUrlException() throws MalformedURLException {
     String basUrlBase = Resources.getResource(GeoJsonTest.class, ".").toString();
     URL badUrl = new URL(basUrlBase + NOFILE_FILENAME);
-    FeatureCollection fc = GeoJson.fromJson(badUrl);
+    FeatureCollection fc = GeoJson.from(badUrl).toFeatureCollection();
   }
 
   @SuppressWarnings("unused")
@@ -87,34 +95,48 @@ public class GeoJsonTest {
     String basUrlBase = Resources.getResource(GeoJsonTest.class, ".").toString();
     URL badUrl = new URL(basUrlBase + NOFILE_FILENAME);
     Path badPath = new File(badUrl.toURI()).toPath();
-    FeatureCollection fc = GeoJson.fromJson(badPath);
+    FeatureCollection fc = GeoJson.from(badPath).toFeatureCollection();
   }
 
   @Test
   public void testRead() throws URISyntaxException, IOException {
 
     FeatureCollection fc;
+    Feature f;
 
     /* URL */
-    URL jsonUrl = Resources.getResource(GeoJsonTest.class, EXAMPLE_FILENAME);
-    fc = GeoJson.fromJson(jsonUrl);
+
+    URL fcJsonUrl = Resources.getResource(
+        GeoJsonTest.class,
+        FEATURE_COLLECTION_FILENAME);
+    fc = GeoJson.from(fcJsonUrl).toFeatureCollection();
     checkFeatureCollection(fc);
+
+    URL fJsonUrl = Resources.getResource(
+        GeoJsonTest.class,
+        FEATURE_FILENAME);
+    f = GeoJson.from(fJsonUrl).toFeature();
+    assertEquals(TEST_POINT, f.asPoint());
 
     /* Path */
-    Path jsonPath = new File(jsonUrl.toURI()).toPath();
-    fc = GeoJson.fromJson(jsonPath);
+
+    Path fcJsonPath = new File(fcJsonUrl.toURI()).toPath();
+    fc = GeoJson.from(fcJsonPath).toFeatureCollection();
     checkFeatureCollection(fc);
 
-    /* Reader */
-    BufferedReader jsonReader = Files.newBufferedReader(jsonPath);
-    fc = GeoJson.fromJson(jsonReader);
-    jsonReader.close();
-    checkFeatureCollection(fc);
+    Path fJsonPath = new File(fJsonUrl.toURI()).toPath();
+    f = GeoJson.from(fJsonPath).toFeature();
+    assertEquals(TEST_POINT, f.asPoint());
 
     /* String */
-    String jsonString = Resources.toString(jsonUrl, StandardCharsets.UTF_8);
-    fc = GeoJson.fromJson(jsonString);
+
+    String fcJsonString = Resources.toString(fcJsonUrl, StandardCharsets.UTF_8);
+    fc = GeoJson.from(fcJsonString).toFeatureCollection();
     checkFeatureCollection(fc);
+
+    String fJsonString = Resources.toString(fJsonUrl, StandardCharsets.UTF_8);
+    f = GeoJson.from(fJsonString).toFeature();
+    assertEquals(TEST_POINT, f.asPoint());
   }
 
   @Test
@@ -163,10 +185,10 @@ public class GeoJsonTest {
     assertArrayEquals(BBOX, f3.bbox(), 0.0);
   }
 
-  /* Test the Feature.as*() methods. */
+  /* Test the toFeatureCollection() and Feature.as*() methods. */
   @Test
   public void testFeatureConversion() {
-    FeatureCollection fc = GeoJson.fromJson(BUILDER.toJson());
+    FeatureCollection fc = GeoJson.from(BUILDER.toJson()).toFeatureCollection();
     List<Feature> features = fc.features();
     assertEquals(TEST_POINT, features.get(0).asPoint());
     assertEquals(TEST_LINE, features.get(1).asLineString());
@@ -192,7 +214,7 @@ public class GeoJsonTest {
     String coords4d = "{\"type\": \"FeatureCollection\"," +
         "\"features\":[{\"type\": \"Feature\",\"geometry\": {\"type\": \"Point\"," +
         "\"coordinates\": [[[[-117,34]]]]},\"properties\": {}}]}";
-    GeoJson.fromJson(coords4d);
+    GeoJson.from(coords4d).toFeatureCollection();
   }
 
   @Test
@@ -228,7 +250,7 @@ public class GeoJsonTest {
 
     /* Create test files */
     Path out = Paths.get("tmp/json-tests");
-    Path path = out.resolve(EXAMPLE_FILENAME);
+    Path path = out.resolve(FEATURE_COLLECTION_FILENAME);
     BUILDER.write(path);
   }
 
