@@ -1,0 +1,15 @@
+.classpath
+.project
+.settings
+.gradle
+bin
+build
+classes
+tmp
+curves*/
+hazout*/
+eq-prob*/
+eq-rate*/
+Scratch*.java
+nshmp-haz-log*
+.vscode
