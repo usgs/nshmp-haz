@@ -6,7 +6,7 @@
 # Usage:
 #   docker run \
 #       -e PROGRAM=<deagg | deagg-epsilon | hazard | rate> \\
-#       -e MODEL=<NSHM> \\
+#       -e MODEL=<WUS-20[08|14|18] | CEUS-20[08|14|18] | COUS-20[08|14|18] | AK-2007> \\
 #       -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \\
 #       -v /absolute/path/to/config/file:/app/config.json \\
 #       -v /absolute/path/to/output:/app/output \\
@@ -157,7 +157,7 @@ error_exit() {
   local usage="
     docker run \\
         -e PROGRAM=<deagg | deagg-epsilon | hazard | rate> \\
-        -e MODEL=<NSHM> \\
+        -e MODEL=<WUS-20[08|14|18] | CEUS-20[08|14|18] | COUS-20[08|14|18] | AK-2007> \\
         -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \\
         -v /absolute/path/to/config/file:/app/config.json \\
         -v /absolute/path/to/output:/app/output \\
