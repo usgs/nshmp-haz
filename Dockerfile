@@ -44,10 +44,11 @@ RUN apk add --no-cache git curl bash
 # Build nshmp-haz
 RUN ./gradlew assemble
 
+# Change working directory
+WORKDIR ${builder_workdir}/models
+
 # Download models
-RUN mkdir models \
-  && cd models \
-  && bash ${builder_workdir}/docker-builder-entrypoint.sh
+RUN bash ${builder_workdir}/docker-builder-entrypoint.sh
 
 ####
 # Application Image: Java 8

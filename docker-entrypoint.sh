@@ -101,8 +101,8 @@ main() {
 #   (string) CHECK_CONFIG_FILE_RETURN - The config file name
 ####
 check_config_file() {
-   # Check if file is valid JSON
-  cat ${CONFIG_FILE} | jq empty 2> ${LOG_FILE} || \
+  # Check if file is valid JSON
+  jq empty < ${CONFIG_FILE} 2> ${LOG_FILE} || \
       error_exit "Config file is not valid JSON" "$(< ${LOG_FILE})"
 
   # Return 
@@ -125,7 +125,7 @@ check_sites_file() {
   # Check if valid JSON or ASCII file
   case ${site_file} in
     *.geojson)
-      cat ${site_file} | jq empty 2> ${LOG_FILE} || \
+      jq empty < ${site_file} 2> ${LOG_FILE} || \
           error_exit "Site file [${site_file}] is not valid JSON" "$(< ${LOG_FILE})"
       ;;
     *.csv)
@@ -337,7 +337,7 @@ get_nshmp_program() {
 ####
 move_to_output_volume() {
   # Get output directory
-  local hazout=$(cat ${CONFIG_FILE} | jq -r '.output.directory')
+  local hazout=$(jq -r '.output.directory' ${CONFIG_FILE})
 
   if [ ${hazout} == null ]; then
     hazout="hazout"
