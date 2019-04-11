@@ -84,7 +84,7 @@ main() {
       "${site_file}" \
       ${RETURN_PERIOD:+ "${RETURN_PERIOD}"} \
       "${config_file}" 2> ${LOG_FILE} || \
-      error_exit "Failed running nshmp-haz" "$(tail -n 25 ${LOG_FILE})" 
+      error_exit "Failed running nshmp-haz" "$(tail -n 55 ${LOG_FILE})" 
 
   # Move artifacts to mounted volume
   move_to_output_volume 2> ${LOG_FILE} 
