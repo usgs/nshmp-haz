@@ -30,6 +30,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.google.gson.JsonElement;
@@ -49,6 +50,7 @@ public class GeoJsonTest {
 
   private static final String FEATURE_COLLECTION_FILENAME = "feature-collection.geojson";
   private static final String FEATURE_FILENAME = "feature.geojson";
+  private static final String PROPERTIES_FILENAME = "properties.geojson";
   private static final String TEST_FILENAME = "test.geojson";
   private static final String NOFILE_FILENAME = "nofile.geojson";
 
@@ -235,7 +237,31 @@ public class GeoJsonTest {
   @Test
   public void testProperties() {
 
-    Map<String, Object> propsMap = Properties.builder()
+    URL fJsonUrl = Resources.getResource(
+        GeoJsonTest.class,
+        PROPERTIES_FILENAME);
+    Properties props = GeoJson.from(fJsonUrl).toFeature().properties();
+
+    assertTrue(props.containsKey(DESCRIPTION));
+    assertTrue(props.getBoolean("boolean"));
+    assertEquals(42, props.getInt("id"));
+    assertEquals(0.5, props.getDouble(FILL_OPACITY), 0.0);
+    assertEquals("description", props.getString(DESCRIPTION));
+    TestObject actual = props.get("object", TestObject.class);
+    TestObject expected = new TestObject("test", ImmutableList.of(1.0, 2.0));
+    assertEquals(expected.getClass(), actual.getClass());
+    assertEquals(expected, actual);
+
+    /* builder */
+    Map<String, Object> bMap = buildMap();
+    assertTrue(bMap.containsKey(DESCRIPTION.toString()));
+    assertEquals(42, props.getInt("id"));
+    assertEquals(0.5, props.getDouble(FILL_OPACITY), 0.0);
+    assertEquals("description", props.get(DESCRIPTION.toString()));
+  }
+
+  private static Map<String, Object> buildMap() {
+    return Properties.builder()
         .put(DESCRIPTION, "description")
         .put(FILL, "#112233")
         .put(FILL_OPACITY, 0.5)
@@ -248,14 +274,24 @@ public class GeoJsonTest {
         .put(TITLE, "title")
         .put("id", (double) 42) // mimic GSON deserialization
         .put("boolean", true)
+        .put("object", new TestObject("test", ImmutableList.of(1.0, 2.0)))
         .build();
+  }
 
-    Properties props = new Properties(propsMap);
-    assertTrue(props.containsKey(DESCRIPTION));
-    assertTrue(props.getBoolean("boolean"));
-    assertEquals(42, props.getInt("id"));
-    assertEquals(0.5, props.getDouble(FILL_OPACITY), 0.0);
-    assertEquals("description", props.getString(DESCRIPTION));
+  private static class TestObject {
+    final String str;
+    final List<Double> list;
+
+    TestObject(String str, List<Double> list) {
+      this.str = str;
+      this.list = list;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      TestObject other = (TestObject) obj;
+      return this.list.equals(other.list) && this.str.equals(other.str);
+    }
   }
 
   public static void main(String[] args) throws IOException {
@@ -264,9 +300,23 @@ public class GeoJsonTest {
     // [-118.00000000000001, 35.0] --> [-118.0, 35.0],
 
     /* Create test files */
+    // Path out = Paths.get("tmp/json-tests");
+    // Path path = out.resolve(FEATURE_COLLECTION_FILENAME);
+    // FC_BUILDER.write(path);
+
+    // Path out = Paths.get("tmp/json-tests");
+    // Path path = out.resolve(PROPERTIES_FILENAME);
+    // Feature.point(TEST_POINT)
+    // .id("properties-test")
+    // .properties(buildMap())
+    // .write(path);
+
     Path out = Paths.get("tmp/json-tests");
-    Path path = out.resolve(FEATURE_COLLECTION_FILENAME);
-    FC_BUILDER.write(path);
+    Path path = out.resolve("props-null.geojson");
+    Feature.point(TEST_POINT)
+        .id("properties-test")
+        .write(path);
+
   }
 
 }

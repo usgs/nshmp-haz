@@ -7,9 +7,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.google.gson.JsonElement;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
@@ -33,7 +34,7 @@ public class Feature {
   private final Object id;
   private final double[] bbox;
   private final Geometry<?> geometry;
-  private final Map<String, Object> properties;
+  private final Map<String, JsonElement> properties;
 
   private Feature(Builder builder) {
     this.id = builder.id;
@@ -156,7 +157,7 @@ public class Feature {
     private Object id;
     private double[] bbox;
     private Geometry<?> geometry;
-    private Map<String, Object> properties;// = ImmutableMap.of();
+    private Map<String, JsonElement> properties;
 
     private boolean built = false;
 
@@ -205,8 +206,11 @@ public class Feature {
      * @param properties to set
      * @return this builder
      */
-    public Builder properties(Map<String, Object> properties) {
-      this.properties = Collections.unmodifiableMap(new LinkedHashMap<String, Object>(properties));
+    public Builder properties(Map<String, ?> properties) {
+      this.properties = properties.entrySet().stream()
+          .collect(Collectors.toMap(
+              Map.Entry::getKey,
+              e -> GeoJson.GSON.toJsonTree(e.getValue())));
       return this;
     }
 
