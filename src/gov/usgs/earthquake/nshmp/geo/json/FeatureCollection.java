@@ -3,11 +3,16 @@ package gov.usgs.earthquake.nshmp.geo.json;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 /**
  * A GeoJSON feature collection.
  * 
  * @author Brandon Clayton
+ * @author Peter Powers
  */
 public final class FeatureCollection {
 
@@ -35,4 +40,29 @@ public final class FeatureCollection {
   public List<Feature> features() {
     return ImmutableList.copyOf(features);
   }
+
+  static final class Serializer implements JsonSerializer<FeatureCollection> {
+
+    @Override
+    public JsonElement serialize(
+        FeatureCollection featureCollection,
+        java.lang.reflect.Type typeOfSrc,
+        JsonSerializationContext context) {
+
+      /*
+       * Serialize using Gson that includes Feature adapter but not
+       * FeatureCollection adapter that would trigger recursive calls to this
+       * serializer.
+       */
+      JsonObject jObj = GeoJson.GSON_FEATURE
+          .toJsonTree(featureCollection)
+          .getAsJsonObject();
+
+      if (featureCollection.bbox() == null) {
+        jObj.remove("bbox");
+      }
+      return jObj;
+    }
+  }
+
 }

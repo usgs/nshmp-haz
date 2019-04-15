@@ -9,6 +9,8 @@ import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
 import com.google.gson.JsonElement;
 
+import gov.usgs.earthquake.nshmp.internal.TextUtils;
+
 /**
  * GeoJSON properties helper class.
  * 
@@ -57,6 +59,14 @@ public final class Properties {
     return containsKey(key.toString());
   }
 
+  JsonElement getJsonElement(String key) {
+    checkArgument(
+        containsKey(key),
+        "No key '%s' in map: %s",
+        key, source.keySet());
+    return source.get(key);
+  }
+
   /**
    * Return the value for the specified key as an object. Note that this method
    * may return {@code null} as the property value.
@@ -65,15 +75,7 @@ public final class Properties {
    * @param key to get value for
    */
   public Object get(String key) {
-    return GeoJson.GSON.fromJson(getJsonElement(key), Object.class);
-  }
-
-  JsonElement getJsonElement(String key) {
-    checkArgument(
-        containsKey(key),
-        "No key '%s' in map: %s",
-        key, source.keySet());
-    return source.get(key);
+    return GeoJson.GSON_DEFAULT.fromJson(getJsonElement(key), Object.class);
   }
 
   /**
@@ -85,7 +87,7 @@ public final class Properties {
    * @param classOfT the class of T
    */
   public <T> T get(String key, Class<T> classOfT) {
-    return GeoJson.GSON.fromJson(getJsonElement(key), classOfT);
+    return GeoJson.GSON_DEFAULT.fromJson(getJsonElement(key), classOfT);
   }
 
   /**
@@ -263,7 +265,7 @@ public final class Properties {
     TITLE;
 
     private static final Converter<Style, String> STRING_CONVERTER =
-        Util.enumStringConverter(Style.class, CaseFormat.LOWER_HYPHEN);
+        TextUtils.enumStringConverter(Style.class, CaseFormat.LOWER_HYPHEN);
 
     /**
      * Returns the {@link #name()} of this identifier converted to

@@ -12,6 +12,8 @@ import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.STROKE_WIDTH;
 import static gov.usgs.earthquake.nshmp.geo.json.Properties.Style.TITLE;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -33,6 +35,7 @@ import org.junit.rules.TemporaryFolder;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
@@ -44,9 +47,6 @@ import gov.usgs.earthquake.nshmp.geo.json.GeoJson.Type;
 
 @SuppressWarnings("javadoc")
 public class GeoJsonTest {
-
-  // TODO test that single Feature creation geometry is not null?
-  // currently disallowinng empty feature collections
 
   private static final String FEATURE_COLLECTION_FILENAME = "feature-collection.geojson";
   private static final String FEATURE_FILENAME = "feature.geojson";
@@ -80,7 +80,14 @@ public class GeoJsonTest {
           .bbox(BBOX)
           .build());
 
-  private static final Feature.Builder F_BUILDER = Feature.point(TEST_POINT)
+  private static final Feature.Builder F_BUILDER_1 = Feature.point(TEST_POINT)
+      .id("featureId")
+      .properties(ImmutableMap.of(
+          "id", 1,
+          "title", "Feature Title",
+          "color", "#ff0080"));
+
+  private static final Feature.Builder F_BUILDER_2 = Feature.point(TEST_POINT)
       .id("featureId")
       .properties(ImmutableMap.of(
           "id", 1,
@@ -171,6 +178,11 @@ public class GeoJsonTest {
   @Test
   public void testWrite() throws IOException {
 
+    /*
+     * This also tests the removal of null 'id' and 'bbox' members on
+     * serialization.
+     */
+
     /* Feature collection JSON direct from builder. */
     JsonParser parser = new JsonParser();
     JsonElement jsonExpected = parser.parse(FC_BUILDER.toJson());
@@ -189,10 +201,10 @@ public class GeoJsonTest {
     assertEquals(jsonExpected, jsonActual);
 
     /* Feature JSON direct from builder. */
-    jsonExpected = parser.parse(F_BUILDER.toJson());
+    jsonExpected = parser.parse(F_BUILDER_1.toJson());
 
     /* Write to file and read back in. */
-    F_BUILDER.write(out);
+    F_BUILDER_2.write(out);
     jsonActual = parser.parse(new String(Files.readAllBytes(out)));
     assertEquals(jsonExpected, jsonActual);
   }
@@ -212,6 +224,23 @@ public class GeoJsonTest {
     assertEquals(TEST_LINE, features.get(2).asPolygonBorder());
   }
 
+  @Test
+  public void testFeatureCollectionBboxRemove() {
+    String json = GeoJson.builder()
+        .add(Feature.point(TEST_POINT).build())
+        .toJson();
+    FeatureCollection fc = GeoJson.from(json).toFeatureCollection();
+    assertNull(fc.bbox());
+  }
+  
+  @Test
+  public void testFeatureId() {
+    Feature f = GeoJson.from(Feature.point(TEST_POINT).toJson()).toFeature();
+    assertFalse(f.hasId());
+    f = GeoJson.from(Feature.point(TEST_POINT).id("test").toJson()).toFeature();
+    assertTrue(f.hasId());
+  }
+  
   @Test(expected = IllegalStateException.class)
   public void testFeatureUsedBuilder() {
     Feature.Builder f = Feature.point(TEST_POINT);
@@ -232,6 +261,11 @@ public class GeoJsonTest {
         "\"features\":[{\"type\": \"Feature\",\"geometry\": {\"type\": \"Point\"," +
         "\"coordinates\": [[[[-117,34]]]]},\"properties\": {}}]}";
     GeoJson.from(coords4d).toFeatureCollection();
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testBadBbox() {
+    Feature.point(TEST_POINT).bbox(new double[0]);
   }
 
   @Test
@@ -275,6 +309,7 @@ public class GeoJsonTest {
         .put("id", (double) 42) // mimic GSON deserialization
         .put("boolean", true)
         .put("object", new TestObject("test", ImmutableList.of(1.0, 2.0)))
+        .put("null-test", null)
         .build();
   }
 
@@ -295,27 +330,34 @@ public class GeoJsonTest {
   }
 
   public static void main(String[] args) throws IOException {
-
+    
+    // TODO clean
+    
     // TODO this will need updating on new Location serialization
     // [-118.00000000000001, 35.0] --> [-118.0, 35.0],
 
     /* Create test files */
-    // Path out = Paths.get("tmp/json-tests");
-    // Path path = out.resolve(FEATURE_COLLECTION_FILENAME);
-    // FC_BUILDER.write(path);
+//    Path out = Paths.get("tmp/json-tests");
+//    Path path = out.resolve(FEATURE_COLLECTION_FILENAME);
+//    FC_BUILDER.write(path);
+//
+//    out = Paths.get("tmp/json-tests");
+//    path = out.resolve(PROPERTIES_FILENAME);
+//    Feature.point(TEST_POINT)
+//        .id("properties-test")
+//        // .bbox(new double[] {0, 0, 1, 1})
+//        .properties(buildMap())
+//        .write(path);
+//
+//    out = Paths.get("tmp/json-tests");
+//    path = out.resolve("props-null.geojson");
+//    Feature.point(TEST_POINT)
+//        .id("properties-test")
+//        .write(path);
 
-    // Path out = Paths.get("tmp/json-tests");
-    // Path path = out.resolve(PROPERTIES_FILENAME);
-    // Feature.point(TEST_POINT)
-    // .id("properties-test")
-    // .properties(buildMap())
-    // .write(path);
-
-    Path out = Paths.get("tmp/json-tests");
-    Path path = out.resolve("props-null.geojson");
-    Feature.point(TEST_POINT)
-        .id("properties-test")
-        .write(path);
+    Feature f = GeoJson.from(Feature.point(TEST_POINT).toJson()).toFeature();
+    System.out.println(f.idAsString());
+    System.out.println(f.idAsInt());
 
   }
 

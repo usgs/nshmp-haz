@@ -13,10 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Converter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import gov.usgs.earthquake.nshmp.internal.TextUtils;
 
 /**
  * Entry point for creating and parsing <a href="http://geojson.org"
@@ -82,6 +87,9 @@ import com.google.gson.JsonIOException;
  * }
  * </pre>
  * 
+ * A builder can also {@link Builder#write(Path) write} directly to a specified
+ * path.
+ * 
  * <p>Note in the example above that features have their own geometry-specific
  * builders. Feature builders also supply {@link Feature.Builder#toJson()
  * toJson()} and {@link Feature.Builder#write(Path) write(Path)} methods to
@@ -107,6 +115,8 @@ import com.google.gson.JsonIOException;
  */
 public abstract class GeoJson {
 
+  private GeoJson() {}
+
   /**
    * Return this GeoJson as a {@code Feature}.
    */
@@ -120,15 +130,21 @@ public abstract class GeoJson {
   /*
    * Developer notes:
    * 
-   * TODO: this class can be converted to interface in Java 9+ which supports
-   * private inner classes
-   * 
    * TODO if depths are considered, should they be negative? Per the GeoJSON
    * spec: "Altitude or elevation MAY be included as an optional third element."
    * 
    * TODO: once Location has been been changed to 4-fields where we no longer
    * have radians to degrees conversion rounding errors, change the Geometry
-   * converters to not round coordinates.
+   * converters to not round coordinates and record the original lat and lon
+   * specified on creation.
+   * 
+   * Serialization note: Although we generally want to avoid null values in
+   * GeoJSON properties members, we don't want to completely prevent their use.
+   * However, when serializeNulls=true, all custom adapters are skipped so we
+   * end up with optional GeoJSON member clutter, for example 'bbox' and 'id'.
+   * The workaround is to use two distinct Gson instances (to avoid recursive
+   * calls to delegate serializers) where we explicitely remove null fields
+   * using JsonObject.remove().
    */
 
   /**
@@ -166,11 +182,21 @@ public abstract class GeoJson {
     return new Builder();
   }
 
-  /* See notes in Geometry regarding coordinate type adapter. */
-  static Gson GSON = new GsonBuilder()
+  /* Default Gson with FeatureCollection adapter. */
+  static final Gson GSON_DEFAULT = new GsonBuilder()
       .registerTypeAdapter(
-          GeoJson.Type.class,
-          new Util.Serializer<>(GeoJson.Type.converter()))
+          FeatureCollection.class,
+          new FeatureCollection.Serializer())
+      .setPrettyPrinting()
+      .disableHtmlEscaping()
+      .serializeNulls()
+      .create();
+
+  /* Gson with Feature adapter. */
+  static final Gson GSON_FEATURE = new GsonBuilder()
+      .registerTypeAdapter(
+          Feature.class,
+          new Feature.Serializer())
       .setPrettyPrinting()
       .disableHtmlEscaping()
       .serializeNulls()
@@ -221,8 +247,8 @@ public abstract class GeoJson {
      */
     public String toJson() {
       checkState(features.size() > 0, "GeoJSON is empty");
-      String json = GSON.toJson(new FeatureCollection(features, bbox));
-      return Util.cleanPoints(json);
+      String json = GSON_DEFAULT.toJson(new FeatureCollection(features, bbox));
+      return cleanPoints(json);
     }
 
     /**
@@ -236,7 +262,16 @@ public abstract class GeoJson {
     }
   }
 
+  /* Reformats point arays onto single line and appends newline character */
+  static String cleanPoints(String s) {
+    return s.replaceAll("\\[\\s+([-\\d])", "[$1")
+        .replaceAll(",\\s+([-\\d])", ", $1")
+        .replaceAll("(\\d)\\s+\\]", "$1]")
+        .replaceAll("}\\Z", "}" + TextUtils.NEWLINE);
+  }
+
   /** GeoJSON type identifier. */
+  @JsonAdapter(TypeSerializer.class)
   public enum Type {
 
     /** GeoJSON {@code Feature} object. */
@@ -253,10 +288,22 @@ public abstract class GeoJson {
 
     /** GeoJSON {@code Polygon} geometry. */
     POLYGON;
+  }
 
-    /* Case format converter. */
-    static Converter<Type, String> converter() {
-      return Util.enumStringConverter(Type.class, CaseFormat.UPPER_CAMEL);
+  /* Create a class with delegate to attach using JsonAdapter annotation. */
+  static final class TypeSerializer extends TypeAdapter<Type> {
+
+    TypeAdapter<Type> delegate = TextUtils.enumSerializer(
+        TextUtils.enumStringConverter(Type.class, CaseFormat.UPPER_CAMEL));
+
+    @Override
+    public void write(JsonWriter out, Type value) throws IOException {
+      delegate.write(out, value);
+    }
+
+    @Override
+    public Type read(JsonReader in) throws IOException {
+      return delegate.read(in);
     }
   }
 
@@ -279,7 +326,7 @@ public abstract class GeoJson {
     }
 
     private <T> T readString(Class<T> classOfT) {
-      return GSON.fromJson(json, classOfT);
+      return GSON_DEFAULT.fromJson(json, classOfT);
     }
   }
 
@@ -303,7 +350,7 @@ public abstract class GeoJson {
 
     private <T> T readUrl(Class<T> classOfT) {
       try (BufferedReader br = new BufferedReader(new InputStreamReader(json.openStream()))) {
-        return GSON.fromJson(br, classOfT);
+        return GSON_DEFAULT.fromJson(br, classOfT);
       } catch (IOException ioe) {
         throw new JsonIOException(ioe);
       }
@@ -330,7 +377,7 @@ public abstract class GeoJson {
 
     private <T> T readPath(Class<T> classOfT) {
       try (BufferedReader br = Files.newBufferedReader(json)) {
-        return GSON.fromJson(br, classOfT);
+        return GSON_DEFAULT.fromJson(br, classOfT);
       } catch (IOException ioe) {
         throw new JsonIOException(ioe);
       }

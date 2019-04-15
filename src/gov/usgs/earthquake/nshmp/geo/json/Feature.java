@@ -1,5 +1,6 @@
 package gov.usgs.earthquake.nshmp.geo.json;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -10,7 +11,11 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
 import gov.usgs.earthquake.nshmp.geo.LocationList;
@@ -27,9 +32,9 @@ import gov.usgs.earthquake.nshmp.geo.json.GeoJson.Type;
  * @author Peter Powers
  * @author Brandon Clayton
  */
-@SuppressWarnings("unused")
 public class Feature {
 
+  @SuppressWarnings("unused") // for serialization only
   private final GeoJson.Type type = GeoJson.Type.FEATURE;
   private final Object id;
   private final double[] bbox;
@@ -72,14 +77,31 @@ public class Feature {
   }
 
   /**
+   * Return whether this feature has a non-null 'id' member.
+   */
+  public boolean hasId() {
+    return id != null;
+  }
+
+  /**
    * The 'id' of this feature as a string.
+   * 
+   * @throws NullPointerException if this feature does not contain an 'id'
+   *         member. Use {@link #hasId()} to test whether 'id' member exists.
    */
   public String idAsString() {
-    return (String) id;
+    /*
+     * Cast to string will return null; throw exception for consistency with
+     * idAsInt().
+     */
+    return (String) checkNotNull(id);
   }
 
   /**
    * The 'id' of this feature as an integer.
+   * 
+   * @throws NullPointerException if this feature does not contain an 'id'
+   *         member. Use {@link #hasId()} to test whether 'id' member exists.
    */
   public int idAsInt() {
     return ((Double) id).intValue();
@@ -150,14 +172,17 @@ public class Feature {
     /*
      * Developer notes: 'properties' is always required in the GeoJSON spec and
      * is therefore initialized with an empty map that may be replaced later.
-     * Although the properties field can be serialized as null, we're generally
-     * not serializing nulls so an empty map is a better solution.
+     * Although the properties field can be serialized as null, we prefer to
+     * limit null serialization to the elements of the properties map.
+     * 
+     * 'id' and 'bbox' serialization will be skipped if null. See developer
+     * notes in GeoJson for details on how this is handled.
      */
 
     private Object id;
     private double[] bbox;
     private Geometry<?> geometry;
-    private Map<String, JsonElement> properties;
+    private Map<String, JsonElement> properties = ImmutableMap.of();
 
     private boolean built = false;
 
@@ -192,10 +217,12 @@ public class Feature {
      * the GeoJSON <a href="http://geojson.org" target="_top">specification</a
      * for details on bounding boxes.
      * 
+     * @throws IllegalArgument
      * @param bbox to set
      * @return this builder
      */
     public Builder bbox(double[] bbox) {
+      checkArgument(bbox.length == 4, "'bbox' array must have 4 values");
       this.bbox = bbox;
       return this;
     }
@@ -210,7 +237,7 @@ public class Feature {
       this.properties = properties.entrySet().stream()
           .collect(Collectors.toMap(
               Map.Entry::getKey,
-              e -> GeoJson.GSON.toJsonTree(e.getValue())));
+              e -> GeoJson.GSON_DEFAULT.toJsonTree(e.getValue())));
       return this;
     }
 
@@ -229,8 +256,8 @@ public class Feature {
      * @throws IllegalStateException if builder is empty
      */
     public String toJson() {
-      String json = GeoJson.GSON.toJson(new Feature(this));
-      return Util.cleanPoints(json);
+      String json = GeoJson.GSON_FEATURE.toJson(build());
+      return GeoJson.cleanPoints(json);
     }
 
     /**
@@ -241,6 +268,30 @@ public class Feature {
      */
     public void write(Path path) throws IOException {
       Files.write(path, toJson().getBytes(StandardCharsets.UTF_8));
+    }
+  }
+
+  static final class Serializer implements JsonSerializer<Feature> {
+
+    @Override
+    public JsonElement serialize(
+        Feature feature,
+        java.lang.reflect.Type typeOfSrc,
+        JsonSerializationContext context) {
+
+      /*
+       * Can use default Gson because we'll never encounter any nested
+       * FeatureCollections that would trigger recursive calls to this
+       * serializer.
+       */
+      JsonObject jObj = GeoJson.GSON_DEFAULT
+          .toJsonTree(feature)
+          .getAsJsonObject();
+
+      if (feature.bbox() == null) {
+        jObj.remove("bbox");
+      }
+      return jObj;
     }
   }
 
