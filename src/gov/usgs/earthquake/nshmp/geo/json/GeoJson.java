@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,18 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Converter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import gov.usgs.earthquake.nshmp.internal.TextUtils;
 
 /**
  * Entry point for creating and parsing <a href="http://geojson.org"
- * target="_top">GeoJSON</a> feature collections.
+ * target="_top">GeoJSON</a> features and feature collections.
  * 
- * <p>This class will not create or parse JSON containing a single feature (even
- * though this is valid GeoJSON), nor will it allow the creation of empty
- * feature collections. To create a GeoJSON string, use a builder and add
+ * <p>To create a GeoJSON feature collection string, use a builder and add
  * features per the example below:
  * 
  * <pre>
@@ -47,7 +49,7 @@ import com.google.gson.JsonIOException;
  *     .toJson();
  * </pre>
  * 
- * <p>where the GeoJSON string created is:
+ * <p>Where the GeoJSON string created is:
  * 
  * <pre>
  * {
@@ -85,40 +87,116 @@ import com.google.gson.JsonIOException;
  * }
  * </pre>
  * 
- * <p>To parse GeoJSON, use a static {@code from*} method. Once parsed, the
- * features in a feature collection may be accessed as objects in the
+ * A builder can also {@link Builder#write(Path) write} directly to a specified
+ * path.
+ * 
+ * <p>Note in the example above that features have their own geometry-specific
+ * builders. Feature builders also supply {@link Feature.Builder#toJson()
+ * toJson()} and {@link Feature.Builder#write(Path) write(Path)} methods to
+ * output single-feature GeoJSON directly.
+ * 
+ * <p>Parse GeoJSON to a feature or feature collection using static
+ * {@code from*} methods as follows:
+ * 
+ * <pre>
+ * Feature f = GeoJson.from(stringOrPathOrUrl).toFeature();
+ * FeatureCollection fc = GeoJson.from(stringOrPathOrUrl).toFeatureCollection();
+ * </pre>
+ * 
+ * <p>Once parsed, the feature geometry may be accessed as objects in the
  * {@code geo} package (e.g. {@code Location}, {@code LocationList}, etc...).
  * This requires some prior knowledge of the contents of the parsed GeoJSON.
+ * 
+ * <p>This class does not allow the creation of empty feature collections or
+ * features with null geometry.
  * 
  * @author Peter Powers
  * @author Brandon Clayton
  */
-public final class GeoJson {
+public abstract class GeoJson {
 
-  /* No instantiation. */
   private GeoJson() {}
 
-  // TODO if depths are considered, should they be negative? Per the GeoJSON
-  // spec: "Altitude or elevation MAY be included as an optional third element."
-
-  // TODO: once Location has been been changed to 4-fields where we no longer
-  // have
-  // radians to degrees conversion rounding errors, change the Geometry
-  // converters
-  // to not round coordinates.
+  /**
+   * Return this GeoJson as a {@code Feature}.
+   */
+  public abstract Feature toFeature();
 
   /**
-   * A reusable GeoJSON {@code FeatureCollection} builder.
+   * Return this GeoJson as a {@code FeatureCollection}.
+   */
+  public abstract FeatureCollection toFeatureCollection();
+
+  /*
+   * Developer notes:
+   * 
+   * TODO if depths are considered, should they be negative? Per the GeoJSON
+   * spec: "Altitude or elevation MAY be included as an optional third element."
+   * 
+   * TODO: once Location has been been changed to 4-fields where we no longer
+   * have radians to degrees conversion rounding errors, change the Geometry
+   * converters to not round coordinates and record the original lat and lon
+   * specified on creation.
+   * 
+   * Serialization note: Although we generally want to avoid null values in
+   * GeoJSON properties members, we don't want to completely prevent their use.
+   * However, when serializeNulls=true, all custom adapters are skipped so we
+   * end up with optional GeoJSON member clutter, for example 'bbox' and 'id'.
+   * The workaround is to use two distinct Gson instances (to avoid recursive
+   * calls to delegate serializers) where we explicitely remove null fields
+   * using JsonObject.remove().
+   */
+
+  /**
+   * Create a GeoJSON from a string.
+   * 
+   * @param json string to read
+   */
+  public static GeoJson from(String json) {
+    return new FromString(json);
+  }
+
+  /**
+   * Create a GeoJSON from a file path.
+   * 
+   * @param json file path to read
+   */
+  public static GeoJson from(Path json) {
+    return new FromPath(json);
+  }
+
+  /**
+   * Create a GeoJSON from a URL. Use this method when reading resources from a
+   * JAR.
+   * 
+   * @param json URL to read
+   */
+  public static GeoJson from(URL json) {
+    return new FromUrl(json);
+  }
+
+  /**
+   * A reusable GeoJSON builder.
    */
   public static Builder builder() {
     return new Builder();
   }
 
-  /* See notes in Geometry regarding coordinate type adapter. */
-  static Gson GSON = new GsonBuilder()
+  /* Default Gson with FeatureCollection adapter. */
+  static final Gson GSON_DEFAULT = new GsonBuilder()
       .registerTypeAdapter(
-          GeoJson.Type.class,
-          new Util.Serializer<>(GeoJson.Type.converter()))
+          FeatureCollection.class,
+          new FeatureCollection.Serializer())
+      .setPrettyPrinting()
+      .disableHtmlEscaping()
+      .serializeNulls()
+      .create();
+
+  /* Gson with Feature adapter. */
+  static final Gson GSON_FEATURE = new GsonBuilder()
+      .registerTypeAdapter(
+          Feature.class,
+          new Feature.Serializer())
       .setPrettyPrinting()
       .disableHtmlEscaping()
       .serializeNulls()
@@ -169,8 +247,8 @@ public final class GeoJson {
      */
     public String toJson() {
       checkState(features.size() > 0, "GeoJSON is empty");
-      String json = GSON.toJson(new FeatureCollection(features, bbox));
-      return Util.cleanPoints(json);
+      String json = GSON_DEFAULT.toJson(new FeatureCollection(features, bbox));
+      return cleanPoints(json);
     }
 
     /**
@@ -184,54 +262,16 @@ public final class GeoJson {
     }
   }
 
-  /**
-   * Deserialize a GeoJSON {@code FeatureCollection} from a string.
-   * 
-   * @param json string to deserialize
-   */
-  public static FeatureCollection fromJson(String json) {
-    return GSON.fromJson(json, FeatureCollection.class);
-  }
-
-  /**
-   * Deserialize a GeoJSON {@code FeatureCollection} from a reader.
-   * 
-   * @param json reader from which to deserialize
-   */
-  public static FeatureCollection fromJson(Reader json) {
-    return GSON.fromJson(json, FeatureCollection.class);
-  }
-
-  /**
-   * Deserialize a GeoJSON {@code FeatureCollection} from a file path.
-   * 
-   * @param json file path from which to deserialize
-   */
-  public static FeatureCollection fromJson(Path json) {
-    /* Rethrow IOException as Runtime. */
-    try (BufferedReader br = Files.newBufferedReader(json)) {
-      return fromJson(Files.newBufferedReader(json));
-    } catch (IOException ioe) {
-      throw new JsonIOException(ioe);
-    }
-  }
-
-  /**
-   * Deserialize a GeoJSON {@code FeatureCollection} from a URL. Use this for
-   * reading from Java resources that may be packaged in a JAR.
-   * 
-   * @param json URL from which to deserialize
-   */
-  public static FeatureCollection fromJson(URL json) {
-    /* Rethrow IOException as Runtime. */
-    try (BufferedReader br = new BufferedReader(new InputStreamReader(json.openStream()))) {
-      return fromJson(br);
-    } catch (IOException ioe) {
-      throw new JsonIOException(ioe);
-    }
+  /* Reformats point arays onto single line and appends newline character */
+  static String cleanPoints(String s) {
+    return s.replaceAll("\\[\\s+([-\\d])", "[$1")
+        .replaceAll(",\\s+([-\\d])", ", $1")
+        .replaceAll("(\\d)\\s+\\]", "$1]")
+        .replaceAll("}\\Z", "}" + TextUtils.NEWLINE);
   }
 
   /** GeoJSON type identifier. */
+  @JsonAdapter(TypeSerializer.class)
   public enum Type {
 
     /** GeoJSON {@code Feature} object. */
@@ -248,10 +288,99 @@ public final class GeoJson {
 
     /** GeoJSON {@code Polygon} geometry. */
     POLYGON;
+  }
 
-    /* Case format converter. */
-    static Converter<Type, String> converter() {
-      return Util.enumStringConverter(Type.class, CaseFormat.UPPER_CAMEL);
+  /* Create a class with delegate to attach using JsonAdapter annotation. */
+  static final class TypeSerializer extends TypeAdapter<Type> {
+
+    TypeAdapter<Type> delegate = TextUtils.enumSerializer(
+        TextUtils.enumStringConverter(Type.class, CaseFormat.UPPER_CAMEL));
+
+    @Override
+    public void write(JsonWriter out, Type value) throws IOException {
+      delegate.write(out, value);
+    }
+
+    @Override
+    public Type read(JsonReader in) throws IOException {
+      return delegate.read(in);
+    }
+  }
+
+  private static final class FromString extends GeoJson {
+
+    final String json;
+
+    FromString(String json) {
+      this.json = json;
+    }
+
+    @Override
+    public Feature toFeature() {
+      return readString(Feature.class);
+    }
+
+    @Override
+    public FeatureCollection toFeatureCollection() {
+      return readString(FeatureCollection.class);
+    }
+
+    private <T> T readString(Class<T> classOfT) {
+      return GSON_DEFAULT.fromJson(json, classOfT);
+    }
+  }
+
+  private static final class FromUrl extends GeoJson {
+
+    final URL json;
+
+    FromUrl(URL json) {
+      this.json = json;
+    }
+
+    @Override
+    public Feature toFeature() {
+      return readUrl(Feature.class);
+    }
+
+    @Override
+    public FeatureCollection toFeatureCollection() {
+      return readUrl(FeatureCollection.class);
+    }
+
+    private <T> T readUrl(Class<T> classOfT) {
+      try (BufferedReader br = new BufferedReader(new InputStreamReader(json.openStream()))) {
+        return GSON_DEFAULT.fromJson(br, classOfT);
+      } catch (IOException ioe) {
+        throw new JsonIOException(ioe);
+      }
+    }
+  }
+
+  private static final class FromPath extends GeoJson {
+
+    final Path json;
+
+    FromPath(Path json) {
+      this.json = json;
+    }
+
+    @Override
+    public Feature toFeature() {
+      return readPath(Feature.class);
+    }
+
+    @Override
+    public FeatureCollection toFeatureCollection() {
+      return readPath(FeatureCollection.class);
+    }
+
+    private <T> T readPath(Class<T> classOfT) {
+      try (BufferedReader br = Files.newBufferedReader(json)) {
+        return GSON_DEFAULT.fromJson(br, classOfT);
+      } catch (IOException ioe) {
+        throw new JsonIOException(ioe);
+      }
     }
   }
 

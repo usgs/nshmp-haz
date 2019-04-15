@@ -24,8 +24,8 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * instance registers the coordinate type adapter factory that processes
  * instances of double[] and puts the values on a single line. Geometry type
  * converters are used to parse serialized coordinate arrays back to object
- * types in the goe package. There are probably other, and perhaps more elegant,
- * ways to do the above, but the current implementation owrks for now.
+ * types in the geo package. There are probably other, and perhaps more elegant,
+ * ways to do the above, but the current implementation works for now.
  * 
  * @author Peter Powers
  */

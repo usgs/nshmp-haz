@@ -1,0 +1,13 @@
+{
+  "type": "Feature",
+  "id": "featureId",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [-117.0, 34.0]
+  },
+  "properties": {
+    "id": 1,
+    "title": "Feature Title",
+    "color": "#ff0080"
+  }
+}

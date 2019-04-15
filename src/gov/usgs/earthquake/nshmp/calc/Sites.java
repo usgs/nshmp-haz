@@ -143,7 +143,7 @@ public abstract class Sites implements Iterable<Site> {
    * @throws IOException if a problem is encountered
    */
   public static Sites fromJson(Path path, CalcConfig defaults) throws IOException {
-    FeatureCollection fc = GeoJson.fromJson(path);
+    FeatureCollection fc = GeoJson.from(path).toFeatureCollection();
     List<Feature> features = fc.features();
     if (features.get(0).type() == Type.POINT) {
       return createSiteList(features, defaults);

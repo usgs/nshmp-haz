@@ -1,13 +1,15 @@
 package gov.usgs.earthquake.nshmp.geo.json;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
+import com.google.gson.JsonElement;
+
+import gov.usgs.earthquake.nshmp.internal.TextUtils;
 
 /**
  * GeoJSON properties helper class.
@@ -35,15 +37,15 @@ public final class Properties {
 
   /* Property parsing. */
 
-  private Map<String, Object> source;
+  private Map<String, JsonElement> source;
 
-  Properties(Map<String, Object> source) {
+  Properties(Map<String, JsonElement> source) {
     this.source = source;
   }
 
   /**
    * Return whether the supplied key exists in the property map
-   * @param key whose presence in this map is to be tested
+   * @param key to check for
    */
   public boolean containsKey(String key) {
     return source.containsKey(key);
@@ -51,42 +53,65 @@ public final class Properties {
 
   /**
    * Return whether the supplied key exists in the property map
-   * @param key whose presence in this map is to be tested
+   * @param key get value for
    */
   public boolean containsKey(Style key) {
     return containsKey(key.toString());
   }
 
+  JsonElement getJsonElement(String key) {
+    checkArgument(
+        containsKey(key),
+        "No key '%s' in map: %s",
+        key, source.keySet());
+    return source.get(key);
+  }
+
   /**
-   * Return the value for the specified key as an {@code Object}.
-   * @throws NullPointerException if no such property key exists
+   * Return the value for the specified key as an object. Note that this method
+   * may return {@code null} as the property value.
+   * 
+   * @throws IllegalArgumentException if no such property key exists
+   * @param key to get value for
    */
   public Object get(String key) {
-    return checkNotNull(source.get(key), "No key '%s' in map: %s", key, source);
+    return GeoJson.GSON_DEFAULT.fromJson(getJsonElement(key), Object.class);
+  }
+
+  /**
+   * Return the value for the specified key as an object of the specified class.
+   * 
+   * @throws IllegalArgumentException if no such property key exists
+   * @param <T> the type of the desired object
+   * @param key to get value for
+   * @param classOfT the class of T
+   */
+  public <T> T get(String key, Class<T> classOfT) {
+    return GeoJson.GSON_DEFAULT.fromJson(getJsonElement(key), classOfT);
   }
 
   /**
    * Return the value for the specified key as an {@code boolean}.
-   * @throws NullPointerException if no such property key exists
+   * @throws IllegalArgumentException if no such property key exists
    */
   public boolean getBoolean(String key) {
-    return (boolean) get(key);
+    return getJsonElement(key).getAsBoolean();
   }
 
   /**
    * Return the value for the specified key as an {@code int}.
-   * @throws NullPointerException if no such property key exists
+   * @throws IllegalArgumentException if no such property key exists
    */
   public int getInt(String key) {
-    return ((Double) get(key)).intValue();
+    return getJsonElement(key).getAsInt();
   }
 
   /**
    * Return the value for specified key as an {@code double}.
-   * @throws NullPointerException if no such property key exists
+   * @throws IllegalArgumentException if no such property key exists
    */
   public double getDouble(String key) {
-    return (double) get(key);
+    return getJsonElement(key).getAsDouble();
   }
 
   /**
@@ -102,7 +127,7 @@ public final class Properties {
    * @throws NullPointerException if no such property key exists
    */
   public String getString(String key) {
-    return (String) get(key);
+    return getJsonElement(key).getAsString();
   }
 
   /**
@@ -117,22 +142,28 @@ public final class Properties {
 
   /**
    * Return a reusable property map builder that preserves the order in which
-   * properties are added.
+   * properties are added. {@code build()} returns a copy of the internal map
+   * instance.
    */
   public static Builder builder() {
     return new Builder();
   }
 
   /**
-   * Property map builder.
+   * Reusable property map builder.
+   * 
+   * @see Properties#builder()
    */
   public static class Builder {
 
-    private final Map<String, Object> map;
+    /*
+     * Insertion order preserving map. On build(), we create a copy so that in
+     * the unlikely event that a previous property map is hanging around and
+     * hasn't been written it won't be modified.
+     */
+    private final Map<String, Object> map = new LinkedHashMap<>();
 
-    private Builder() {
-      map = new LinkedHashMap<>();
-    }
+    private Builder() {}
 
     /**
      * Add a property to this builder.
@@ -158,10 +189,10 @@ public final class Properties {
     }
 
     /**
-     * Return an immutable map reflecting the current contents of this builder.
+     * Return a mutable copy of the internal builder map.
      */
     public Map<String, Object> build() {
-      return Collections.unmodifiableMap(new LinkedHashMap<String, Object>(map));
+      return new LinkedHashMap<>(map);
     }
   }
 
@@ -234,7 +265,7 @@ public final class Properties {
     TITLE;
 
     private static final Converter<Style, String> STRING_CONVERTER =
-        Util.enumStringConverter(Style.class, CaseFormat.LOWER_HYPHEN);
+        TextUtils.enumStringConverter(Style.class, CaseFormat.LOWER_HYPHEN);
 
     /**
      * Returns the {@link #name()} of this identifier converted to
