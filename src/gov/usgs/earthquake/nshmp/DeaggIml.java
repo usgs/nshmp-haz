@@ -27,18 +27,19 @@ import gov.usgs.earthquake.nshmp.eq.model.HazardModel;
 import gov.usgs.earthquake.nshmp.internal.Logging;
 
 /**
- * Deaggregate probabilisitic seismic hazard at a return period of interest.
+ * Deaggregate probabilisitic seismic hazard at an intesity measure level of
+ * interest.
  *
  * @author Peter Powers
  */
-public class DeaggCalc {
+public class DeaggIml {
 
   /**
    * Entry point for the deaggregation of probabilisitic seismic hazard.
    * 
    * <p>Deaggregating siesmic hazard is largeley identical to a hazard
-   * calculation except that a return period (in years) must be supplied as an
-   * additional argument after the 'site(s)' argument. See the
+   * calculation except that an intensity measure level (in units of g) must be
+   * supplied as an additional argument after the 'site(s)' argument. See the
    * {@link HazardCalc#main(String[]) HazardCalc program} for more information
    * on required parameters.
    * 
@@ -72,7 +73,7 @@ public class DeaggCalc {
     }
 
     Logging.init();
-    Logger log = Logger.getLogger(DeaggCalc.class.getName());
+    Logger log = Logger.getLogger(DeaggIml.class.getName());
     Path tmpLog = HazardCalc.createTempLog();
 
     try {
@@ -97,9 +98,9 @@ public class DeaggCalc {
       Sites sites = HazardCalc.readSites(args[1], config, log);
       log.info("Sites: " + sites);
 
-      double returnPeriod = Double.valueOf(args[2]);
+      double iml = Double.valueOf(args[2]);
 
-      Path out = calc(model, config, sites, returnPeriod, log);
+      Path out = calc(model, config, sites, iml, log);
       log.info(PROGRAM + ": finished");
 
       /* Transfer log and write config, windows requires fh.close() */
@@ -125,7 +126,7 @@ public class DeaggCalc {
       HazardModel model,
       CalcConfig config,
       Sites sites,
-      double returnPeriod,
+      double iml,
       Logger log) throws IOException {
 
     ExecutorService exec = null;
@@ -144,7 +145,7 @@ public class DeaggCalc {
 
     for (Site site : sites) {
       Hazard hazard = HazardCalcs.hazard(model, config, site, exec);
-      Deaggregation deagg = HazardCalcs.deaggReturnPeriod(hazard, returnPeriod, exec);
+      Deaggregation deagg = HazardCalcs.deaggIml(hazard, iml, exec);
       handler.add(hazard, Optional.of(deagg));
       log.fine(hazard.toString());
     }
@@ -158,9 +159,9 @@ public class DeaggCalc {
     return handler.outputDir();
   }
 
-  private static final String PROGRAM = DeaggCalc.class.getSimpleName();
+  private static final String PROGRAM = DeaggIml.class.getSimpleName();
   private static final String USAGE_COMMAND =
-      "java -cp nshmp-haz.jar gov.usgs.earthquake.nshmp.DeaggCalc model sites returnPeriod [config]";
+      "java -cp nshmp-haz.jar gov.usgs.earthquake.nshmp.DeaggIml model sites iml [config]";
   private static final String USAGE_URL1 = "https://github.com/usgs/nshmp-haz/wiki";
   private static final String USAGE_URL2 = "https://github.com/usgs/nshmp-haz/tree/master/etc";
   private static final String SITE_STRING = "name,lon,lat[,vs30,vsInf[,z1p0,z2p5]]";
@@ -185,9 +186,7 @@ public class DeaggCalc {
       .append(NEWLINE)
       .append("     - or a *.csv file or *.geojson file of site data")
       .append(NEWLINE)
-      .append("  'returnPeriod', in years, is a time horizon of interest")
-      .append(NEWLINE)
-      .append("     - e.g. one might enter 2475 to represent a 2% in 50 year probability")
+      .append("  'iml', in units of g, is an intensity measure level of interest")
       .append(NEWLINE)
       .append("  'config' (optional) supplies a calculation configuration")
       .append(NEWLINE)

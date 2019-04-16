@@ -9,11 +9,9 @@ import static gov.usgs.earthquake.nshmp.calc.CalcFactory.sourcesToCurves;
 import static gov.usgs.earthquake.nshmp.calc.CalcFactory.systemToCurves;
 import static gov.usgs.earthquake.nshmp.calc.CalcFactory.toHazardResult;
 import static gov.usgs.earthquake.nshmp.data.Data.checkInRange;
-import static gov.usgs.earthquake.nshmp.eq.model.PointSourceType.FIXED_STRIKE;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
@@ -30,7 +28,6 @@ import gov.usgs.earthquake.nshmp.eq.model.HazardModel;
 import gov.usgs.earthquake.nshmp.eq.model.Source;
 import gov.usgs.earthquake.nshmp.eq.model.SourceSet;
 import gov.usgs.earthquake.nshmp.eq.model.SystemSourceSet;
-import gov.usgs.earthquake.nshmp.gmm.Imt;
 
 /**
  * Static probabilistic seismic hazard analysis calculators.
@@ -89,10 +86,11 @@ public class HazardCalcs {
   }
 
   private static Range<Double> rpRange = Range.closed(1.0, 20000.0);
+  private static Range<Double> imlRange = Range.closed(0.0001, 8.0);
 
   /**
    * Deaggregate probabilistic seismic hazard at the supplied return period (in
-   * years). Deaggregation currently runs on a single thread.
+   * years). Deaggregation will performed for all IMTs specified for hazard.
    * 
    * <p>Call this method with the {@link Hazard} result of
    * {@link #hazard(HazardModel, CalcConfig, Site, Executor)} to which you
@@ -103,25 +101,47 @@ public class HazardCalcs {
    * ignored as the supplied model will already have been initialized.
    *
    * @param hazard to deaggregate
-   * @param returnPeriod at which to deaggregate
-   * @param imt an optional (single) IMT at which to deaggregate
+   * @param returnPeriod at which to deaggregate (in years)
    * @return a {@code Deaggregation} object
    */
-  public static Deaggregation deaggregation(
+  public static Deaggregation deaggReturnPeriod(
       Hazard hazard,
       double returnPeriod,
-      Optional<Imt> imt,
       Executor exec) {
 
     checkNotNull(hazard);
     checkInRange(rpRange, "Return period", returnPeriod);
 
-    /*
-     * TODO I'm not sure why we're passing in an optional IMT, doesn't it just
-     * make more sense to pick up the imts from the hazard result.
-     */
+    return Deaggregation.atReturnPeriod(hazard, returnPeriod, exec);
+  }
 
-    return Deaggregation.atReturnPeriod(hazard, returnPeriod, imt, exec);
+  /**
+   * Deaggregate probabilistic seismic hazard at the supplied intensity measure
+   * level (in units of g). Deaggregation will performed for all IMTs specified
+   * for hazard.
+   * 
+   * <p>Call this method with the {@link Hazard} result of
+   * {@link #hazard(HazardModel, CalcConfig, Site, Executor)} to which you
+   * supply the calculation settings and sites of interest that will also be
+   * used for deaggregation.
+   *
+   * <p><b>Note:</b> any model initialization settings in {@code config} will be
+   * ignored as the supplied model will already have been initialized.
+   *
+   * @param hazard to deaggregate
+   * @param iml intensity measure level at which to deaggregate (in g)
+   * @param imt an optional (single) IMT at which to deaggregate
+   * @return a {@code Deaggregation} object
+   */
+  public static Deaggregation deaggIml(
+      Hazard hazard,
+      double iml,
+      Executor exec) {
+
+    checkNotNull(hazard);
+    checkInRange(imlRange, "Intensity measure level", iml);
+
+    return Deaggregation.atIml(hazard, iml, exec);
   }
 
   /**
