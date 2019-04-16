@@ -5,11 +5,9 @@ import static gov.usgs.earthquake.nshmp.calc.DeaggDataset.SOURCE_SET_CONSOLIDATO
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -107,13 +105,10 @@ public final class Deaggregation {
   public static Deaggregation atReturnPeriod(
       Hazard hazard,
       double returnPeriod,
-      Optional<Imt> deaggImt,
       Executor exec) {
 
     double rate = 1.0 / returnPeriod;
-    Set<Imt> imtsToDeagg = deaggImt.isPresent()
-        ? EnumSet.of(deaggImt.get())
-        : hazard.totalCurves.keySet();
+    Set<Imt> imtsToDeagg = hazard.totalCurves.keySet();
 
     DeaggConfig.Builder cb = DeaggConfig.builder(hazard);
     HazardToDeagg transform = new HazardToDeagg(hazard);
@@ -140,12 +135,9 @@ public final class Deaggregation {
   public static Deaggregation atIml(
       Hazard hazard,
       double iml,
-      Optional<Imt> deaggImt,
       Executor exec) {
 
-    Set<Imt> imtsToDeagg = deaggImt.isPresent()
-        ? EnumSet.of(deaggImt.get())
-        : hazard.totalCurves.keySet();
+    Set<Imt> imtsToDeagg = hazard.totalCurves.keySet();
 
     DeaggConfig.Builder cb = DeaggConfig.builder(hazard);
     HazardToDeagg transform = new HazardToDeagg(hazard);
