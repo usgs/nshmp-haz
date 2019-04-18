@@ -7,6 +7,7 @@ gov.usgs.earthquake.nshmp.eq.fault.surface
 gov.usgs.earthquake.nshmp.eq.model
 gov.usgs.earthquake.nshmp.function
 gov.usgs.earthquake.nshmp.geo
+gov.usgs.earthquake.nshmp.geo.json
 gov.usgs.earthquake.nshmp.gmm
 gov.usgs.earthquake.nshmp.mfd
 gov.usgs.earthquake.nshmp.tree
