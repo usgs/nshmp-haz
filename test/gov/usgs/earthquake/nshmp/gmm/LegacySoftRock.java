@@ -30,23 +30,13 @@ public class LegacySoftRock extends GmmTest {
   private static String GMM_INPUTS = "CEUS_vs760_inputs.csv";
   private static String GMM_RESULTS = "LEGACY_vs760_results.csv";
 
-  static {
-    try {
-      inputsList = loadInputs(GMM_INPUTS);
-    } catch (IOException ioe) {
-      ioe.printStackTrace();
-      System.exit(1);
-    }
-  }
-
   @Parameters(name = "{index}: {0} {2} {1}")
-  public static Collection<Object[]> data()
-      throws IOException {
+  public static Collection<Object[]> data() throws IOException {
     return loadResults(GMM_RESULTS);
   }
 
   public LegacySoftRock(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
-    super(index, gmm, imt, exMedian, exSigma);
+    super(index, gmm, imt, exMedian, exSigma, GMM_INPUTS);
   }
 
   /* Result generation sets */
