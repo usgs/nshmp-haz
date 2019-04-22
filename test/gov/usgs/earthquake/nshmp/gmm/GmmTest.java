@@ -29,21 +29,27 @@ public abstract class GmmTest {
 
   private static final String DATA_DIR = "data/";
   private static final double TOL = 1e-6;
-  static List<GmmInput> inputsList;
 
   private int index;
   private Gmm gmm;
   private Imt imt;
   private double exMedian;
   private double exSigma;
+  private List<GmmInput> inputsList;
 
-  GmmTest(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
-
+  GmmTest(int index, Gmm gmm, Imt imt, double exMedian, double exSigma, String gmmInputs) {
     this.index = index;
     this.gmm = gmm;
     this.imt = imt;
     this.exMedian = exMedian;
     this.exSigma = exSigma;
+    
+    try {
+      inputsList = loadInputs(gmmInputs);
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+      System.exit(1);
+    }
   }
 
   @Test
