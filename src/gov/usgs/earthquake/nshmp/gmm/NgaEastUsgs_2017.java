@@ -1065,7 +1065,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     private static final CoefficientContainer COEFFS = new CoefficientContainer(
         "nga-east-usgs-siteamp.csv");
 
-    private static final double V_MIN = 200.0;
+    private static final double V_MIN = 185.0;
     private static final double V_MAX = 3000.0;
     private static final double V_LIN_REF = 760.0;
     private static final double VL = 200.0;
@@ -1084,7 +1084,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     private static final class Coefficients {
 
       final Imt imt;
-      final double c, v1, v2, vf, σvc, σl, σu, f760i, f760g, f760iσ, f760gσ, f3, f4, f5, vc, σc;
+      final double c, v1, v2, vf, σvc, σl, σu;
+      final double f760i, f760g, f760iσ, f760gσ;
+      final double f3, f4, f5, vc, σc;
 
       Coefficients(Imt imt, CoefficientContainer cc) {
         this.imt = imt;
