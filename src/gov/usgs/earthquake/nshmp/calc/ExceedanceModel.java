@@ -272,7 +272,7 @@ public enum ExceedanceModel {
    * Return a list of exceedance curves, one for each tree branch in the
    * supplied MultiScalarGroundMotion. NOTE that returned curves have NOT been
    * scaled by their branch weight. Given that this scaling will be applied
-   * later (in the case of cluster sources) it is imperitave that the iteration
+   * later (in the case of cluster sources) it is imperative that the iteration
    * order of weights applied downstream is the same as the order used here when
    * generating the curves [loop means then sigmas].
    */
