@@ -1230,13 +1230,16 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /* Linear response */
 
       /*
-       * Vs30 dependent f760 model: impedance vs.gradient. This is an update to
-       * the complementary imp/gr weighting scheme, commented out below, that
-       * gives 90/10 weight at 400 m/s and 76.7/23.3 at 600 m/s.
+       * Vs30 dependent f760 model: impedance vs. gradient
+       * 
+       * The final model gives 2/3 weight to a weight scaling model of
+       * [0.9i,0.1g] to [0.1i,0.9g] and 1/3 weight to a weight scaling model of
+       * [0.5i,0.5g] to [0.1i,0.9g]. This results in a final weight scaling model
+       * of [0.767i,0.233g] at 600 m/s and [0.1i,0.9g] at 400 m/s.
        */
-      double wti = WT1;
+      double wti = WT1; // impedance = 0.767 @ Vs30 > 600
       if (vs30 < VW2) {
-        wti = WT2;
+        wti = WT2; // impedance = 0.1 @ Vs30 < 400
       } else if (vs30 < VW1) {
         wti = WT_SCALE * log(vs30 / VW2) + WT2;
       }
