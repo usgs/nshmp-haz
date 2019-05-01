@@ -1292,6 +1292,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       } else if (vs30 <= VU) {
         fv = c.c * log(c.v2 / V_LIN_REF);
       } else {
+        /* Equivalent to equation 3 for 2000 < vs30 < 3000 */
         double f2000 = c.c * log(c.v2 / V_LIN_REF);
         fv = Interpolator.findY(log(VU), f2000, log(V_MAX), -f760, log(vs30));
       }
@@ -1307,8 +1308,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         double vT = (vs30 - c.v2) / (VU - c.v2);
         fvσ = c.σvc + (c.σu - c.σvc) * vT * vT;
       } else {
-        double scale = log(vs30 / VU) / log(VU / V_MAX);
-        fvσ = (c.σvc + (c.σu - c.σvc)) * scale;
+        fvσ = c.σu * (1.0 - log(vs30 / VU) / log(V_MAX / VU));
       }
 
       double fLin = fv + f760;
