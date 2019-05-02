@@ -143,49 +143,23 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
     double Fd = calcPathTerm(c, in.Mw, in.rJB);
 
     // Site term
-    double Fs = calcSite(c, in.vs30, pga4nl);
+    double Fs = calcSite(c, pga4nl, in.vs30);
     
-//    // Site Response Term -- Linear
-//    double vs30 = in.vs30;
-//    double Fs = c.b_lin * log(vs30 / Vref);
-//
-//    // Site Response Term -- Nonlinear
-//    double bnl = 0.0; // vs30 >= 760 case
-//    if (vs30 < Vref) {
-//      if (vs30 > V2) {
-//        bnl = c.b2 * log(vs30 / Vref) / log(V2 / Vref);
-//      } else if (vs30 > V1) {
-//        bnl = (c.b1 - c.b2) * log(vs30 / V2) / log(V1 / V2) + c.b2;
-//      } else {
-//        bnl = c.b1;
-//      }
-//    }
-//
-//    double Fnl = 0.0;
-//    if (pga4nl <= A1) {
-//      Fnl = bnl * log(PGAlo / 0.1);
-//    } else if (pga4nl <= A2) {
-//      double dX = log(A2 / A1);
-//      double dY = bnl * log(A2 / PGAlo);
-//      double _c = (3.0 * dY - bnl * dX) / (dX * dX);
-//      double d = -(2.0 * dY - bnl * dX) / (dX * dX * dX);
-//      double p = log(pga4nl / A1);
-//      Fnl = bnl * log(PGAlo / 0.1) + (_c * p * p) + (d * p * p * p);
-//
-//    } else {
-//      Fnl = bnl * log(pga4nl / 0.1);
-//    }
-//
-//    // Total site
-//    Fs += Fnl;
-
     // Total Model
     return Fm + Fd + Fs;
   }
   
-  /* test replacement for separate BA siteamp class used by youngs 
-   * and AM09. */
-  static double calcSite(Coefficients c, double vs30, double lnPga) {
+  /** 
+   * Package visible site amplification model. This model
+   * is appropriate for use with other GMMs where the reference rock
+   * site condition has Vs30=760.
+   */
+  double siteAmp(double lnPga, double vs30) {
+    return calcSite(coeffs, lnPga, vs30);
+  }
+  
+  /* Site term */
+  private static double calcSite(Coefficients c, double lnPga, double vs30) {
     
     double Flin = c.b_lin * log(vs30 / Vref);
 
