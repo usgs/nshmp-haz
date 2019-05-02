@@ -111,7 +111,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
 
   private final Coefficients coeffs;
   private final Coefficients coeffsPGA;
-  private final BooreAtkinsonSiteAmp siteAmp;
+  private final BooreAtkinson_2008 siteAmp;
   private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
 
   // interpolatedGmm = null if !interpolated
@@ -125,7 +125,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
   AtkinsonMacias_2009(final Imt imt, Gmm subtype) {
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
-    siteAmp = new BooreAtkinsonSiteAmp(imt);
+    siteAmp = new BooreAtkinson_2008(imt);
     cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
     interpolated = INTERPOLATED_IMTS.containsKey(imt);
     interpolatedGmm = interpolated
@@ -161,13 +161,13 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
   private static final double calcMean(
       final Coefficients c,
       final Coefficients cPga,
-      final BooreAtkinsonSiteAmp siteAmp,
+      final BooreAtkinson_2008 siteAmp,
       final GmmInput in) {
 
     double μ = calcMean(c, in);
     if (in.vs30 != 760.0) {
       double μPgaRock = calcMean(cPga, in);
-      μ += siteAmp.calc(μPgaRock, in.vs30, 760.0);
+      μ += siteAmp.siteAmp(μPgaRock, in.vs30);
     }
     return μ;
   }
