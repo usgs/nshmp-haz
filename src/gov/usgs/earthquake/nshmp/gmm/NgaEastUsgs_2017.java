@@ -75,6 +75,10 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * recommendations for ergodic site amplification in central and eastern North
  * America: PEER Report No. 2017/04, 66 p.
  *
+ * <p><b>Reference:</b> Stewart, J., Parker, G., Atkinson, G., Boore, D., and
+ * Hashash, Y., and Silva, W., 2019, Ergodic site amplification model for
+ * central and eastern North America: Earthquake Spectra (in review)
+ * 
  * <p><b>Reference:</b> Hashash, Y., Harmon, J., Ilhan, O., Parker, G., and
  * Stewart, 2017, Recommendation for ergodic nonlinear site amplification in
  * central and eastern North America: PEER Report No. 2017/05, 62 p.
@@ -1115,7 +1119,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     private static final CoefficientContainer COEFFS = new CoefficientContainer(
         "nga-east-usgs-siteamp.csv");
 
-    private static final double V_MIN = 185.0;
+    private static final double V_MIN = 150.0;
     private static final double V_MAX = 3000.0;
     private static final double V_LIN_REF = 760.0;
     private static final double VL = 200.0;
