@@ -13,7 +13,7 @@
 #       -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \
 #       -v /absolute/path/to/config/file:/app/config.json \
 #       -v /absolute/path/to/output:/app/output \
-#       usgsnshmp/nshmp-haz
+#       usgs/nshmp-haz
 ####
 
 set -o errexit;
@@ -183,7 +183,7 @@ error_exit() {
         -e VISUALVM_HOSTNAME=<hostname> \\
         -v /absolute/path/to/config/file:/app/config.json \\
         -v /absolute/path/to/output:/app/output \\
-        usgsnshmp/nshmp-haz
+        usgs/nshmp-haz
   ";
 
   local message="
