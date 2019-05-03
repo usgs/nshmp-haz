@@ -51,12 +51,12 @@ WORKDIR ${builder_workdir}/models
 RUN bash ${builder_workdir}/docker-builder-entrypoint.sh
 
 ####
-# Application Image: Java 8
-#   - Install bash and jq
+# Application Image: Java 8 in usgs/centos image
+#   - Install jq
 #   - Copy JAR file from builder image
 #   - Run nshmp-haz
 ####
-FROM openjdk:8-alpine
+FROM usgsnshmp/nshmp-openjdk:jdk8
 
 # Set author
 LABEL maintainer="Peter Powers <pmpowers@usgs.gov>"
@@ -65,7 +65,8 @@ LABEL maintainer="Peter Powers <pmpowers@usgs.gov>"
 WORKDIR /app
 
 # Install jq
-RUN apk add bash jq
+RUN yum install -y add epel-release
+RUN yum install -y jq
 
 # Get JAR path
 ARG jar_path
@@ -98,6 +99,15 @@ ENV RETURN_PERIOD ""
 # Optional config file
 ENV CONFIG_FILE "config.json"
 
+# Whether to have access to Java VisualVM
+ENV ACCESS_VISUALVM false
+
+# Port for Java VisualVM
+ENV VISUALVM_PORT 9090
+
+# Java VisualVM hostname
+ENV VISUALVM_HOSTNAME localhost
+
 # Set volume for output
 VOLUME [ "/app/output" ]
 
@@ -106,3 +116,6 @@ RUN echo "{}" > ${CONFIG_FILE}
 
 # Run nshmp-haz
 ENTRYPOINT [ "bash", "docker-entrypoint.sh" ]
+
+# Expose Java VisualVM port
+EXPOSE ${VISUALVM_PORT}
