@@ -28,7 +28,7 @@ import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 public abstract class GmmTest {
 
   private static final String DATA_DIR = "data/";
-  private static final double TOL = 1e-6;
+  private static final double TOL = 1e-10;
 
   private int index;
   private Gmm gmm;
@@ -77,8 +77,8 @@ public abstract class GmmTest {
           ScalarGroundMotion sgm = gmModel.calc(input);
           String result = Parsing.join(
               Lists.newArrayList(modelIndex++ + "-" + id,
-                  String.format("%.6f", Math.exp(sgm.mean())),
-                  String.format("%.6f", sgm.sigma())),
+                  String.format("%.10f", Math.exp(sgm.mean())),
+                  String.format("%.10f", sgm.sigma())),
               Delimiter.COMMA);
           lines.add(result);
         }
