@@ -24,8 +24,8 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class NgaWest2 extends GmmTest {
 
-  private static String GMM_INPUTS = "NGA_inputs.csv";
-  private static String GMM_RESULTS = "NGAW2_results.csv";
+  private static String GMM_INPUTS = "nga-west-inputs.csv";
+  private static String GMM_RESULTS = "nga-west2-results.csv";
 
   @Parameters(name = "{index}: {0} {2} {1}")
   public static Collection<Object[]> data() throws IOException {

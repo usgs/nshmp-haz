@@ -20,8 +20,8 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class CeusSoftRock extends GmmTest {
 
-  private static String GMM_INPUTS = "CEUS_vs760_inputs.csv";
-  private static String GMM_RESULTS = "CEUS_vs760_results.csv";
+  private static String GMM_INPUTS = "ceus-vs760-inputs.csv";
+  private static String GMM_RESULTS = "ceus-vs760-results.csv";
 
   @Parameters(name = "{index}: {0} {2} {1}")
   public static Collection<Object[]> data() throws IOException {
