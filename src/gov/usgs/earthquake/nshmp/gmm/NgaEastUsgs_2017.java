@@ -521,47 +521,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Usgs17_SitePlusSigma extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : site (a. +σ)";
-
-    Usgs17_SitePlusSigma(Imt imt) {
-      super(imt, SiteAmp.Model.LOGIC_TREE_PLUS_SIGMA);
-    }
-  }
-  
-  static class Usgs17_SiteCenter extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : site (b. no σ)";
-
-    Usgs17_SiteCenter(Imt imt) {
-      super(imt, SiteAmp.Model.LOGIC_TREE_CENTER);
-    }
-  }
-
-  static class Usgs17_SiteMinusSigma extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : site (c. -σ)";
-
-    Usgs17_SiteMinusSigma(Imt imt) {
-      super(imt, SiteAmp.Model.LOGIC_TREE_MINUS_SIGMA);
-    }
-  }
-
-  static class Usgs17_SiteSmooth extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : site-0.1s-smooth";
-
-    Usgs17_SiteSmooth(Imt imt) {
-      super(imt, SiteAmp.Model.LOGIC_TREE_10HZ_SMOOTH);
-    }
-  }
-  
-  static class Usgs17_SiteSmoothCenter extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : site-0.1s-smooth (no σ)";
-
-    Usgs17_SiteSmoothCenter(Imt imt) {
-      super(imt, SiteAmp.Model.LOGIC_TREE_10HZ_SMOOTH_CENTER);
-    }
-  }
-
-
   /*
    * Implementation of USGS Seed model logic tree. All models but SP16 are table
    * based; SP16 is added to the median ground motion array last. NOTE that the
@@ -677,15 +636,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
   
-  static class UsgsSeedsSiteSmooth extends UsgsSeeds {
-    static final String NAME = UsgsSeeds.BASE_NAME + " : site-0.1s-smooth";
-
-    UsgsSeedsSiteSmooth(Imt imt) {
-      super(imt, SiteAmp.Model.LOGIC_TREE_10HZ_SMOOTH);
-    }
-  }
-
-
   static abstract class Sammons extends NgaEastUsgs_2017 {
     static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons : ";
     static final String NAME0 = NAME + "0";
@@ -1141,8 +1091,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       final double c, v1, v2, vf, σvc, σl, σu;
       final double f760i, f760g, f760iσ, f760gσ;
       final double f3, f4, f5, vc, σc;
-      /* 0.1s smoothed between adjacent periods (logT) */
-      final double f760is, f760iσs; 
 
       Coefficients(Imt imt, CoefficientContainer cc) {
         this.imt = imt;
@@ -1155,9 +1103,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         σl = coeffs.get("sig_l");
         σu = coeffs.get("sig_u");
         f760i = coeffs.get("f760i");
-        f760is = coeffs.get("f760i_s");
         f760iσ = coeffs.get("f760is");
-        f760iσs = coeffs.get("f760is_s");
         f760g = coeffs.get("f760g");
         f760gσ = coeffs.get("f760gs");
         f3 = coeffs.get("f3");
@@ -1180,12 +1126,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     static enum Model {
       GRADIENT_ONLY,
       IMPEDANCE_ONLY,
-      LOGIC_TREE,
-      LOGIC_TREE_PLUS_SIGMA,
-      LOGIC_TREE_CENTER,
-      LOGIC_TREE_MINUS_SIGMA,
-      LOGIC_TREE_10HZ_SMOOTH,
-      LOGIC_TREE_10HZ_SMOOTH_CENTER;
+      LOGIC_TREE;
     }
 
     SiteAmp.Value calc(double pgaRock, double vs30) {
@@ -1226,7 +1167,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /* Vs30 filtering */ // TODO update comments to 3000
 
       if (vs30 >= V_MAX) {
-        return new Value(0.0, 0.0, model);
+        return new Value(0.0, 0.0);
       } else if (vs30 < V_MIN) {
         vs30 = V_MIN;
       }
@@ -1258,18 +1199,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         wtg = 0.0;
       }
 
-      /* Override f760 term for smooth models */
-      double f760i = c.f760i;
-      double f760iσ = c.f760iσ;
-      if (model == Model.LOGIC_TREE_10HZ_SMOOTH || 
-          model == Model.LOGIC_TREE_10HZ_SMOOTH_CENTER) {
-        f760i = c.f760is;
-        f760iσ = c.f760iσs;
-      }
-//      double f760 = c.f760i * wti + c.f760g * wtg;
-//      double f760σ = c.f760iσ * wti + c.f760gσ * wtg;
-      double f760 = f760i * wti + c.f760g * wtg;
-      double f760σ = f760iσ * wti + c.f760gσ * wtg;
+      double f760 = c.f760i * wti + c.f760g * wtg;
+      double f760σ = c.f760iσ * wti + c.f760gσ * wtg;
 
       /* Vs30 dependent f760 model: impedance vs.gradient. */
       // TODO clean
@@ -1384,7 +1315,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 //      
 //       System.out.println(values);
 
-      return new Value(fT, σT, model);
+      return new Value(fT, σT);
     }
 
     /**
@@ -1397,38 +1328,18 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       final double siteAmp;
       final double σ;
-      final Model model;
 
-      Value(double siteAmp, double σ, Model model) {
+      Value(double siteAmp, double σ) {
         this.siteAmp = siteAmp;
         this.σ = σ;
-        this.model = model;
       }
 
       double apply(double μ) {
         double μAmp = μ + siteAmp;
-
-        switch (model) {
-
-          case LOGIC_TREE_10HZ_SMOOTH_CENTER:
-            return μAmp;
-
-          case LOGIC_TREE_PLUS_SIGMA:
-            return μAmp + σ;
-
-          case LOGIC_TREE_CENTER:
-            return μAmp;
-            
-          case LOGIC_TREE_MINUS_SIGMA:
-            return μAmp - σ;
-
-          default:
-            return log(
-                SITE_AMP_WTS[0] * exp(μAmp + σ) +
-                    SITE_AMP_WTS[1] * exp(μAmp) +
-                    SITE_AMP_WTS[2] * exp(μAmp - σ));
-
-        }
+        return log(
+            SITE_AMP_WTS[0] * exp(μAmp + σ) +
+                SITE_AMP_WTS[1] * exp(μAmp) +
+                SITE_AMP_WTS[2] * exp(μAmp - σ));
       }
     }
   }
