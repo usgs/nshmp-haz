@@ -5,37 +5,40 @@
 #
 # Usage:
 #   docker run \
-#       -e PROGRAM=<deagg | deagg-epsilon | hazard | rate> \\
-#       -e MODEL=<WUS-20[08|14|18] | CEUS-20[08|14|18] | COUS-20[08|14|18] | AK-2007> \\
-#       -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \\
-#       -v /absolute/path/to/config/file:/app/config.json \\
-#       -v /absolute/path/to/output:/app/output \\
-#       usgsnshmp/nshmp-haz
+#       -e PROGRAM=<deagg | deagg-epsilon | hazard | rate> \
+#       -e MODEL=<WUS-20[08|14|18] | CEUS-20[08|14|18] | COUS-20[08|14|18] | AK-2007> \
+#       -e ACCESS_VISUALVM=<true | false> \
+#       -e VISUALVM_PORT=<port> \
+#       -e VISUALVM_HOSTNAME=<hostname> \
+#       -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \
+#       -v /absolute/path/to/config/file:/app/config.json \
+#       -v /absolute/path/to/output:/app/output \
+#       usgs/nshmp-haz
 ####
 
-set -o errexit
-set -o errtrace
+set -o errexit;
+set -o errtrace;
 
 # check_config_file global return variable
-CHECK_CONFIG_FILE_RETURN=""
+CHECK_CONFIG_FILE_RETURN="";
 
 # check_site_file global return variable
-CHECK_SITE_FILE_RETURN=""
+CHECK_SITE_FILE_RETURN="";
 
 # get_cous_model global return variable
-GET_COUS_MODEL_RETURN=""
+GET_COUS_MODEL_RETURN="";
 
 # get_model global return variable
-GET_MODEL_RETURN=""
+GET_MODEL_RETURN="";
 
 # get_model_path global return variable
-GET_MODEL_PATH_RETURN=""
+GET_MODEL_PATH_RETURN="";
 
 # get_nshmp_program global return variable
-GET_NSHMP_PROGRAM_RETURN=""
+GET_NSHMP_PROGRAM_RETURN="";
 
 # Log file
-LOG_FILE="docker-entrypoint.log"
+readonly LOG_FILE="docker-entrypoint.log";
 
 ####
 # Run nshmp-haz.
@@ -56,38 +59,53 @@ LOG_FILE="docker-entrypoint.log"
 ####
 main() {
   # Set trap for uncaught errors
-  trap 'error_exit "${BASH_COMMAND}" "$(< ${LOG_FILE})"' ERR
+  trap 'error_exit "${BASH_COMMAND}" "$(< ${LOG_FILE})"' ERR;
 
   # Get Java class to run
-  get_nshmp_program 2> ${LOG_FILE} 
-  local nshmp_program="${GET_NSHMP_PROGRAM_RETURN}"
+  get_nshmp_program 2> ${LOG_FILE};
+  local nshmp_program="${GET_NSHMP_PROGRAM_RETURN}";
 
   # Get model path
-  get_model_path 2> ${LOG_FILE} 
-  local nshmp_model_path="${GET_MODEL_PATH_RETURN}"
+  get_model_path 2> ${LOG_FILE};
+  local nshmp_model_path="${GET_MODEL_PATH_RETURN}";
 
   # Check site file
-  check_sites_file 2> ${LOG_FILE} 
-  local site_file="${CHECK_SITE_FILE_RETURN}"
+  check_sites_file 2> ${LOG_FILE};
+  local site_file="${CHECK_SITE_FILE_RETURN}";
 
   # Check config file
-  check_config_file 2> ${LOG_FILE} 
-  local config_file="${CHECK_CONFIG_FILE_RETURN}"
+  check_config_file 2> ${LOG_FILE};
+  local config_file="${CHECK_CONFIG_FILE_RETURN}";
 
   # Monitor log file
   tail -f ${LOG_FILE} & 
 
+  # Set Java VisualVM
+  local visualvm_opts="";
+  if [ ${ACCESS_VISUALVM} = true ]; then
+    visualvm_opts="-Dcom.sun.management.jmxremote
+      -Dcom.sun.management.jmxremote.rmi.port=${VISUALVM_PORT}
+      -Dcom.sun.management.jmxremote.port=${VISUALVM_PORT}
+      -Dcom.sun.management.jmxremote.ssl=false
+      -Dcom.sun.management.jmxremote.authenticate=false
+      -Dcom.sun.management.jmxremote.local.only=false
+      -Djava.rmi.server.hostname=${VISUALVM_HOSTNAME}
+    ";
+  fi
+
   # Run nshmp-haz
-  java -Xms${JAVA_XMS} -Xmx${JAVA_XMX} -cp nshmp-haz.jar \
+  java -Xms${JAVA_XMS} -Xmx${JAVA_XMX} \
+      ${visualvm_opts} \
+      -cp nshmp-haz.jar \
       gov.usgs.earthquake.nshmp.${nshmp_program} \
       "${nshmp_model_path}" \
       "${site_file}" \
       ${RETURN_PERIOD:+ "${RETURN_PERIOD}"} \
       "${config_file}" 2> ${LOG_FILE} || \
-      error_exit "Failed running nshmp-haz" "$(tail -n 55 ${LOG_FILE})" 
+      error_exit "Failed running nshmp-haz" "$(tail -n 55 ${LOG_FILE})";
 
   # Move artifacts to mounted volume
-  move_to_output_volume 2> ${LOG_FILE} 
+  move_to_output_volume 2> ${LOG_FILE};
 }
 
 ####
@@ -103,10 +121,10 @@ main() {
 check_config_file() {
   # Check if file is valid JSON
   jq empty < ${CONFIG_FILE} 2> ${LOG_FILE} || \
-      error_exit "Config file is not valid JSON" "$(< ${LOG_FILE})"
+      error_exit "Config file is not valid JSON" "$(< ${LOG_FILE})";
 
   # Return 
-  CHECK_CONFIG_FILE_RETURN=${CONFIG_FILE}
+  CHECK_CONFIG_FILE_RETURN=${CONFIG_FILE};
 }
 
 ####
@@ -120,28 +138,28 @@ check_config_file() {
 ####
 check_sites_file() {
   local site_file=$(ls sites*) 2> ${LOG_FILE} || \
-      error_exit "Site file does not exist." "$(< ${LOG_FILE})"
+      error_exit "Site file does not exist." "$(< ${LOG_FILE})";
 
   # Check if valid JSON or ASCII file
   case ${site_file} in
     *.geojson)
       jq empty < ${site_file} 2> ${LOG_FILE} || \
-          error_exit "Site file [${site_file}] is not valid JSON" "$(< ${LOG_FILE})"
+          error_exit "Site file [${site_file}] is not valid JSON" "$(< ${LOG_FILE})";
       ;;
     *.csv)
       if [ "$(file ${site_file} -b)" != "ASCII text" ]; then
         error_exit \
             "Site file [${site_file}] is not valid ASCII" \
-            "Site file is not valid ASCII"
+            "Site file is not valid ASCII";
       fi
       ;;
     *)
-      error_exit "Bad site file [${site_file}]." "Bad site file."
+      error_exit "Bad site file [${site_file}]." "Bad site file.";
       ;;
   esac
 
   # Return
-  CHECK_SITE_FILE_RETURN=${site_file}
+  CHECK_SITE_FILE_RETURN=${site_file};
 }
 
 ####
@@ -160,10 +178,13 @@ error_exit() {
         -e PROGRAM=<deagg | deagg-epsilon | hazard | rate> \\
         -e MODEL=<WUS-20[08|14|18] | CEUS-20[08|14|18] | COUS-20[08|14|18] | AK-2007> \\
         -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \\
+        -e ACCESS_VISUALVM=<true | false> \\
+        -e VISUALVM_PORT=<port> \\
+        -e VISUALVM_HOSTNAME=<hostname> \\
         -v /absolute/path/to/config/file:/app/config.json \\
         -v /absolute/path/to/output:/app/output \\
-        usgsnshmp/nshmp-haz
-  "
+        usgs/nshmp-haz
+  ";
 
   local message="
     nshmp-haz Docker error:
@@ -179,11 +200,11 @@ error_exit() {
 
     ${usage}
 
-  "
+  ";
 
-  printf "${message}"
+  printf "${message}";
 
-  exit -1
+  exit -1;
 }
 
 ####
@@ -198,25 +219,25 @@ error_exit() {
 #   (string) GET_COUS_MODEL_RETURN - The cous model path
 ####
 get_cous_model() {
-  local nshmp_model_path=""
+  local nshmp_model_path="";
 
   case ${MODEL} in
     "COUS-2008")
-      nshmp_model_path="nshm-cous-2008/"
+      nshmp_model_path="nshm-cous-2008/";
       ;;
     "COUS-2014")
-      nshmp_model_path="nshm-cous-2014/"
+      nshmp_model_path="nshm-cous-2014/";
       ;;
     "COUS-2018")
-      nshmp_model_path="nshm-cous-2018/"
+      nshmp_model_path="nshm-cous-2018/";
       ;;
     *)
-      error_exit "Model [${MODEL}] not supported for program ${PROGRAM}" "Model not supported"
+      error_exit "Model [${MODEL}] not supported for program ${PROGRAM}" "Model not supported";
       ;;
   esac
 
   # Return 
-  GET_COUS_MODEL_RETURN=${nshmp_model_path}
+  GET_COUS_MODEL_RETURN=${nshmp_model_path};
 }
 
 ####
@@ -231,32 +252,32 @@ get_cous_model() {
 #   (string) GET_MODEL_RETURN - The model path
 ####
 get_model() {
-  local nshmp_model_path=""
+  local nshmp_model_path="";
 
   case ${MODEL} in
     "AK-2007")
-      nshmp_model_path="nshm-ak-2007"
+      nshmp_model_path="nshm-ak-2007";
       ;;
     "CEUS-2008")
-      nshmp_model_path="nshm-cous-2008/Central & Eastern US/"
+      nshmp_model_path="nshm-cous-2008/Central & Eastern US/";
       ;;
     "CEUS-2014")
-      nshmp_model_path="nshm-cous-2014/Central & Eastern US/"
+      nshmp_model_path="nshm-cous-2014/Central & Eastern US/";
       ;;
     "CEUS-2018")
-      nshmp_model_path="nshm-cous-2018/Central & Eastern US/"
+      nshmp_model_path="nshm-cous-2018/Central & Eastern US/";
       ;;
     "WUS-2008")
-      nshmp_model_path="nshm-cous-2008/Western US/"
+      nshmp_model_path="nshm-cous-2008/Western US/";
       ;;
     "WUS-2014")
-      nshmp_model_path="nshm-cous-2014/Western US/"
+      nshmp_model_path="nshm-cous-2014/Western US/";
       ;;
     "WUS-2018")
-      nshmp_model_path="nshm-cous-2018/Western US/"
+      nshmp_model_path="nshm-cous-2018/Western US/";
       ;;
     *)
-      error_exit "Model [${MODEL}] not supported for program ${PROGRAM}" "Model not supported"
+      error_exit "Model [${MODEL}] not supported for program ${PROGRAM}" "Model not supported";
       ;;
   esac
   
@@ -277,18 +298,18 @@ get_model() {
 #   (string) GET_MODEL_PATH_RETURN - The model path
 ####
 get_model_path() {
-  local nshmp_model_path=""
+  local nshmp_model_path="";
 
   if [ ${PROGRAM} == 'deagg-epsilon' ]; then
-    get_cous_model 2> ${LOG_FILE} 
-    nshmp_model_path="${GET_COUS_MODEL_RETURN}"
+    get_cous_model 2> ${LOG_FILE};
+    nshmp_model_path="${GET_COUS_MODEL_RETURN}";
   else
-    get_model 2> ${LOG_FILE} 
-    nshmp_model_path="${GET_MODEL_RETURN}"
+    get_model 2> ${LOG_FILE};
+    nshmp_model_path="${GET_MODEL_RETURN}";
   fi
 
   # Return
-  GET_MODEL_PATH_RETURN=${nshmp_model_path}
+  GET_MODEL_PATH_RETURN=${nshmp_model_path};
 }
 
 ####
@@ -302,28 +323,28 @@ get_model_path() {
 #   (string) GET_NSHMP_PROGRAM_RETURN - The Java class to call
 ####
 get_nshmp_program() {
-  local nshmp_program=""
+  local nshmp_program="";
 
   case ${PROGRAM} in
     "deagg")
-      nshmp_program="DeaggCalc"
+      nshmp_program="DeaggCalc";
       ;;
     "deag-epsilon")
-      nshmp_program="DeaggEpsilon"
+      nshmp_program="DeaggEpsilon";
       ;;
     "hazard")
-      nshmp_program="HazardCalc"
+      nshmp_program="HazardCalc";
       ;;
     "rate")
-      nshmp_program="RateCalc"
+      nshmp_program="RateCalc";
       ;;
     *)
-      error_exit "Program [${PROGRAM}] not supported" "Program not supported"
+      error_exit "Program [${PROGRAM}] not supported" "Program not supported";
       ;;
   esac
   
   # Return
-  GET_NSHMP_PROGRAM_RETURN=${nshmp_program}
+  GET_NSHMP_PROGRAM_RETURN=${nshmp_program};
 }
 
 ####
@@ -337,17 +358,17 @@ get_nshmp_program() {
 ####
 move_to_output_volume() {
   # Get output directory
-  local hazout=$(jq -r '.output.directory' ${CONFIG_FILE})
+  local hazout=$(jq -r '.output.directory' ${CONFIG_FILE});
 
   if [ ${hazout} == null ]; then
-    hazout="hazout"
+    hazout="hazout";
   fi
 
   # Copy output to volume output
-  cp -r ${hazout}/* output/. 2> ${LOG_FILE} 
+  cp -r ${hazout}/* output/. 2> ${LOG_FILE};
 }
 
 ####
 # Run main
 ####
-main "$@" 2> ${LOG_FILE} 
+main "$@";
