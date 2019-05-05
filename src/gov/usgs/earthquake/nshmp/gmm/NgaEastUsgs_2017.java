@@ -36,17 +36,19 @@ import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
- * Implementation of the PEER NGA-East for USGS ground motion model. This is a
- * custom version of the model developed specifically for USGS applications. It
- * is a composite model that consists of 17 median ground motion models with
- * period dependent weights.
+ * Implementation of the PEER NGA-East for USGS ground motion model. This
+ * version of the model was developed specifically for USGS applications but is
+ * identical to the final NGA-East model developed for the NRC. It is a
+ * composite model that consists of 17 median ground motion models with period
+ * dependent weights. This class also includes the implementation of the USGS
+ * Updated Seed logic tree.
  * 
  * <p>Calculation of hazard using this implementation deviates somewhat from the
  * current nshmp-haz PSHA pipeline and required implementation of a
  * {@code MultiScalarGroundMotion}. A {@code MultiScalarGroundMotion} stores
  * arrays of means and sigmas with associated weights.
  * 
- * <p>This class also manages implementations of 22 'seed' models, 19 of which
+ * <p>This class manages implementations of 22 'seed' models, 19 of which
  * were used to generate (via Sammons mapping) the 17 NGA-East for USGS models
  * and associated weights, and 3 of which are updates. This class also handles
  * USGS logic tree of 14 of those seed models. Ground motions for most models
@@ -91,14 +93,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
 public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   /*
-   * TODO
-   * 
-   * Cluster analysis is incorrect as currently implemented; analysis performed
-   * after combining models (this has been updated, recheck)
-   * 
-   * Deagg will currently use weight-averaged means; this is incorrect, or at
-   * least requires more study to determine if it generates an acceptable
-   * approximation
+   * Developer notes:
    * 
    * Note: supported periods are derived from sigma coefficient files. Several
    * supported periods have been commented out because they are not represented
@@ -106,8 +101,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * 
    * When supplied with tables for the 17 usgs models, 0.01s is present with
    * values distinct from PGA, however the seed models are missing this period.
-   * For now we've duplicated PGA for 0.01s ground motion values in the seed
-   * model tables. Because a coefficient table (sigma coeffs in this case) is
+   * We therefore duplicate PGA for 0.01s ground motion values in the seed model
+   * tables. Because a coefficient table (sigma coeffs in this case) is
    * referenced for supported IMTs, the ground motion tables across seed and
    * sammons models must be consistent.
    * 
@@ -115,23 +110,21 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * 
    * Notes on sigma:
    * 
-   * When supplied with the NGA-East for USGS (2017), PEER recommended use of an
-   * updated EPRI (2013) model (Table 5.5). The NSHMP asked PEER to develop an
-   * improved φ_s2s model, which necessitated reverting to the functional forms
-   * for τ and φ_ss. The tau and φ_s2s models have a single branch each; the
-   * φ_ss model has three branches. The φ_ss and τ models both have coefficients
-   * for low, central, and high statistical uncertainty branches; no statistical
-   * uncertianty model was developed for φ_s2s.
+   * NGA-East for USGS (2017) recommended use of an updated EPRI (2013) model
+   * (Table 5.5), which is currently considered as one independent branch of an
+   * aleatory variability logic tree.
    * 
-   * Sigma tables are broken into 'lo', 'mid', and 'hi' files representing the
-   * 'Low', 'Central', and 'Hi' branches of the sigma logic tree. In many cases
-   * coefficents are constant across all periods, but because of the statistical
-   * uncertainty branching, it is easier to repeat the values in the coefficient
-   * tables/files than to have to encode lo-mid-hi branching logic in sigma
-   * calculation methods. Similarly, the φ_s2s coefficents, for which there is
-   * no statistical uncertainty model/branching, are the same across all files.
+   * The NSHMP asked PEER panel to develop an improved φ_s2s model. This
+   * necessitated including τ and φ_ss as independent terms. Only the 'global' τ
+   * and φ_ss models are considered, per Linda Al Atik's recommendation. Because
+   * no statistical uncertianty model was developed for φ_s2s, we only consider
+   * the 'central' branch for τ and φ_ss terms. Sensitivity studies show that
+   * consideration of only the 'global' and 'central' branches of τ and φ_ss has
+   * little effect on the final σ. This 'panel' model is the second branch in
+   * the aleatory variability logic tree.
    */
-  static final String NAME = "NGA-East USGS (2017)";
+
+  static final String NAME = "NGA-East for USGS (2017)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(4.0, 8.2))
@@ -140,20 +133,17 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       .build();
 
   /*
-   * Sigma coefficients for global model from tables 11-3 (tau) and 11-9 (phi).
+   * Sigma coefficients for global model from tables 5-1 (tau) and 5-2 (phi) and
+   * EPRI model from table 5-5.
    */
-  static CoefficientContainer COEFFS_SIGMA_LO;
-  static CoefficientContainer COEFFS_SIGMA_MID;
-  static CoefficientContainer COEFFS_SIGMA_HI;
+  static CoefficientContainer COEFFS_SIGMA_PANEL;
   static CoefficientContainer COEFFS_SIGMA_EPRI;
 
-  /* Immutable, ordered map */
+  /* Immutable, ordered map of seed model weights. */
   static Map<String, Double> USGS_SEED_WEIGHTS;
 
   static {
-    COEFFS_SIGMA_LO = new CoefficientContainer("nga-east-usgs-sigma-lo.csv");
-    COEFFS_SIGMA_MID = new CoefficientContainer("nga-east-usgs-sigma-mid.csv");
-    COEFFS_SIGMA_HI = new CoefficientContainer("nga-east-usgs-sigma-hi.csv");
+    COEFFS_SIGMA_PANEL = new CoefficientContainer("nga-east-usgs-sigma-panel.csv");
     COEFFS_SIGMA_EPRI = new CoefficientContainer("nga-east-usgs-sigma-epri.csv");
     USGS_SEED_WEIGHTS = initSeedWeights();
   }
@@ -190,28 +180,25 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private static final double VΦ1 = 1200.0;
   private static final double VΦ2 = 1500.0;
 
-  private static final class CoefficientsSigma {
+  private static final class CoefficientsSigmaPanel {
 
-    /* τ coefficients */
+    /* τ coefficients, global model, central branch */
     final double τ1, τ2, τ3, τ4;
 
-    /* φ_ss coefficients; g=global, m=mag-dep, c=constant */
-    final double ga, gb, ma, mb, c;
+    /* φ_ss coefficients, global model, central branch */
+    final double a, b;
 
     /* φ_s2s coefficients */
     final double φs2s1, φs2s2;
 
-    CoefficientsSigma(Imt imt, CoefficientContainer cc) {
+    CoefficientsSigmaPanel(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);
       τ1 = coeffs.get("t1");
       τ2 = coeffs.get("t2");
       τ3 = coeffs.get("t3");
       τ4 = coeffs.get("t4");
-      ga = coeffs.get("ss_ga");
-      gb = coeffs.get("ss_gb");
-      ma = coeffs.get("ss_ma");
-      mb = coeffs.get("ss_mb");
-      c = coeffs.get("ss_c");
+      a = coeffs.get("ss_a");
+      b = coeffs.get("ss_b");
       φs2s1 = coeffs.get("s2s1");
       φs2s2 = coeffs.get("s2s2");
     }
@@ -233,56 +220,22 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  private final CoefficientsSigma σCoeffsLo;
-  private final CoefficientsSigma σCoeffsMid;
-  private final CoefficientsSigma σCoeffsHi;
+  private final CoefficientsSigmaPanel σCoeffsPanel;
   private final CoefficientsSigmaEpri σCoeffsEpri;
 
   NgaEastUsgs_2017(final Imt imt) {
-    σCoeffsLo = new CoefficientsSigma(imt, COEFFS_SIGMA_LO);
-    σCoeffsMid = new CoefficientsSigma(imt, COEFFS_SIGMA_MID);
-    σCoeffsHi = new CoefficientsSigma(imt, COEFFS_SIGMA_HI);
+    σCoeffsPanel = new CoefficientsSigmaPanel(imt, COEFFS_SIGMA_PANEL);
     σCoeffsEpri = new CoefficientsSigmaEpri(imt, COEFFS_SIGMA_EPRI);
-  }
-
-  /* Recommendation 1: Updated EPRI model. */
-  SigmaSet sigmaSetEpri(double Mw) {
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = new double[] { sigmaEpri(σCoeffsEpri, Mw) };
-    σSet.weights = new double[] { 1.0 };
-    return σSet;
-  }
-
-  /* Recommendation 2: Panel model (φ_S2S), no branches. */
-  SigmaSet sigmaSetPanel(double Mw, double vs30) {
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = new double[] { sigmaPanel(σCoeffsMid, Mw, vs30) };
-    σSet.weights = new double[] { 1.0 };
-    return σSet;
   }
 
   /* Final USGS logic-tree model: Panel=0.2, EPRIu=0.8 */
   SigmaSet sigmaSetLogicTree(double Mw, double vs30) {
     SigmaSet σSet = new SigmaSet();
     σSet.sigmas = new double[] {
-        sigmaPanel(σCoeffsMid, Mw, vs30),
+        sigmaPanel(σCoeffsPanel, Mw, vs30),
         sigmaEpri(σCoeffsEpri, Mw)
     };
     σSet.weights = SIGMA_LTC_WTS;
-    return σSet;
-  }
-
-  /* Archive: Panel model with phi_S2S term and all branches. */
-  @Deprecated
-  SigmaSet sigmaSetPanelBranching(double Mw, double vs30) {
-    double[] sigmas = {
-        sigmaPanelBranching(σCoeffsLo, Mw, vs30),
-        sigmaPanelBranching(σCoeffsMid, Mw, vs30),
-        sigmaPanelBranching(σCoeffsHi, Mw, vs30),
-    };
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = sigmas;
-    σSet.weights = SIGMA_WTS;
     return σSet;
   }
 
@@ -292,16 +245,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return Data.sum(Data.multiply(ss.sigmas, ss.weights));
   }
 
-  /*
-   * Recommendation 1: Updated EPRI (2013); initial NGA-East team recomendation.
-   */
+  /* σ branch 1: Updated EPRI (2013); initial recomendation. */
   private static double sigmaEpri(CoefficientsSigmaEpri c, double Mw) {
-    double[] phiTau = sigmaEpriTerms(c, Mw);
-    return Maths.hypot(phiTau[0], phiTau[1]);
-  }
-
-  /* Updated EPRI (2013) φ and τ. Method returns a double[] of {φ,τ} */
-  private static double[] sigmaEpriTerms(CoefficientsSigmaEpri c, double Mw) {
     double τ;
     double φ;
     if (Mw <= 5.0) {
@@ -317,12 +262,12 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       τ = c.τ_m7;
       φ = c.φ_m7;
     }
-    return new double[] { φ, τ };
+    return Maths.hypot(φ, τ);
   }
 
-  /* Recommendation 2: Same as above, no c branching. */
+  /* σ branch 2: Panel recommendation with φ_s2s. */
   private static double sigmaPanel(
-      CoefficientsSigma c,
+      CoefficientsSigmaPanel c,
       double Mw,
       double vs30) {
 
@@ -330,30 +275,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
 
     /* φ_ss model; global branch only; Equation 5-2 */
-    double φ_ss = phi_ss(Mw, c.ga, c.gb);
+    double φ_ss = phi_ss(Mw, c.a, c.b);
 
-    /* φ_s2s model; single branch; Stewart et al. */
-    double φ_s2s = phi_s2s(vs30, c.φs2s1, c.φs2s2);
-
-    return Maths.hypot(τ, φ_ss, φ_s2s);
-  }
-
-  /* Archive: Panel model with phi_S2S term and φ_ss branching. */
-  @Deprecated
-  private static double sigmaPanelBranching(
-      CoefficientsSigma c,
-      double Mw,
-      double vs30) {
-
-    /* τ model; global branch only; Equation 5-1 */
-    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
-
-    /* φ_ss model; global, constant, and mag-dep branches Equation 5-2 */
-    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
-        0.1 * c.c +
-        0.1 * phi_ss(Mw, c.ma, c.mb);
-
-    /* φ_s2s model; single branch; Stewart et al. */
+    /* φ_s2s model; single branch; Stewart et al. (2019) */
     double φ_s2s = phi_s2s(vs30, c.φs2s1, c.φs2s2);
 
     return Maths.hypot(τ, φ_ss, φ_s2s);
@@ -428,8 +352,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         Imt imt,
         double[] weights,
         GroundMotionTable[] tables,
-        GroundMotionTable[] pgaTables,
-        SiteAmp.Model model) {
+        GroundMotionTable[] pgaTables) {
 
       super(imt);
       checkArgument(
@@ -438,7 +361,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       this.weights = weights;
       this.tables = tables;
       this.pgaTables = pgaTables;
-      this.siteAmp = new SiteAmp(imt, model);
+      this.siteAmp = new SiteAmp(imt);
     }
 
     @Override
@@ -462,62 +385,12 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs17 extends ModelGroup {
-    static final String BASE_NAME = NgaEastUsgs_2017.NAME;
-    static final String NAME = BASE_NAME + " : σ-LogicTree";
-
     Usgs17(Imt imt) {
-      this(imt, SiteAmp.Model.LOGIC_TREE);
-    }
-
-    Usgs17(Imt imt, SiteAmp.Model model) {
       super(
           imt,
           GroundMotionTables.getNgaEastWeights(imt),
           GroundMotionTables.getNgaEast(imt),
-          GroundMotionTables.getNgaEast(Imt.PGA),
-          model);
-    }
-  }
-
-  static class Usgs17_SigmaEpri extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : σ-EPRI";
-
-    Usgs17_SigmaEpri(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetEpri(in.Mw);
-    }
-  }
-
-  static class Usgs17_SigmaPanel extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : σ-Panel";
-
-    Usgs17_SigmaPanel(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetPanel(in.Mw, in.vs30);
-    }
-  }
-
-  static class Usgs17_SiteImpedance extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : site-impedance";
-
-    Usgs17_SiteImpedance(Imt imt) {
-      super(imt, SiteAmp.Model.IMPEDANCE_ONLY);
-    }
-  }
-
-  static class Usgs17_SiteGradient extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : site-gradient";
-
-    Usgs17_SiteGradient(Imt imt) {
-      super(imt, SiteAmp.Model.GRADIENT_ONLY);
+          GroundMotionTables.getNgaEast(Imt.PGA));
     }
   }
 
@@ -528,8 +401,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * other seed models.
    */
   static class UsgsSeeds extends NgaEastUsgs_2017 {
-    static final String BASE_NAME = NgaEastUsgs_2017.NAME + " : Seed Tree";
-    static final String NAME = BASE_NAME + " : σ-LogicTree";
+    static final String NAME = "NGA-East Updated Seed Tree";
     static final String SP16_ID = "SP16";
 
     /* ids for table based models only; skips SP16 */
@@ -556,15 +428,11 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
 
     UsgsSeeds(Imt imt) {
-      this(imt, SiteAmp.Model.LOGIC_TREE);
-    }
-
-    UsgsSeeds(Imt imt, SiteAmp.Model model) {
       super(imt);
       this.tables = GroundMotionTables.getNgaEastSeeds(ids, imt);
       this.pgaTables = GroundMotionTables.getNgaEastSeeds(ids, Imt.PGA);
       this.sp16 = new ShahjoueiPezeshk_2016(imt);
-      this.siteAmp = new SiteAmp(imt, model);
+      this.siteAmp = new SiteAmp(imt);
     }
 
     @Override
@@ -590,52 +458,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class UsgsSeedsEpri extends UsgsSeeds {
-
-    static final String NAME = UsgsSeeds.BASE_NAME + " : σ-EPRI";
-
-    UsgsSeedsEpri(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetEpri(in.Mw);
-    }
-  }
-
-  static class UsgsSeedsPanel extends UsgsSeeds {
-
-    static final String NAME = UsgsSeeds.BASE_NAME + " : σ-Panel";
-
-    UsgsSeedsPanel(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetPanel(in.Mw, in.vs30);
-    }
-  }
-
-  static class UsgsSeedsSiteImpedance extends UsgsSeeds {
-
-    static final String NAME = UsgsSeeds.BASE_NAME + " : site-impedance";
-
-    UsgsSeedsSiteImpedance(Imt imt) {
-      super(imt, SiteAmp.Model.IMPEDANCE_ONLY);
-    }
-  }
-
-  static class UsgsSeedsSiteGradient extends UsgsSeeds {
-
-    static final String NAME = UsgsSeeds.BASE_NAME + " : site-gradient";
-
-    UsgsSeedsSiteGradient(Imt imt) {
-      super(imt, SiteAmp.Model.GRADIENT_ONLY);
-    }
-  }
-  
   static abstract class Sammons extends NgaEastUsgs_2017 {
     static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons : ";
     static final String NAME0 = NAME + "0";
@@ -1083,8 +905,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
     private final Coefficients c;
 
-    private final Model model;
-
     private static final class Coefficients {
 
       final Imt imt;
@@ -1115,18 +935,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
 
     SiteAmp(Imt imt) {
-      this(imt, Model.LOGIC_TREE);
-    }
-
-    SiteAmp(Imt imt, Model model) {
       c = new Coefficients(imt, COEFFS);
-      this.model = model;
-    }
-
-    static enum Model {
-      GRADIENT_ONLY,
-      IMPEDANCE_ONLY,
-      LOGIC_TREE;
     }
 
     SiteAmp.Value calc(double pgaRock, double vs30) {
@@ -1179,8 +988,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
        * 
        * The final model gives 2/3 weight to a weight scaling model of
        * [0.9i,0.1g] to [0.1i,0.9g] and 1/3 weight to a weight scaling model of
-       * [0.5i,0.5g] to [0.1i,0.9g]. This results in a final weight scaling model
-       * of [0.767i,0.233g] at 600 m/s and [0.1i,0.9g] at 400 m/s.
+       * [0.5i,0.5g] to [0.1i,0.9g]. This results in a final weight scaling
+       * model of [0.767i,0.233g] at 600 m/s and [0.1i,0.9g] at 400 m/s.
        */
       double wti = WT1; // impedance = 0.767 @ Vs30 > 600
       if (vs30 < VW2) {
@@ -1190,37 +999,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       }
       double wtg = 1.0 - wti;
 
-      // TODO clean - sensitivity testing
-      if (this.model == Model.GRADIENT_ONLY) {
-        wti = 0.0;
-        wtg = 1.0;
-      } else if (this.model == Model.IMPEDANCE_ONLY) {
-        wti = 1.0;
-        wtg = 0.0;
-      }
-
       double f760 = c.f760i * wti + c.f760g * wtg;
       double f760σ = c.f760iσ * wti + c.f760gσ * wtg;
-
-      /* Vs30 dependent f760 model: impedance vs.gradient. */
-      // TODO clean
-      //
-      // renamed class fields
-      // private static final double WT_I = 0.9;
-      // private static final double WT_G = 1.0 - WT_I;
-      // private static final double WT_SCALE = (WT_I - WT_G) / (log(VW1) -
-      // log(VW2)); // ≈1.97
-      //
-      // implementation
-      // double wti = WT_I;
-      // if (vs30 < VW2) {
-      // wti = WT_G;
-      // } else if (vs30 < VW1) {
-      // wti = WT_SCALE * log(vs30 / VW2) + WT_G;
-      // }
-      // double wtg = 1.0 - wti;
-      // double f760 = c.f760i * wti + c.f760g * wtg;
-      // double f760σ = c.f760iσ * wti + c.f760gσ * wtg;
 
       double fv = 0.0;
       if (vs30 <= c.v1) {
@@ -1275,46 +1055,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double fT = fLin + fNonlin;
       double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
 
-      // // TODO clean
-      // String values = String.format(
-      // "%12s\t%5.3f\t%.6g\t%.7g\t%.7g\t%.7g\t%.7g\t%.7g\t%.7g\t%.7g\t%.7g\t%.7g",
-      // c.imt.name(),
-      // c.imt.isSA() ? c.imt.period() : 0.0,
-      // pgaRock,
-      // fv,
-      // f760,
-      // fvσ,
-      // fLin,
-      // σLin,
-      // fNonlin,
-      // σNonlin,
-      // fT,
-      // σT);
-
-      // TODO clean
-      // String values = String.format(
-      // "%5.3f %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
-      // c.imt.isSA() ? c.imt.period() : 0.0,
-      // fv,
-      // c.f760g,
-      // c.f760i,
-      // f760,
-      // fLin,
-      // fNonlin,
-      // fT,
-      // σT);
-
-//       // TODO clean
-//       String values = String.format(
-//       "%5.3f\t%d\t%.7g\t%.7g\t%.7g",
-//       c.imt.isSA() ? c.imt.period() : 0.0,
-//       (int) vs30,
-//       exp(fLin),
-//       exp(fNonlin),
-//       exp(fT));
-//      
-//       System.out.println(values);
-
       return new Value(fT, σT);
     }
 
@@ -1323,8 +1063,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
      * uncertainty.
      */
     static final class Value {
-
-      // TODO test short circuit for vs3000 matches pass thru apply
 
       final double siteAmp;
       final double σ;
