@@ -91,14 +91,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
 public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   /*
-   * TODO
-   * 
-   * Cluster analysis is incorrect as currently implemented; analysis performed
-   * after combining models (this has been updated, recheck)
-   * 
-   * Deagg will currently use weight-averaged means; this is incorrect, or at
-   * least requires more study to determine if it generates an acceptable
-   * approximation
+   * Developer notes:
    * 
    * Note: supported periods are derived from sigma coefficient files. Several
    * supported periods have been commented out because they are not represented
@@ -106,8 +99,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * 
    * When supplied with tables for the 17 usgs models, 0.01s is present with
    * values distinct from PGA, however the seed models are missing this period.
-   * For now we've duplicated PGA for 0.01s ground motion values in the seed
-   * model tables. Because a coefficient table (sigma coeffs in this case) is
+   * We therefore duplicate PGA for 0.01s ground motion values in the seed model
+   * tables. Because a coefficient table (sigma coeffs in this case) is
    * referenced for supported IMTs, the ground motion tables across seed and
    * sammons models must be consistent.
    * 
@@ -115,22 +108,20 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * 
    * Notes on sigma:
    * 
-   * When supplied with the NGA-East for USGS (2017), PEER recommended use of an
-   * updated EPRI (2013) model (Table 5.5). The NSHMP asked PEER to develop an
-   * improved φ_s2s model, which necessitated reverting to the functional forms
-   * for τ and φ_ss. The tau and φ_s2s models have a single branch each; the
-   * φ_ss model has three branches. The φ_ss and τ models both have coefficients
-   * for low, central, and high statistical uncertainty branches; no statistical
-   * uncertianty model was developed for φ_s2s.
+   * NGA-East for USGS (2017) recommended use of an updated EPRI (2013) model
+   * (Table 5.5), which is currently considered as one independent branch of an
+   * aleatory variability logic tree.
    * 
-   * Sigma tables are broken into 'lo', 'mid', and 'hi' files representing the
-   * 'Low', 'Central', and 'Hi' branches of the sigma logic tree. In many cases
-   * coefficents are constant across all periods, but because of the statistical
-   * uncertainty branching, it is easier to repeat the values in the coefficient
-   * tables/files than to have to encode lo-mid-hi branching logic in sigma
-   * calculation methods. Similarly, the φ_s2s coefficents, for which there is
-   * no statistical uncertainty model/branching, are the same across all files.
+   * The NSHMP asked PEER panel to develop an improved φ_s2s model. This
+   * necessitated including τ and φ_ss as independent terms. Only the 'global' τ
+   * and φ_ss models are considered, per Linda Al Atik's recommendation. Because
+   * no statistical uncertianty model was developed for φ_s2s, we only consider
+   * the 'central' branch for τ and φ_ss terms. Sensitivity studies show that
+   * consideration of only the 'global' and 'central' branches of τ and φ_ss has
+   * little effect on the final σ. This 'panel' model is the second branch in
+   * the aleatory variability logic tree.
    */
+
   static final String NAME = "NGA-East USGS (2017)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
@@ -140,20 +131,17 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       .build();
 
   /*
-   * Sigma coefficients for global model from tables 11-3 (tau) and 11-9 (phi).
+   * Sigma coefficients for global model from tables 5-1 (tau) and 5-2 (phi) and
+   * EPRI model from table 5-5.
    */
-  static CoefficientContainer COEFFS_SIGMA_LO;
   static CoefficientContainer COEFFS_SIGMA_MID;
-  static CoefficientContainer COEFFS_SIGMA_HI;
   static CoefficientContainer COEFFS_SIGMA_EPRI;
 
-  /* Immutable, ordered map */
+  /* Immutable, ordered map of seed model weights. */
   static Map<String, Double> USGS_SEED_WEIGHTS;
 
   static {
-    COEFFS_SIGMA_LO = new CoefficientContainer("nga-east-usgs-sigma-lo.csv");
     COEFFS_SIGMA_MID = new CoefficientContainer("nga-east-usgs-sigma-mid.csv");
-    COEFFS_SIGMA_HI = new CoefficientContainer("nga-east-usgs-sigma-hi.csv");
     COEFFS_SIGMA_EPRI = new CoefficientContainer("nga-east-usgs-sigma-epri.csv");
     USGS_SEED_WEIGHTS = initSeedWeights();
   }
@@ -233,15 +221,11 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  private final CoefficientsSigma σCoeffsLo;
   private final CoefficientsSigma σCoeffsMid;
-  private final CoefficientsSigma σCoeffsHi;
   private final CoefficientsSigmaEpri σCoeffsEpri;
 
   NgaEastUsgs_2017(final Imt imt) {
-    σCoeffsLo = new CoefficientsSigma(imt, COEFFS_SIGMA_LO);
     σCoeffsMid = new CoefficientsSigma(imt, COEFFS_SIGMA_MID);
-    σCoeffsHi = new CoefficientsSigma(imt, COEFFS_SIGMA_HI);
     σCoeffsEpri = new CoefficientsSigmaEpri(imt, COEFFS_SIGMA_EPRI);
   }
 
@@ -269,20 +253,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         sigmaEpri(σCoeffsEpri, Mw)
     };
     σSet.weights = SIGMA_LTC_WTS;
-    return σSet;
-  }
-
-  /* Archive: Panel model with phi_S2S term and all branches. */
-  @Deprecated
-  SigmaSet sigmaSetPanelBranching(double Mw, double vs30) {
-    double[] sigmas = {
-        sigmaPanelBranching(σCoeffsLo, Mw, vs30),
-        sigmaPanelBranching(σCoeffsMid, Mw, vs30),
-        sigmaPanelBranching(σCoeffsHi, Mw, vs30),
-    };
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = sigmas;
-    σSet.weights = SIGMA_WTS;
     return σSet;
   }
 
@@ -331,27 +301,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
     /* φ_ss model; global branch only; Equation 5-2 */
     double φ_ss = phi_ss(Mw, c.ga, c.gb);
-
-    /* φ_s2s model; single branch; Stewart et al. */
-    double φ_s2s = phi_s2s(vs30, c.φs2s1, c.φs2s2);
-
-    return Maths.hypot(τ, φ_ss, φ_s2s);
-  }
-
-  /* Archive: Panel model with phi_S2S term and φ_ss branching. */
-  @Deprecated
-  private static double sigmaPanelBranching(
-      CoefficientsSigma c,
-      double Mw,
-      double vs30) {
-
-    /* τ model; global branch only; Equation 5-1 */
-    double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
-
-    /* φ_ss model; global, constant, and mag-dep branches Equation 5-2 */
-    double φ_ss = 0.8 * phi_ss(Mw, c.ga, c.gb) +
-        0.1 * c.c +
-        0.1 * phi_ss(Mw, c.ma, c.mb);
 
     /* φ_s2s model; single branch; Stewart et al. */
     double φ_s2s = phi_s2s(vs30, c.φs2s1, c.φs2s2);
@@ -635,7 +584,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       super(imt, SiteAmp.Model.GRADIENT_ONLY);
     }
   }
-  
+
   static abstract class Sammons extends NgaEastUsgs_2017 {
     static final String NAME = NgaEastUsgs_2017.NAME + " : Sammons : ";
     static final String NAME0 = NAME + "0";
@@ -1179,8 +1128,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
        * 
        * The final model gives 2/3 weight to a weight scaling model of
        * [0.9i,0.1g] to [0.1i,0.9g] and 1/3 weight to a weight scaling model of
-       * [0.5i,0.5g] to [0.1i,0.9g]. This results in a final weight scaling model
-       * of [0.767i,0.233g] at 600 m/s and [0.1i,0.9g] at 400 m/s.
+       * [0.5i,0.5g] to [0.1i,0.9g]. This results in a final weight scaling
+       * model of [0.767i,0.233g] at 600 m/s and [0.1i,0.9g] at 400 m/s.
        */
       double wti = WT1; // impedance = 0.767 @ Vs30 > 600
       if (vs30 < VW2) {
@@ -1304,16 +1253,16 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       // fT,
       // σT);
 
-//       // TODO clean
-//       String values = String.format(
-//       "%5.3f\t%d\t%.7g\t%.7g\t%.7g",
-//       c.imt.isSA() ? c.imt.period() : 0.0,
-//       (int) vs30,
-//       exp(fLin),
-//       exp(fNonlin),
-//       exp(fT));
-//      
-//       System.out.println(values);
+      // // TODO clean
+      // String values = String.format(
+      // "%5.3f\t%d\t%.7g\t%.7g\t%.7g",
+      // c.imt.isSA() ? c.imt.period() : 0.0,
+      // (int) vs30,
+      // exp(fLin),
+      // exp(fNonlin),
+      // exp(fT));
+      //
+      // System.out.println(values);
 
       return new Value(fT, σT);
     }
