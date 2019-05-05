@@ -1000,26 +1000,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       double f760 = c.f760i * wti + c.f760g * wtg;
       double f760σ = c.f760iσ * wti + c.f760gσ * wtg;
 
-      /* Vs30 dependent f760 model: impedance vs.gradient. */
-      // TODO clean
-      //
-      // renamed class fields
-      // private static final double WT_I = 0.9;
-      // private static final double WT_G = 1.0 - WT_I;
-      // private static final double WT_SCALE = (WT_I - WT_G) / (log(VW1) -
-      // log(VW2)); // ≈1.97
-      //
-      // implementation
-      // double wti = WT_I;
-      // if (vs30 < VW2) {
-      // wti = WT_G;
-      // } else if (vs30 < VW1) {
-      // wti = WT_SCALE * log(vs30 / VW2) + WT_G;
-      // }
-      // double wtg = 1.0 - wti;
-      // double f760 = c.f760i * wti + c.f760g * wtg;
-      // double f760σ = c.f760iσ * wti + c.f760gσ * wtg;
-
       double fv = 0.0;
       if (vs30 <= c.v1) {
         fv = c.c * log(c.v1 / V_LIN_REF);
@@ -1072,46 +1052,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       double fT = fLin + fNonlin;
       double σT = sqrt(σLin * σLin + σNonlin * σNonlin);
-
-      // // TODO clean
-      // String values = String.format(
-      // "%12s\t%5.3f\t%.6g\t%.7g\t%.7g\t%.7g\t%.7g\t%.7g\t%.7g\t%.7g\t%.7g\t%.7g",
-      // c.imt.name(),
-      // c.imt.isSA() ? c.imt.period() : 0.0,
-      // pgaRock,
-      // fv,
-      // f760,
-      // fvσ,
-      // fLin,
-      // σLin,
-      // fNonlin,
-      // σNonlin,
-      // fT,
-      // σT);
-
-      // TODO clean
-      // String values = String.format(
-      // "%5.3f %.7g %.7g %.7g %.7g %.7g %.7g %.7g %.7g",
-      // c.imt.isSA() ? c.imt.period() : 0.0,
-      // fv,
-      // c.f760g,
-      // c.f760i,
-      // f760,
-      // fLin,
-      // fNonlin,
-      // fT,
-      // σT);
-
-      // // TODO clean
-      // String values = String.format(
-      // "%5.3f\t%d\t%.7g\t%.7g\t%.7g",
-      // c.imt.isSA() ? c.imt.period() : 0.0,
-      // (int) vs30,
-      // exp(fLin),
-      // exp(fNonlin),
-      // exp(fT));
-      //
-      // System.out.println(values);
 
       return new Value(fT, σT);
     }
