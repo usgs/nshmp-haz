@@ -22,7 +22,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 @SuppressWarnings("javadoc")
 @RunWith(Parameterized.class)
-public class Ngaw2 extends GmmTest {
+public class NgaWest2 extends GmmTest {
 
   private static String GMM_INPUTS = "NGA_inputs.csv";
   private static String GMM_RESULTS = "NGAW2_results.csv";
@@ -32,7 +32,7 @@ public class Ngaw2 extends GmmTest {
     return loadResults(GMM_RESULTS);
   }
 
-  public Ngaw2(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
+  public NgaWest2(int index, Gmm gmm, Imt imt, double exMedian, double exSigma) {
     super(index, gmm, imt, exMedian, exSigma, GMM_INPUTS);
   }
 
