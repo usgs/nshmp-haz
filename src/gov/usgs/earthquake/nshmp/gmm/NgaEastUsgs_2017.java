@@ -180,11 +180,11 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   private static final class CoefficientsSigma {
 
-    /* τ coefficients */
+    /* τ coefficients, global model, central branch */
     final double τ1, τ2, τ3, τ4;
 
-    /* φ_ss coefficients; g=global, m=mag-dep, c=constant */
-    final double ga, gb, ma, mb, c;
+    /* φ_ss coefficients, global model, central branch */
+    final double a, b;
 
     /* φ_s2s coefficients */
     final double φs2s1, φs2s2;
@@ -195,11 +195,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       τ2 = coeffs.get("t2");
       τ3 = coeffs.get("t3");
       τ4 = coeffs.get("t4");
-      ga = coeffs.get("ss_ga");
-      gb = coeffs.get("ss_gb");
-      ma = coeffs.get("ss_ma");
-      mb = coeffs.get("ss_mb");
-      c = coeffs.get("ss_c");
+      a = coeffs.get("ss_a");
+      b = coeffs.get("ss_b");
       φs2s1 = coeffs.get("s2s1");
       φs2s2 = coeffs.get("s2s2");
     }
@@ -300,9 +297,9 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     double τ = tau(Mw, c.τ1, c.τ2, c.τ3, c.τ4);
 
     /* φ_ss model; global branch only; Equation 5-2 */
-    double φ_ss = phi_ss(Mw, c.ga, c.gb);
+    double φ_ss = phi_ss(Mw, c.a, c.b);
 
-    /* φ_s2s model; single branch; Stewart et al. */
+    /* φ_s2s model; single branch; Stewart et al. (2019) */
     double φ_s2s = phi_s2s(vs30, c.φs2s1, c.φs2s2);
 
     return Maths.hypot(τ, φ_ss, φ_s2s);
