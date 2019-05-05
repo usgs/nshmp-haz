@@ -659,20 +659,6 @@ public enum Gmm {
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS_SITE_IMPEDANCE(
-      NgaEastUsgs_2017.Usgs17_SiteImpedance.class,
-      NgaEastUsgs_2017.Usgs17_SiteImpedance.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
-      NgaEastUsgs_2017.CONSTRAINTS),
-
-  /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS_SITE_GRADIENT(
-      NgaEastUsgs_2017.Usgs17_SiteGradient.class,
-      NgaEastUsgs_2017.Usgs17_SiteGradient.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
-      NgaEastUsgs_2017.CONSTRAINTS),
-  
-  /** @see NgaEastUsgs_2017 */
   NGA_EAST_USGS_1(
       NgaEastUsgs_2017.Sammons_1.class,
       NgaEastUsgs_2017.Sammons_1.NAME,
@@ -819,20 +805,6 @@ public enum Gmm {
       NgaEastHybrid.NgaEastUsgsSeeds_Sigma2014.class,
       NgaEastHybrid.NgaEastUsgsSeeds_Sigma2014.NAME,
       FrankelEtAl_1996.COEFFS,
-      NgaEastUsgs_2017.CONSTRAINTS),
-
-  /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS_SEEDS_SITE_IMPEDANCE(
-      NgaEastUsgs_2017.UsgsSeedsSiteImpedance.class,
-      NgaEastUsgs_2017.UsgsSeedsSiteImpedance.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
-      NgaEastUsgs_2017.CONSTRAINTS),
-
-  /** @see NgaEastUsgs_2017 */
-  NGA_EAST_USGS_SEEDS_SITE_GRADIENT(
-      NgaEastUsgs_2017.UsgsSeedsSiteGradient.class,
-      NgaEastUsgs_2017.UsgsSeedsSiteGradient.NAME,
-      NgaEastUsgs_2017.COEFFS_SIGMA_MID,
       NgaEastUsgs_2017.CONSTRAINTS),
 
   /* NGA-East Seed Models */
@@ -1526,14 +1498,10 @@ public enum Gmm {
             NGA_EAST_USGS_EPRI,
             NGA_EAST_USGS_PANEL,
             NGA_EAST_USGS_CEUS2014,
-            NGA_EAST_USGS_SITE_IMPEDANCE,
-            NGA_EAST_USGS_SITE_GRADIENT,
             NGA_EAST_USGS_SEEDS,
             NGA_EAST_USGS_SEEDS_EPRI,
             NGA_EAST_USGS_SEEDS_PANEL,
-            NGA_EAST_USGS_SEEDS_CEUS2014,
-            NGA_EAST_USGS_SEEDS_SITE_IMPEDANCE,
-            NGA_EAST_USGS_SEEDS_SITE_GRADIENT)),
+            NGA_EAST_USGS_SEEDS_CEUS2014)),
 
     NGA_EAST_SIGMA_SITE(
         "NGA-East USGS Sigma & Site Studies",

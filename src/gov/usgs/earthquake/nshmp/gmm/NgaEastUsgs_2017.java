@@ -374,8 +374,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         Imt imt,
         double[] weights,
         GroundMotionTable[] tables,
-        GroundMotionTable[] pgaTables,
-        SiteAmp.Model model) {
+        GroundMotionTable[] pgaTables) {
 
       super(imt);
       checkArgument(
@@ -384,7 +383,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       this.weights = weights;
       this.tables = tables;
       this.pgaTables = pgaTables;
-      this.siteAmp = new SiteAmp(imt, model);
+      this.siteAmp = new SiteAmp(imt);
     }
 
     @Override
@@ -412,16 +411,11 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     static final String NAME = BASE_NAME + " : σ-LogicTree";
 
     Usgs17(Imt imt) {
-      this(imt, SiteAmp.Model.LOGIC_TREE);
-    }
-
-    Usgs17(Imt imt, SiteAmp.Model model) {
       super(
           imt,
           GroundMotionTables.getNgaEastWeights(imt),
           GroundMotionTables.getNgaEast(imt),
-          GroundMotionTables.getNgaEast(Imt.PGA),
-          model);
+          GroundMotionTables.getNgaEast(Imt.PGA));
     }
   }
 
@@ -448,22 +442,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     @Override
     SigmaSet calcSigma(GmmInput in) {
       return sigmaSetPanel(in.Mw, in.vs30);
-    }
-  }
-
-  static class Usgs17_SiteImpedance extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : site-impedance";
-
-    Usgs17_SiteImpedance(Imt imt) {
-      super(imt, SiteAmp.Model.IMPEDANCE_ONLY);
-    }
-  }
-
-  static class Usgs17_SiteGradient extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : site-gradient";
-
-    Usgs17_SiteGradient(Imt imt) {
-      super(imt, SiteAmp.Model.GRADIENT_ONLY);
     }
   }
 
@@ -502,15 +480,11 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
 
     UsgsSeeds(Imt imt) {
-      this(imt, SiteAmp.Model.LOGIC_TREE);
-    }
-
-    UsgsSeeds(Imt imt, SiteAmp.Model model) {
       super(imt);
       this.tables = GroundMotionTables.getNgaEastSeeds(ids, imt);
       this.pgaTables = GroundMotionTables.getNgaEastSeeds(ids, Imt.PGA);
       this.sp16 = new ShahjoueiPezeshk_2016(imt);
-      this.siteAmp = new SiteAmp(imt, model);
+      this.siteAmp = new SiteAmp(imt);
     }
 
     @Override
@@ -561,24 +535,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     @Override
     SigmaSet calcSigma(GmmInput in) {
       return sigmaSetPanel(in.Mw, in.vs30);
-    }
-  }
-
-  static class UsgsSeedsSiteImpedance extends UsgsSeeds {
-
-    static final String NAME = UsgsSeeds.BASE_NAME + " : site-impedance";
-
-    UsgsSeedsSiteImpedance(Imt imt) {
-      super(imt, SiteAmp.Model.IMPEDANCE_ONLY);
-    }
-  }
-
-  static class UsgsSeedsSiteGradient extends UsgsSeeds {
-
-    static final String NAME = UsgsSeeds.BASE_NAME + " : site-gradient";
-
-    UsgsSeedsSiteGradient(Imt imt) {
-      super(imt, SiteAmp.Model.GRADIENT_ONLY);
     }
   }
 
@@ -1029,8 +985,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
     private final Coefficients c;
 
-    private final Model model;
-
     private static final class Coefficients {
 
       final Imt imt;
@@ -1061,18 +1015,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
 
     SiteAmp(Imt imt) {
-      this(imt, Model.LOGIC_TREE);
-    }
-
-    SiteAmp(Imt imt, Model model) {
       c = new Coefficients(imt, COEFFS);
-      this.model = model;
-    }
-
-    static enum Model {
-      GRADIENT_ONLY,
-      IMPEDANCE_ONLY,
-      LOGIC_TREE;
     }
 
     SiteAmp.Value calc(double pgaRock, double vs30) {
@@ -1135,15 +1078,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         wti = WT_SCALE * log(vs30 / VW2) + WT2;
       }
       double wtg = 1.0 - wti;
-
-      // TODO clean - sensitivity testing
-      if (this.model == Model.GRADIENT_ONLY) {
-        wti = 0.0;
-        wtg = 1.0;
-      } else if (this.model == Model.IMPEDANCE_ONLY) {
-        wti = 1.0;
-        wtg = 0.0;
-      }
 
       double f760 = c.f760i * wti + c.f760g * wtg;
       double f760σ = c.f760iσ * wti + c.f760gσ * wtg;
