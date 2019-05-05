@@ -142,11 +142,27 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
     // Path Term
     double Fd = calcPathTerm(c, in.Mw, in.rJB);
 
-    // Site Response Term -- Linear
-    double vs30 = in.vs30;
-    double Fs = c.b_lin * log(vs30 / Vref);
+    // Site term
+    double Fs = calcSite(c, pga4nl, in.vs30);
+    
+    // Total Model
+    return Fm + Fd + Fs;
+  }
+  
+  /** 
+   * Package visible site amplification model. This model
+   * is appropriate for use with other GMMs where the reference rock
+   * site condition has Vs30=760.
+   */
+  double siteAmp(double lnPga, double vs30) {
+    return calcSite(coeffs, lnPga, vs30);
+  }
+  
+  /* Site term */
+  private static double calcSite(Coefficients c, double lnPga, double vs30) {
+    
+    double Flin = c.b_lin * log(vs30 / Vref);
 
-    // Site Response Term -- Nonlinear
     double bnl = 0.0; // vs30 >= 760 case
     if (vs30 < Vref) {
       if (vs30 > V2) {
@@ -159,25 +175,20 @@ public final class BooreAtkinson_2008 implements GroundMotionModel {
     }
 
     double Fnl = 0.0;
-    if (pga4nl <= A1) {
+    if (lnPga <= A1) {
       Fnl = bnl * log(PGAlo / 0.1);
-    } else if (pga4nl <= A2) {
+    } else if (lnPga <= A2) {
       double dX = log(A2 / A1);
       double dY = bnl * log(A2 / PGAlo);
       double _c = (3.0 * dY - bnl * dX) / (dX * dX);
       double d = -(2.0 * dY - bnl * dX) / (dX * dX * dX);
-      double p = log(pga4nl / A1);
+      double p = log(lnPga / A1);
       Fnl = bnl * log(PGAlo / 0.1) + (_c * p * p) + (d * p * p * p);
-
     } else {
-      Fnl = bnl * log(pga4nl / 0.1);
+      Fnl = bnl * log(lnPga / 0.1);
     }
 
-    // Total site
-    Fs += Fnl;
-
-    // Total Model
-    return Fm + Fd + Fs;
+    return Flin + Fnl;
   }
 
   // Median PGA for ref rock (Vs30=760m/s); always called with PGA coeffs

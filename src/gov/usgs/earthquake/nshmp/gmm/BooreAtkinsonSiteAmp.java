@@ -9,6 +9,7 @@ import java.util.Map;
  *
  * @author Peter Powers
  */
+@Deprecated
 class BooreAtkinsonSiteAmp {
 
   /*

@@ -75,6 +75,10 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * recommendations for ergodic site amplification in central and eastern North
  * America: PEER Report No. 2017/04, 66 p.
  *
+ * <p><b>Reference:</b> Stewart, J., Parker, G., Atkinson, G., Boore, D., and
+ * Hashash, Y., and Silva, W., 2019, Ergodic site amplification model for
+ * central and eastern North America: Earthquake Spectra (in review)
+ * 
  * <p><b>Reference:</b> Hashash, Y., Harmon, J., Ilhan, O., Parker, G., and
  * Stewart, 2017, Recommendation for ergodic nonlinear site amplification in
  * central and eastern North America: PEER Report No. 2017/05, 62 p.
@@ -1115,7 +1119,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     private static final CoefficientContainer COEFFS = new CoefficientContainer(
         "nga-east-usgs-siteamp.csv");
 
-    private static final double V_MIN = 185.0;
+    private static final double V_MIN = 150.0;
     private static final double V_MAX = 3000.0;
     private static final double V_LIN_REF = 760.0;
     private static final double VL = 200.0;
@@ -1230,13 +1234,16 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       /* Linear response */
 
       /*
-       * Vs30 dependent f760 model: impedance vs.gradient. This is an update to
-       * the complementary imp/gr weighting scheme, commented out below, that
-       * gives 90/10 weight at 400 m/s and 76.7/23.3 at 600 m/s.
+       * Vs30 dependent f760 model: impedance vs. gradient
+       * 
+       * The final model gives 2/3 weight to a weight scaling model of
+       * [0.9i,0.1g] to [0.1i,0.9g] and 1/3 weight to a weight scaling model of
+       * [0.5i,0.5g] to [0.1i,0.9g]. This results in a final weight scaling model
+       * of [0.767i,0.233g] at 600 m/s and [0.1i,0.9g] at 400 m/s.
        */
-      double wti = WT1;
+      double wti = WT1; // impedance = 0.767 @ Vs30 > 600
       if (vs30 < VW2) {
-        wti = WT2;
+        wti = WT2; // impedance = 0.1 @ Vs30 < 400
       } else if (vs30 < VW1) {
         wti = WT_SCALE * log(vs30 / VW2) + WT2;
       }
@@ -1292,6 +1299,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       } else if (vs30 <= VU) {
         fv = c.c * log(c.v2 / V_LIN_REF);
       } else {
+        /* Equivalent to equation 3 for 2000 < vs30 < 3000 */
         double f2000 = c.c * log(c.v2 / V_LIN_REF);
         fv = Interpolator.findY(log(VU), f2000, log(V_MAX), -f760, log(vs30));
       }
@@ -1307,8 +1315,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
         double vT = (vs30 - c.v2) / (VU - c.v2);
         fvσ = c.σvc + (c.σu - c.σvc) * vT * vT;
       } else {
-        double scale = log(vs30 / VU) / log(VU / V_MAX);
-        fvσ = (c.σvc + (c.σu - c.σvc)) * scale;
+        fvσ = c.σu * (1.0 - log(vs30 / VU) / log(V_MAX / VU));
       }
 
       double fLin = fv + f760;
