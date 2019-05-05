@@ -9,24 +9,6 @@ import static gov.usgs.earthquake.nshmp.gmm.Gmm.BSSA_14_BASIN_AMP;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.CAMPBELL_03;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.CB_14;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.CB_14_BASIN_AMP;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SIGMA_AB_06_PRIME;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SIGMA_ATKINSON_08_PRIME;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SIGMA_CAMPBELL_03;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SIGMA_FRANKEL_96;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SIGMA_PEZESHK_11;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SIGMA_SILVA_02;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SIGMA_SOMERVILLE_01;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SIGMA_TORO_97_MW;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SIGMA_TP_05;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SITE_AB_06_PRIME;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SITE_ATKINSON_08_PRIME;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SITE_CAMPBELL_03;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SITE_FRANKEL_96;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SITE_PEZESHK_11;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SITE_SILVA_02;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SITE_SOMERVILLE_01;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SITE_TORO_97_MW;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CEUS14_NGAE_SITE_TP_05;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.CY_14;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.CY_14_BASIN_AMP;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.FRANKEL_96;
@@ -154,55 +136,6 @@ class CombinedGmm implements GroundMotionModel {
     }
   }
   
-  /* Hybrid CEUS14 NGA-East Sigma GMMs */
-  static final Map<Gmm, Double> CEUS_2014_NGAE_SIGMA = ImmutableMap.<Gmm, Double> builder()
-      .put(CEUS14_NGAE_SIGMA_AB_06_PRIME, 0.22)
-      .put(CEUS14_NGAE_SIGMA_ATKINSON_08_PRIME, 0.08)
-      .put(CEUS14_NGAE_SIGMA_CAMPBELL_03, 0.11)
-      .put(CEUS14_NGAE_SIGMA_FRANKEL_96, 0.06)
-      .put(CEUS14_NGAE_SIGMA_PEZESHK_11, 0.15)
-      .put(CEUS14_NGAE_SIGMA_SILVA_02, 0.06)
-      .put(CEUS14_NGAE_SIGMA_SOMERVILLE_01, 0.1)
-      .put(CEUS14_NGAE_SIGMA_TP_05, 0.11)
-      .put(CEUS14_NGAE_SIGMA_TORO_97_MW, 0.11)
-      .build();
-
-  static final class Ceus2014_NgaEastSigma extends CombinedGmm {
-
-    static final String NAME = CombinedGmm.NAME + "CEUS 2014 (4.* + NGAE Sigma)";
-    static final Constraints CONSTRAINTS = CEUS_2014_CONSTRAINTS;
-    static final CoefficientContainer COEFFS = FrankelEtAl_1996.COEFFS;
-
-    Ceus2014_NgaEastSigma(Imt imt) {
-      super(imt, CEUS_2014_NGAE_SIGMA);
-    }
-  }
-  
-  /* Hybrid CEUS14 NGA-East Site GMMs */
-  static final Map<Gmm, Double> CEUS_2014_NGAE_SITE = ImmutableMap.<Gmm, Double> builder()
-      .put(CEUS14_NGAE_SITE_AB_06_PRIME, 0.22)
-      .put(CEUS14_NGAE_SITE_ATKINSON_08_PRIME, 0.08)
-      .put(CEUS14_NGAE_SITE_CAMPBELL_03, 0.11)
-      .put(CEUS14_NGAE_SITE_FRANKEL_96, 0.06)
-      .put(CEUS14_NGAE_SITE_PEZESHK_11, 0.15)
-      .put(CEUS14_NGAE_SITE_SILVA_02, 0.06)
-      .put(CEUS14_NGAE_SITE_SOMERVILLE_01, 0.1)
-      .put(CEUS14_NGAE_SITE_TP_05, 0.11)
-      .put(CEUS14_NGAE_SITE_TORO_97_MW, 0.11)
-      .build();
-
-  static final class Ceus2014_NgaEastSite extends CombinedGmm {
-
-    static final String NAME = CombinedGmm.NAME + "CEUS 2014 (4.* + NGAE Site)";
-    static final Constraints CONSTRAINTS = CEUS_2014_CONSTRAINTS;
-    static final CoefficientContainer COEFFS = FrankelEtAl_1996.COEFFS;
-
-    Ceus2014_NgaEastSite(Imt imt) {
-      super(imt, CEUS_2014_NGAE_SITE);
-    }
-  }
-
-
   private static final Map<Gmm, Double> WUS_2014_4P1 = ImmutableMap.<Gmm, Double> builder()
       .put(ASK_14, 0.22)
       .put(BSSA_14, 0.22)

@@ -122,7 +122,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * the aleatory variability logic tree.
    */
 
-  static final String NAME = "NGA-East USGS (2017)";
+  static final String NAME = "NGA-East for USGS (2017)";
 
   static final Constraints CONSTRAINTS = Constraints.builder()
       .set(MW, Range.closed(4.0, 8.2))
@@ -383,9 +383,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   }
 
   static class Usgs17 extends ModelGroup {
-    static final String BASE_NAME = NgaEastUsgs_2017.NAME;
-    static final String NAME = BASE_NAME + " : σ-LogicTree";
-
     Usgs17(Imt imt) {
       super(
           imt,
@@ -402,8 +399,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * other seed models.
    */
   static class UsgsSeeds extends NgaEastUsgs_2017 {
-    static final String BASE_NAME = NgaEastUsgs_2017.NAME + " : Seed Tree";
-    static final String NAME = BASE_NAME + " : σ-LogicTree";
+    static final String NAME = "NGA-East Updated Seed Tree";
     static final String SP16_ID = "SP16";
 
     /* ids for table based models only; skips SP16 */
