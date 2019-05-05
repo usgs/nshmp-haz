@@ -36,17 +36,19 @@ import gov.usgs.earthquake.nshmp.internal.Parsing.Delimiter;
 import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
- * Implementation of the PEER NGA-East for USGS ground motion model. This is a
- * custom version of the model developed specifically for USGS applications. It
- * is a composite model that consists of 17 median ground motion models with
- * period dependent weights.
+ * Implementation of the PEER NGA-East for USGS ground motion model. This
+ * version of the model was developed specifically for USGS applications but is
+ * identical to the final NGA-East model developed for the NRC. It is a
+ * composite model that consists of 17 median ground motion models with period
+ * dependent weights. This class also includes the implementation of the USGS
+ * Updated Seed logic tree.
  * 
  * <p>Calculation of hazard using this implementation deviates somewhat from the
  * current nshmp-haz PSHA pipeline and required implementation of a
  * {@code MultiScalarGroundMotion}. A {@code MultiScalarGroundMotion} stores
  * arrays of means and sigmas with associated weights.
  * 
- * <p>This class also manages implementations of 22 'seed' models, 19 of which
+ * <p>This class manages implementations of 22 'seed' models, 19 of which
  * were used to generate (via Sammons mapping) the 17 NGA-East for USGS models
  * and associated weights, and 3 of which are updates. This class also handles
  * USGS logic tree of 14 of those seed models. Ground motions for most models
@@ -134,14 +136,14 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * Sigma coefficients for global model from tables 5-1 (tau) and 5-2 (phi) and
    * EPRI model from table 5-5.
    */
-  static CoefficientContainer COEFFS_SIGMA_MID;
+  static CoefficientContainer COEFFS_SIGMA_PANEL;
   static CoefficientContainer COEFFS_SIGMA_EPRI;
 
   /* Immutable, ordered map of seed model weights. */
   static Map<String, Double> USGS_SEED_WEIGHTS;
 
   static {
-    COEFFS_SIGMA_MID = new CoefficientContainer("nga-east-usgs-sigma-mid.csv");
+    COEFFS_SIGMA_PANEL = new CoefficientContainer("nga-east-usgs-sigma-panel.csv");
     COEFFS_SIGMA_EPRI = new CoefficientContainer("nga-east-usgs-sigma-epri.csv");
     USGS_SEED_WEIGHTS = initSeedWeights();
   }
@@ -178,7 +180,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   private static final double VΦ1 = 1200.0;
   private static final double VΦ2 = 1500.0;
 
-  private static final class CoefficientsSigma {
+  private static final class CoefficientsSigmaPanel {
 
     /* τ coefficients, global model, central branch */
     final double τ1, τ2, τ3, τ4;
@@ -189,7 +191,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     /* φ_s2s coefficients */
     final double φs2s1, φs2s2;
 
-    CoefficientsSigma(Imt imt, CoefficientContainer cc) {
+    CoefficientsSigmaPanel(Imt imt, CoefficientContainer cc) {
       Map<String, Double> coeffs = cc.get(imt);
       τ1 = coeffs.get("t1");
       τ2 = coeffs.get("t2");
@@ -218,11 +220,11 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  private final CoefficientsSigma σCoeffsMid;
+  private final CoefficientsSigmaPanel σCoeffsPanel;
   private final CoefficientsSigmaEpri σCoeffsEpri;
 
   NgaEastUsgs_2017(final Imt imt) {
-    σCoeffsMid = new CoefficientsSigma(imt, COEFFS_SIGMA_MID);
+    σCoeffsPanel = new CoefficientsSigmaPanel(imt, COEFFS_SIGMA_PANEL);
     σCoeffsEpri = new CoefficientsSigmaEpri(imt, COEFFS_SIGMA_EPRI);
   }
 
@@ -230,7 +232,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
   SigmaSet sigmaSetLogicTree(double Mw, double vs30) {
     SigmaSet σSet = new SigmaSet();
     σSet.sigmas = new double[] {
-        sigmaPanel(σCoeffsMid, Mw, vs30),
+        sigmaPanel(σCoeffsPanel, Mw, vs30),
         sigmaEpri(σCoeffsEpri, Mw)
     };
     σSet.weights = SIGMA_LTC_WTS;
@@ -265,7 +267,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   /* σ branch 2: Panel recommendation with φ_s2s. */
   private static double sigmaPanel(
-      CoefficientsSigma c,
+      CoefficientsSigmaPanel c,
       double Mw,
       double vs30) {
 
@@ -1061,8 +1063,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
      * uncertainty.
      */
     static final class Value {
-
-      // TODO test short circuit for vs3000 matches pass thru apply
 
       final double siteAmp;
       final double σ;

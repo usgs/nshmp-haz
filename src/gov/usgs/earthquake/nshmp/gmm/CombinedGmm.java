@@ -129,7 +129,7 @@ class CombinedGmm implements GroundMotionModel {
 
     static final String NAME = CombinedGmm.NAME + "CEUS 2018 (5.0)";
     static final Constraints CONSTRAINTS = NgaEastUsgs_2017.CONSTRAINTS;
-    static final CoefficientContainer COEFFS = NgaEastUsgs_2017.COEFFS_SIGMA_MID;
+    static final CoefficientContainer COEFFS = NgaEastUsgs_2017.COEFFS_SIGMA_PANEL;
 
     Ceus2018(Imt imt) {
       super(imt, CEUS_2018);
