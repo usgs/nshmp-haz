@@ -25,8 +25,8 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class SubSlab extends GmmTest {
 
-  private static String GMM_INPUTS = "SLAB_inputs.csv";
-  private static String GMM_RESULTS = "SLAB_results.csv";
+  private static String GMM_INPUTS = "slab-inputs.csv";
+  private static String GMM_RESULTS = "slab-results.csv";
 
   @Parameters(name = "{index}: {0} {2} {1}")
   public static Collection<Object[]> data() throws IOException {

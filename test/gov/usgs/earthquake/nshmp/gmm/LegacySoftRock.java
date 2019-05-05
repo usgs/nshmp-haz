@@ -27,8 +27,8 @@ public class LegacySoftRock extends GmmTest {
    * currently used in the 2007 Alaska NSHM.
    */
 
-  private static String GMM_INPUTS = "CEUS_vs760_inputs.csv";
-  private static String GMM_RESULTS = "LEGACY_vs760_results.csv";
+  private static String GMM_INPUTS = "ceus-vs760-inputs.csv";
+  private static String GMM_RESULTS = "legacy-vs760-results.csv";
 
   @Parameters(name = "{index}: {0} {2} {1}")
   public static Collection<Object[]> data() throws IOException {
