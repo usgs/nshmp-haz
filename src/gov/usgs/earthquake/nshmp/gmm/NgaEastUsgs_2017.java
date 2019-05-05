@@ -226,22 +226,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     σCoeffsEpri = new CoefficientsSigmaEpri(imt, COEFFS_SIGMA_EPRI);
   }
 
-  /* Recommendation 1: Updated EPRI model. */
-  SigmaSet sigmaSetEpri(double Mw) {
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = new double[] { sigmaEpri(σCoeffsEpri, Mw) };
-    σSet.weights = new double[] { 1.0 };
-    return σSet;
-  }
-
-  /* Recommendation 2: Panel model (φ_S2S), no branches. */
-  SigmaSet sigmaSetPanel(double Mw, double vs30) {
-    SigmaSet σSet = new SigmaSet();
-    σSet.sigmas = new double[] { sigmaPanel(σCoeffsMid, Mw, vs30) };
-    σSet.weights = new double[] { 1.0 };
-    return σSet;
-  }
-
   /* Final USGS logic-tree model: Panel=0.2, EPRIu=0.8 */
   SigmaSet sigmaSetLogicTree(double Mw, double vs30) {
     SigmaSet σSet = new SigmaSet();
@@ -259,16 +243,8 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     return Data.sum(Data.multiply(ss.sigmas, ss.weights));
   }
 
-  /*
-   * Recommendation 1: Updated EPRI (2013); initial NGA-East team recomendation.
-   */
+  /* σ branch 1: Updated EPRI (2013); initial recomendation. */
   private static double sigmaEpri(CoefficientsSigmaEpri c, double Mw) {
-    double[] phiTau = sigmaEpriTerms(c, Mw);
-    return Maths.hypot(phiTau[0], phiTau[1]);
-  }
-
-  /* Updated EPRI (2013) φ and τ. Method returns a double[] of {φ,τ} */
-  private static double[] sigmaEpriTerms(CoefficientsSigmaEpri c, double Mw) {
     double τ;
     double φ;
     if (Mw <= 5.0) {
@@ -284,10 +260,10 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
       τ = c.τ_m7;
       φ = c.φ_m7;
     }
-    return new double[] { φ, τ };
+    return Maths.hypot(φ, τ);
   }
 
-  /* Recommendation 2: Same as above, no c branching. */
+  /* σ branch 2: Panel recommendation with φ_s2s. */
   private static double sigmaPanel(
       CoefficientsSigma c,
       double Mw,
@@ -419,32 +395,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  static class Usgs17_SigmaEpri extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : σ-EPRI";
-
-    Usgs17_SigmaEpri(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetEpri(in.Mw);
-    }
-  }
-
-  static class Usgs17_SigmaPanel extends Usgs17 {
-    static final String NAME = Usgs17.BASE_NAME + " : σ-Panel";
-
-    Usgs17_SigmaPanel(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetPanel(in.Mw, in.vs30);
-    }
-  }
-
   /*
    * Implementation of USGS Seed model logic tree. All models but SP16 are table
    * based; SP16 is added to the median ground motion array last. NOTE that the
@@ -507,34 +457,6 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     /* Default sigma */
     SigmaSet calcSigma(GmmInput in) {
       return sigmaSetLogicTree(in.Mw, in.vs30);
-    }
-  }
-
-  static class UsgsSeedsEpri extends UsgsSeeds {
-
-    static final String NAME = UsgsSeeds.BASE_NAME + " : σ-EPRI";
-
-    UsgsSeedsEpri(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetEpri(in.Mw);
-    }
-  }
-
-  static class UsgsSeedsPanel extends UsgsSeeds {
-
-    static final String NAME = UsgsSeeds.BASE_NAME + " : σ-Panel";
-
-    UsgsSeedsPanel(Imt imt) {
-      super(imt);
-    }
-
-    @Override
-    SigmaSet calcSigma(GmmInput in) {
-      return sigmaSetPanel(in.Mw, in.vs30);
     }
   }
 
