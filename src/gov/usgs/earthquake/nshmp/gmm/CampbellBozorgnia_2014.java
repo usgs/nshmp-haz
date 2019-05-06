@@ -328,8 +328,14 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
     }
 
     double z2p5Term = calcBasinTerm(c, z2p5);
+
     if (basinAmpOnly) {
-      return (z2p5Term > zRefTerm) ? z2p5Term : zRefTerm;
+      /* Short-circuit deamplification and short periods. */
+      if ((z2p5Term <= zRefTerm) || (c.imt.ordinal() < Imt.SA0P75.ordinal())) {
+        return zRefTerm;
+      } else if (c.imt.equals(Imt.SA0P75)) {
+        return (zRefTerm + z2p5Term) * 0.5;
+      }
     }
     return z2p5Term;
   }
