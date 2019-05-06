@@ -96,9 +96,11 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
 
   private static final class Coefficients {
 
+    final Imt imt;
     final double c0, c1, c2, c3, c4, σ;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
+      this.imt = imt;
       Map<String, Double> coeffs = cc.get(imt);
       c0 = coeffs.get("c0");
       c1 = coeffs.get("c1");
@@ -141,35 +143,27 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
 
     double σ = coeffs.σ * BASE_10_TO_E;
 
-    if (basinEffect()) {
-      // Possibly use basin/site term from
-      // CB14 with local rock reference.
-      double μRock = calcMean(coeffs, in);
-      double cbBasin = cb14basinAmp.basinDelta(in, VS30_ROCK);
-      double μ = μRock + cbBasin;
-      return DefaultScalarGroundMotion.create(μ, σ);
-    }
+    double μRock = calcMean(coeffs, in);
+    double μPga = calcMean(coeffsPGA, in);
+    double amSite = siteAmp.siteAmp(μPga, in.vs30);
+    double μAm = μRock + amSite;
 
-    double μ = calcMean(coeffs, coeffsPGA, siteAmp, in);
-    return DefaultScalarGroundMotion.create(μ, σ);
+    if (!Double.isNaN(in.z2p5) && basinEffect()) {
+      double cbSite = cb14basinAmp.basinDelta(in, VS30_ROCK);
+      double μCb = μRock + cbSite;
+      /* Short-circuit lower values and short periods. */
+      if ((μCb < μAm) || (coeffs.imt.ordinal() < Imt.SA0P75.ordinal())) {
+        return DefaultScalarGroundMotion.create(μAm, σ);
+      } else if (coeffs.imt.equals(Imt.SA0P75)) {
+        return DefaultScalarGroundMotion.create((μAm + μCb) * 0.5, σ);
+      }
+      return DefaultScalarGroundMotion.create(μCb, σ);
+    }
+    return DefaultScalarGroundMotion.create(μAm, σ);
   }
 
   boolean basinEffect() {
     return false;
-  }
-
-  private static final double calcMean(
-      final Coefficients c,
-      final Coefficients cPga,
-      final BooreAtkinson_2008 siteAmp,
-      final GmmInput in) {
-
-    double μ = calcMean(c, in);
-    if (in.vs30 != 760.0) {
-      double μPgaRock = calcMean(cPga, in);
-      μ += siteAmp.siteAmp(μPgaRock, in.vs30);
-    }
-    return μ;
   }
 
   private static final double calcMean(final Coefficients c, final GmmInput in) {

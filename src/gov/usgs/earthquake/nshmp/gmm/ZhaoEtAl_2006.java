@@ -31,6 +31,7 @@ import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.eq.Earthquakes;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
+import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
  * Abstract implementation of the subduction ground motion model by Zhao et al.
@@ -149,12 +150,15 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
   private static final class Coefficients {
 
-    final double a, b, c, d, e, Si, Ss, Ssl, C1, C2, C3, C4, σ, τ, τS, Ps, Qi, Qs, Wi, Ws;
+    final Imt imt;
+    final double a, b, c, d, e, Si, Ss, Ssl, C1, C2, C3, C4;
+    final double σ, τ, τS, Ps, Qi, Qs, Wi, Ws;
 
     // unused
     // final double Sr, tauI;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
+      this.imt = imt;
       Map<String, Double> coeffs = cc.get(imt);
       a = coeffs.get("a");
       b = coeffs.get("b");
@@ -213,19 +217,23 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
     double σ = calcStdDev(coeffs, isSlab());
 
-    if (basinEffect()) {
-      // Possibly use basin/site term from
-      // CB14 with local rock reference.
-      double fSite = siteTermStep(coeffs, VS30_ROCK);
-      double μRock = calcMean(coeffs, isSlab(), fSite, in);
-      double cbBasin = cb14basinAmp.basinDelta(in, VS30_ROCK);
-      double μ = μRock + cbBasin;
-      return DefaultScalarGroundMotion.create(μ, σ);
-    }
+    double zSiteVs30 = siteTermStep(coeffs, in.vs30);
+    double μZhao = calcMean(coeffs, isSlab(), zSiteVs30, in);
 
-    double fSite = siteTermStep(coeffs, in.vs30);
-    double μ = calcMean(coeffs, isSlab(), fSite, in);
-    return DefaultScalarGroundMotion.create(μ, σ);
+    if (!Double.isNaN(in.z2p5) && basinEffect()) {
+      double cbSite = cb14basinAmp.basinDelta(in, VS30_ROCK);
+      double zSiteRock = siteTermStep(coeffs, VS30_ROCK);
+      double μRock = calcMean(coeffs, isSlab(), zSiteRock, in);
+      double μCb = μRock + cbSite;
+      /* Short-circuit lower values and short periods. */
+      if ((μCb < μZhao) || (coeffs.imt.ordinal() < Imt.SA0P75.ordinal())) {
+        return DefaultScalarGroundMotion.create(μZhao, σ);
+      } else if (coeffs.imt.equals(Imt.SA0P75)) {
+        return DefaultScalarGroundMotion.create((μZhao + μCb) * 0.5, σ);
+      }
+      return DefaultScalarGroundMotion.create(μCb, σ);
+    }
+    return DefaultScalarGroundMotion.create(μZhao, σ);
   }
 
   abstract boolean isSlab();
