@@ -21,6 +21,7 @@ import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
+import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
  * Implementation of the Boore, Stewart, Seyhan, & Atkinson (2014) next
@@ -169,7 +170,7 @@ public class BooreEtAl_2014 implements GroundMotionModel {
     double lnFnl = F1 + f2 * log((pgaRock + F3) / F3);
 
     // Basin depth term -- Equations 9, 10 , 11
-    double DZ1 = calcDeltaZ1(in.z1p0, vs30, basinAmpOnly);
+    double DZ1 = calcDeltaZ1(c.imt, in.z1p0, vs30, basinAmpOnly);
     double Fdz1 = (c.imt.isSA() && c.imt.period() >= 0.65)
         ? (DZ1 <= c.f7 / c.f6) ? c.f6 * DZ1 : c.f7 : 0.0;
 
@@ -218,19 +219,29 @@ public class BooreEtAl_2014 implements GroundMotionModel {
 
   // Calculate delta Z1 in km as a function of vs30 and using the default
   // model of ChiouYoungs_2013 -- Equations 10, 11
-  private static final double calcDeltaZ1(final double z1p0, final double vs30,
+  private static final double calcDeltaZ1(
+      Imt imt,
+      double z1p0,
+      double vs30,
       boolean basinAmpOnly) {
+
     if (Double.isNaN(z1p0)) {
       return 0.0;
     }
 
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     double z1ref = exp(-7.15 / 4.0 * log((vsPow4 + A) / B)) / 1000.0;
+    double Δz1 = z1p0 - z1ref;
 
-    if (basinAmpOnly && z1p0 <= z1ref) {
-      return 0.0;
+    if (basinAmpOnly) {
+      /* Short-circuit deamplification and short periods. */
+      if ((Δz1 <= 0.0) || (imt.ordinal() < Imt.SA0P75.ordinal())) {
+        return 0.0;
+      } else if (imt.equals(Imt.SA0P75)) {
+        return Δz1 * 0.5;
+      }
     }
-    return z1p0 - z1ref;
+    return Δz1;
   }
 
   // Aleatory uncertainty model

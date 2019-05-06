@@ -49,8 +49,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * 
  * <li>Treats all sites as forearc; no backarc term is considered.</li>
  * 
- * <li>{@code zTop} is interpreted as hypocentral depth and is only used for slab
- * events; it is limited to 120 km, consistent with other subduction
+ * <li>{@code zTop} is interpreted as hypocentral depth and is only used for
+ * slab events; it is limited to 120 km, consistent with other subduction
  * models.</li>
  * 
  * <li>Only the middle branch of the {@code ΔC1} magnitude-scaling break term
@@ -115,12 +115,14 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
   private static final class Coefficients {
 
+    final Imt imt;
     final double vlin, b, θ1, θ2, θ6, θ10, θ11, θ12, θ13, θ14, ΔC1mid;
 
     // not currently used
     // final double t7, t8, t15, t16, dC1lo, dC1hi;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
+      this.imt = imt;
       Map<String, Double> coeffs = cc.get(imt);
       vlin = coeffs.get("vlin");
       b = coeffs.get("b");
@@ -160,24 +162,23 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
       return interpolatedGmm.calc(in);
     }
 
-    if (basinEffect()) {
-      // Possibly use basin/site term from CB14 with local rock
-      // reference. For a few short periods VS_ROCK < vlin,
-      // otherwise pgaRock would always be 0.0
-      double pgaRock = (VS30_ROCK < coeffs.vlin)
-          ? exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, VS30_ROCK))
-          : 0.0;
+    double pgaRock = exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, VS30_ROCK));
+    double μAsk = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
+
+    if (!Double.isNaN(in.z2p5) && basinEffect()) {
+      
       double μRock = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, VS30_ROCK);
       double cbBasin = cb14basinAmp.basinDelta(in, VS30_ROCK);
-      double μ = μRock + cbBasin;
-      return DefaultScalarGroundMotion.create(μ, SIGMA);
-    }
+      double μCb = μRock + cbBasin;
 
-    double pgaRock = (in.vs30 < coeffs.vlin)
-        ? exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, VS30_ROCK))
-        : 0.0;
-    double μ = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
-    return DefaultScalarGroundMotion.create(μ, SIGMA);
+      if ((μCb < μAsk) || (coeffs.imt.ordinal() < Imt.SA0P75.ordinal())) {
+        return DefaultScalarGroundMotion.create(μAsk, SIGMA);
+      } else if (coeffs.imt.equals(Imt.SA0P75)) {
+        return DefaultScalarGroundMotion.create((μAsk + μCb) * 0.5, SIGMA);
+      }
+      return DefaultScalarGroundMotion.create(μCb, SIGMA);
+    }
+    return DefaultScalarGroundMotion.create(μAsk, SIGMA);
   }
 
   abstract boolean isSlab();

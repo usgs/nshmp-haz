@@ -333,20 +333,20 @@ public class AbrahamsonEtAl_2014 implements GroundMotionModel {
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     double z1ref = exp(-7.67 / 4.0 * log((vsPow4 + A) / B)) / 1000.0; // km
 
-    // short circuit amplification only
-    if (basinAmpOnly && z1p0 <= z1ref) {
-      return 0.0;
-    }
-
-    // double z1c = (vs30 > 500.0) ? a46 :
-    // (vs30 > 300.0) ? a45 :
-    // (vs30 > 200.0) ? a44 : a43;
-
-    // new interpolation algorithm
+    // new interpolation algorithm; TODO update to Interpolator
     double[] vsCoeff = { c.a43, c.a44, c.a45, c.a46, c.a46 };
     double z1c = Interpolate.findY(VS_BINS, vsCoeff, vs30);
+    z1c *= log((z1p0 + 0.01) / (z1ref + 0.01));
 
-    return z1c * log((z1p0 + 0.01) / (z1ref + 0.01));
+    if (basinAmpOnly) {
+      /* Short-circuit deamplification and short periods. */
+      if ((z1c <= 0.0) || (c.imt.ordinal() < Imt.SA0P75.ordinal())) {
+        return 0.0;
+      } else if (c.imt.equals(Imt.SA0P75)) {
+        return z1c * 0.5;
+      }
+    }
+    return z1c;
   }
 
   // -- Equation 24

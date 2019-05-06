@@ -83,6 +83,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
 
   private static final class Coefficients {
 
+    final Imt imt;
     final double c1, c1a, c1b, c1c, c1d, c3, c5, c6, c7, c7b, c9, c9a, c9b, c11b,
         cn, cM, cHM,
         γ1, γ2, γ3,
@@ -98,6 +99,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
     // phi5_JP, phi6_JP;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
+      this.imt = imt;
       Map<String, Double> coeffs = cc.get(imt);
       c1 = coeffs.get("c1");
       c1a = coeffs.get("c1a");
@@ -228,7 +230,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
     double snl_mod = snl * log((saRef + c.φ4) / c.φ4);
 
     // Soil effect: sediment thickness
-    double dZ1 = calcDeltaZ1(z1p0, vs30, basinAmpOnly);
+    double dZ1 = calcDeltaZ1(c.imt, z1p0, vs30, basinAmpOnly);
     double rkdepth = c.φ5 * (1.0 - exp(-dZ1 / PHI6));
 
     // total model
@@ -247,7 +249,10 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
   }
 
   // -- Equation 1
-  private static final double calcDeltaZ1(final double z1p0, final double vs30,
+  private static double calcDeltaZ1(
+      Imt imt,
+      double z1p0,
+      double vs30,
       boolean basinAmpOnly) {
 
     if (Double.isNaN(z1p0)) {
@@ -256,11 +261,17 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     double z1ref = exp(-7.15 / 4 * log((vsPow4 + A) / B));
     double z1m = z1p0 * 1000.0;
-
-    if (basinAmpOnly && z1m <= z1ref) {
-      return 0.0;
+    double Δz1 = z1m - z1ref;
+    
+    if (basinAmpOnly) {
+      /* Short-circuit deamplification and short periods. */
+      if ((Δz1 <= 0.0) || (imt.ordinal() < Imt.SA0P75.ordinal())) {
+        return 0.0;
+      } else if (imt.equals(Imt.SA0P75)) {
+        return Δz1 * 0.5;
+      }
     }
-    return z1m - z1ref;
+    return Δz1;
   }
 
   // Aleatory uncertainty model -- Equation 3.9
