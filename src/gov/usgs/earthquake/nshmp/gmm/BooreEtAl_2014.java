@@ -21,6 +21,7 @@ import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
+import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
  * Implementation of the Boore, Stewart, Seyhan, & Atkinson (2014) next
@@ -219,11 +220,11 @@ public class BooreEtAl_2014 implements GroundMotionModel {
   // Calculate delta Z1 in km as a function of vs30 and using the default
   // model of ChiouYoungs_2013 -- Equations 10, 11
   private static final double calcDeltaZ1(
-      Imt imt, 
-      double z1p0, 
+      Imt imt,
+      double z1p0,
       double vs30,
       boolean basinAmpOnly) {
-    
+
     if (Double.isNaN(z1p0)) {
       return 0.0;
     }
@@ -231,7 +232,7 @@ public class BooreEtAl_2014 implements GroundMotionModel {
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     double z1ref = exp(-7.15 / 4.0 * log((vsPow4 + A) / B)) / 1000.0;
     double Δz1 = z1p0 - z1ref;
-    
+
     if (basinAmpOnly) {
       /* Short-circuit deamplification and short periods. */
       if ((Δz1 <= 0.0) || (imt.ordinal() < Imt.SA0P75.ordinal())) {

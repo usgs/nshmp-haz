@@ -261,7 +261,6 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     double z1ref = exp(-7.15 / 4 * log((vsPow4 + A) / B));
     double z1m = z1p0 * 1000.0;
-
     double Δz1 = z1m - z1ref;
     
     if (basinAmpOnly) {
