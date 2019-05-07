@@ -7,6 +7,7 @@ import static gov.usgs.earthquake.nshmp.gmm.FaultStyle.STRIKE_SLIP;
 import static gov.usgs.earthquake.nshmp.gmm.FaultStyle.UNKNOWN;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.PGA;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P02;
+import static java.lang.Math.exp;
 import static java.lang.Math.log;
 
 import java.io.BufferedReader;
@@ -308,5 +309,25 @@ public final class GmmUtils {
     }
     return μ;
   }
+  
+  /* */
+  static double scaleSubductionSiteAmp(Imt imt, double lo, double hi) {
+    double scale = subductionBasinPeriodScale(imt);
+    return lo + (hi - lo) * scale;
+  }
+  
+  /* natural log scaling for periods between 0.4s and 1.0s */
+  static double subductionBasinPeriodScale(Imt imt) {
+    switch (imt) {
+      case SA0P5:
+        return 0.243;
+      case SA0P75:
+        return 0.686;
+      default:
+        return 1.0;
+    }
+  }
+
+
 
 }

@@ -221,15 +221,19 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     double μZhao = calcMean(coeffs, isSlab(), zSiteVs30, in);
 
     if (!Double.isNaN(in.z2p5) && basinEffect()) {
+      
       double cbSite = cb14basinAmp.basinDelta(in, VS30_ROCK);
       double zSiteRock = siteTermStep(coeffs, VS30_ROCK);
       double μRock = calcMean(coeffs, isSlab(), zSiteRock, in);
       double μCb = μRock + cbSite;
+      
       /* Short-circuit lower values and short periods. */
-      if ((μCb < μZhao) || (coeffs.imt.ordinal() < Imt.SA0P75.ordinal())) {
+      int imtId = coeffs.imt.ordinal();
+      if ((μCb < μZhao) || (imtId < Imt.SA0P5.ordinal())) {
         return DefaultScalarGroundMotion.create(μZhao, σ);
-      } else if (coeffs.imt.equals(Imt.SA0P75)) {
-        return DefaultScalarGroundMotion.create((μZhao + μCb) * 0.5, σ);
+      } else if (imtId < Imt.SA1P0.ordinal()) {
+        double μScaled = GmmUtils.scaleSubductionSiteAmp(coeffs.imt, μZhao, μCb);
+        return DefaultScalarGroundMotion.create(μScaled, σ);
       }
       return DefaultScalarGroundMotion.create(μCb, σ);
     }

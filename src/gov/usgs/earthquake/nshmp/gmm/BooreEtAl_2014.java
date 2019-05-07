@@ -233,15 +233,7 @@ public class BooreEtAl_2014 implements GroundMotionModel {
     double z1ref = exp(-7.15 / 4.0 * log((vsPow4 + A) / B)) / 1000.0;
     double Δz1 = z1p0 - z1ref;
 
-    if (basinAmpOnly) {
-      /* Short-circuit deamplification and short periods. */
-      if ((Δz1 <= 0.0) || (imt.ordinal() < Imt.SA0P75.ordinal())) {
-        return 0.0;
-      } else if (imt.equals(Imt.SA0P75)) {
-        return Δz1 * 0.5;
-      }
-    }
-    return Δz1;
+    return (basinAmpOnly && (Δz1 < 0.0)) ? 0.0 : Δz1;
   }
 
   // Aleatory uncertainty model

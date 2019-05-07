@@ -338,15 +338,7 @@ public class AbrahamsonEtAl_2014 implements GroundMotionModel {
     double z1c = Interpolate.findY(VS_BINS, vsCoeff, vs30);
     z1c *= log((z1p0 + 0.01) / (z1ref + 0.01));
 
-    if (basinAmpOnly) {
-      /* Short-circuit deamplification and short periods. */
-      if ((z1c <= 0.0) || (c.imt.ordinal() < Imt.SA0P75.ordinal())) {
-        return 0.0;
-      } else if (c.imt.equals(Imt.SA0P75)) {
-        return z1c * 0.5;
-      }
-    }
-    return z1c;
+    return (basinAmpOnly && (z1c < 0.0)) ? 0.0 : z1c;
   }
 
   // -- Equation 24
