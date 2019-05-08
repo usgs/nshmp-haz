@@ -329,7 +329,7 @@ get_nshmp_program() {
     "deagg")
       nshmp_program="DeaggCalc";
       ;;
-    "deag-epsilon")
+    "deagg-epsilon")
       nshmp_program="DeaggEpsilon";
       ;;
     "hazard")
