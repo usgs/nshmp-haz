@@ -16,7 +16,7 @@ ARG builder_workdir=/app/${project}
 ARG jar_path=${builder_workdir}/build/libs/${project}.jar
 
 ####
-# Builder Image: Java 8
+# Builder Image: Java 8 in usgs/centos image
 #   - Install git, curl, and bash
 #   - Download models (docker-builder-entrypoint.sh)
 #   - Build nshmp-haz
