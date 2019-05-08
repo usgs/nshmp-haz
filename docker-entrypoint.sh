@@ -147,7 +147,7 @@ check_sites_file() {
           error_exit "Site file [${site_file}] is not valid JSON" "$(< ${LOG_FILE})";
       ;;
     *.csv)
-      if [ "$(file ${site_file} -b)" != "ASCII text" ]; then
+      if [[ "$(file ${site_file} -b)" != "ASCII text"* ]]; then
         error_exit \
             "Site file [${site_file}] is not valid ASCII" \
             "Site file is not valid ASCII";
