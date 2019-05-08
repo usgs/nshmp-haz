@@ -149,13 +149,17 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
     double μAm = μRock + amSite;
 
     if (!Double.isNaN(in.z2p5) && basinEffect()) {
+
       double cbSite = cb14basinAmp.basinDelta(in, VS30_ROCK);
       double μCb = μRock + cbSite;
+
       /* Short-circuit lower values and short periods. */
-      if ((μCb < μAm) || (coeffs.imt.ordinal() < Imt.SA0P75.ordinal())) {
+      int imtId = coeffs.imt.ordinal();
+      if ((μCb < μAm) || (imtId < Imt.SA0P5.ordinal())) {
         return DefaultScalarGroundMotion.create(μAm, σ);
-      } else if (coeffs.imt.equals(Imt.SA0P75)) {
-        return DefaultScalarGroundMotion.create((μAm + μCb) * 0.5, σ);
+      } else if (imtId < Imt.SA1P0.ordinal()) {
+        double μScaled = GmmUtils.scaleSubductionSiteAmp(coeffs.imt, μAm, μCb);
+        return DefaultScalarGroundMotion.create(μScaled, σ);
       }
       return DefaultScalarGroundMotion.create(μCb, σ);
     }

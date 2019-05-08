@@ -171,10 +171,13 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
       double cbBasin = cb14basinAmp.basinDelta(in, VS30_ROCK);
       double μCb = μRock + cbBasin;
 
-      if ((μCb < μAsk) || (coeffs.imt.ordinal() < Imt.SA0P75.ordinal())) {
+      /* Short-circuit lower values and short periods. */
+      int imtId = coeffs.imt.ordinal();
+      if ((μCb < μAsk) || (imtId < Imt.SA0P5.ordinal())) {
         return DefaultScalarGroundMotion.create(μAsk, SIGMA);
-      } else if (coeffs.imt.equals(Imt.SA0P75)) {
-        return DefaultScalarGroundMotion.create((μAsk + μCb) * 0.5, SIGMA);
+      } else if (imtId < Imt.SA1P0.ordinal()) {
+        double μScaled = GmmUtils.scaleSubductionSiteAmp(coeffs.imt, μAsk, μCb);
+        return DefaultScalarGroundMotion.create(μScaled, SIGMA);
       }
       return DefaultScalarGroundMotion.create(μCb, SIGMA);
     }
