@@ -64,8 +64,8 @@ LABEL maintainer="Peter Powers <pmpowers@usgs.gov>"
 # Set working directory
 WORKDIR /app
 
-# Install jq
-RUN yum install -y add epel-release
+# Install file and jq
+RUN yum install -y add file epel-release
 RUN yum install -y jq
 
 # Get JAR path
