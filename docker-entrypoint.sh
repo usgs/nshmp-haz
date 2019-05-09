@@ -208,7 +208,7 @@ error_exit() {
 }
 
 ####
-# Returns the model path for deagg-epsilon. 
+# Returns the model path for deagg-epsilon and hazard-2018. 
 # Globals:
 #   (string) MODEL - The nshm
 #   (string) PROGRAM - The program to run
@@ -300,7 +300,7 @@ get_model() {
 get_model_path() {
   local nshmp_model_path="";
 
-  if [ ${PROGRAM} == 'deagg-epsilon' ]; then
+  if [ ${PROGRAM} == 'deagg-epsilon' ] || [ ${PROGRAM} == 'hazard-2018' ] ; then
     get_cous_model 2> ${LOG_FILE};
     nshmp_model_path="${GET_COUS_MODEL_RETURN}";
   else
@@ -331,6 +331,9 @@ get_nshmp_program() {
       ;;
     "deagg-epsilon")
       nshmp_program="DeaggEpsilon";
+      ;;
+    "hazard-2018")
+      nshmp_program="Hazard2018";
       ;;
     "hazard")
       nshmp_program="HazardCalc";
