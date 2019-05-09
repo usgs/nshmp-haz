@@ -16,12 +16,12 @@ ARG builder_workdir=/app/${project}
 ARG jar_path=${builder_workdir}/build/libs/${project}.jar
 
 ####
-# Builder Image: Java 8
+# Builder Image: Java 8 in usgs/centos image
 #   - Install git, curl, and bash
 #   - Download models (docker-builder-entrypoint.sh)
 #   - Build nshmp-haz
 ####
-FROM openjdk:8-alpine as builder
+FROM usgsnshmp/nshmp-openjdk:jdk8 as builder
 
 # Get builder workdir
 ARG builder_workdir
@@ -38,8 +38,8 @@ WORKDIR ${builder_workdir}
 # Copy project over to container
 COPY . ${builder_workdir}/. 
 
-# Install git, curl, and bash
-RUN apk add --no-cache git curl bash
+# Install git
+RUN yum install -y git
 
 # Build nshmp-haz
 RUN ./gradlew assemble
@@ -64,8 +64,8 @@ LABEL maintainer="Peter Powers <pmpowers@usgs.gov>"
 # Set working directory
 WORKDIR /app
 
-# Install jq
-RUN yum install -y add epel-release
+# Install file and jq
+RUN yum install -y add file epel-release
 RUN yum install -y jq
 
 # Get JAR path
