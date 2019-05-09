@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
+import javax.management.RuntimeErrorException;
+
 import com.google.common.base.Functions;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
@@ -176,12 +178,24 @@ public final class HazardExport {
     }
     if (hazards.size() == config.output.flushLimit) {
       flush();
+    }
+    if (resultCount % 10 == 0) {
       batchCount++;
       log.info(String.format(
           "     batch: %s in %s – %s sites in %s",
           batchCount, batchWatch, resultCount, totalWatch));
       batchWatch.reset().start();
     }
+
+  }
+
+  /**
+   * Add a Hazard to this handler.
+   * 
+   * @param hazard to add
+   */
+  public void add(Hazard hazard) throws IOException {
+    add(hazard, Optional.empty());
   }
 
   /**
