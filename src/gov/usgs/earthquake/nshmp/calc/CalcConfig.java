@@ -947,8 +947,9 @@ public final class CalcConfig {
      * The number of results (one per {@code Site}) to store before writing to
      * file(s). A larger number requires more memory.
      *
-     * <p><b>Default:</b> {@code 20}
+     * <p><b>Default:</b> {@code 1}
      */
+    @Deprecated
     public final int flushLimit;
 
     private Output(
@@ -1006,7 +1007,7 @@ public final class CalcConfig {
         Builder b = new Builder();
         b.directory = Paths.get(DEFAULT_OUT);
         b.dataTypes = EnumSet.of(DataType.TOTAL);
-        b.flushLimit = 5;
+        b.flushLimit = 1;
         return b;
       }
 
@@ -1055,17 +1056,26 @@ public final class CalcConfig {
      * <p><b>Default:</b> {@link ThreadCount#ALL}
      */
     public final ThreadCount threadCount;
+    
+    /**
+     * The number of tasks to keep in a work queue.
+     *
+     * <p><b>Default:</b> {@code 1}
+     */
+    public final int queueSize;
 
     private Performance(
         boolean optimizeGrids,
         boolean collapseMfds,
         int systemPartition,
-        ThreadCount threadCount) {
+        ThreadCount threadCount,
+        int queueSize) {
 
       this.optimizeGrids = optimizeGrids;
       this.collapseMfds = collapseMfds;
       this.systemPartition = systemPartition;
       this.threadCount = threadCount;
+      this.queueSize = queueSize;
     }
 
     private StringBuilder asString() {
@@ -1074,7 +1084,8 @@ public final class CalcConfig {
           .append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
           .append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
           .append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
-          .append(formatEntry(Key.THREAD_COUNT, threadCount.name()));
+          .append(formatEntry(Key.THREAD_COUNT, threadCount.name()))
+          .append(formatEntry(Key.QUEUE_SIZE, queueSize));
     }
 
     private static final class Builder {
@@ -1083,13 +1094,15 @@ public final class CalcConfig {
       Boolean collapseMfds;
       Integer systemPartition;
       ThreadCount threadCount;
+      Integer queueSize;
 
       Performance build() {
         return new Performance(
             optimizeGrids,
             collapseMfds,
             systemPartition,
-            threadCount);
+            threadCount,
+            queueSize);
       }
 
       void copy(Performance that) {
@@ -1097,6 +1110,7 @@ public final class CalcConfig {
         this.collapseMfds = that.collapseMfds;
         this.systemPartition = that.systemPartition;
         this.threadCount = that.threadCount;
+        this.queueSize = that.queueSize;
       }
 
       void extend(Builder that) {
@@ -1112,6 +1126,9 @@ public final class CalcConfig {
         if (that.threadCount != null) {
           this.threadCount = that.threadCount;
         }
+        if (that.queueSize != null) {
+          this.queueSize = that.queueSize;
+        }
       }
 
       static Builder defaults() {
@@ -1120,6 +1137,7 @@ public final class CalcConfig {
         b.collapseMfds = true;
         b.systemPartition = 1000;
         b.threadCount = ThreadCount.ALL;
+        b.queueSize = 1;
         return b;
       }
 
@@ -1128,6 +1146,7 @@ public final class CalcConfig {
         checkNotNull(collapseMfds, STATE_ERROR, Performance.ID, Key.COLLAPSE_MFDS);
         checkNotNull(systemPartition, STATE_ERROR, Performance.ID, Key.SYSTEM_PARTITION);
         checkNotNull(threadCount, STATE_ERROR, Performance.ID, Key.THREAD_COUNT);
+        checkNotNull(queueSize, STATE_ERROR, Performance.ID, Key.QUEUE_SIZE);
       }
     }
   }
@@ -1156,6 +1175,7 @@ public final class CalcConfig {
     COLLAPSE_MFDS,
     SYSTEM_PARTITION,
     THREAD_COUNT,
+    QUEUE_SIZE,
     /* output */
     DIRECTORY,
     DATA_TYPES,
