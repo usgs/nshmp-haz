@@ -300,7 +300,7 @@ get_model() {
 get_model_path() {
   local nshmp_model_path="";
 
-  if [ ${PROGRAM} == 'deagg-epsilon' ] || [ ${PROGRAM} == 'hazard-2018' ] ; then
+  if [ ${PROGRAM} == 'deagg-epsilon' ] || [ ${PROGRAM} == 'hazard-2018' ]; then
     get_cous_model 2> ${LOG_FILE};
     nshmp_model_path="${GET_COUS_MODEL_RETURN}";
   else
