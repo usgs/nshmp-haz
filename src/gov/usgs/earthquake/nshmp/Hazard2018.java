@@ -183,6 +183,7 @@ public class Hazard2018 {
     }
 
     handler.expire();
+    exec.shutdown();
     log.info(String.format(
         PROGRAM + ": %s sites completed in %s",
         handler.resultsProcessed(), handler.elapsedTime()));
