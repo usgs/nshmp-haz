@@ -135,10 +135,16 @@ public final class Hazard {
         totalCurves.get(entry.getKey()).add(entry.getValue());
       }
     }
+
+    /*
+     * TODO temporarily adding FIRST model in hazards list. Downstream exporters
+     * are really only interested in the union of source types and gmms used
+     * across multiple models.
+     */
     return new Hazard(
         curveMapBuilder.build(),
         totalCurves,
-        null,
+        hazards[0].model,
         hazards[0].site,
         hazards[0].config);
   }
