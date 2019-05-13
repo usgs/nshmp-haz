@@ -155,7 +155,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
 
       /* Short-circuit lower values and short periods. */
       int imtId = coeffs.imt.ordinal();
-      if ((μCb < μAm) || (imtId < Imt.SA0P5.ordinal())) {
+      if ((μCb < μAm) || (imtId < Imt.SA0P75.ordinal())) {
         return DefaultScalarGroundMotion.create(μAm, σ);
       } else if (imtId < Imt.SA1P0.ordinal()) {
         double μScaled = GmmUtils.scaleSubductionSiteAmp(coeffs.imt, μAm, μCb);
