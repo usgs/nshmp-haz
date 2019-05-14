@@ -109,7 +109,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private static final double MC_I = 6.3;
   private static final double MAX_SLAB_DEPTH = 125.0;
   private static final double INTERFACE_DEPTH = 20.0;
-  private static final double VS30_ROCK = 760.0;
+  private static final double VS30_REF = 760.0;
 
   private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
       ImmutableMap.of(
@@ -151,11 +151,11 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private static final class Coefficients {
 
     final Imt imt;
-    final double a, b, c, d, e, Si, Ss, Ssl, Ch, C1, C2, C3, C4;
+    final double a, b, c, d, e, Si, Ss, Ssl, C1, C2, C3, C4;
     final double σ, τ, τS, Ps, Qi, Qs, Wi, Ws;
 
     // unused
-    // final double Sr, tauI;
+    // final double Ch, Sr, tauI;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       this.imt = imt;
@@ -168,7 +168,6 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
       Si = coeffs.get("Si");
       Ss = coeffs.get("Ss");
       Ssl = coeffs.get("Ssl");
-      Ch = coeffs.get("Ch");
       C1 = coeffs.get("C1");
       C2 = coeffs.get("C2");
       C3 = coeffs.get("C3");
@@ -223,8 +222,8 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
     if (!Double.isNaN(in.z2p5) && basinEffect()) {
 
-      double cbSite = cb14basinAmp.basinDelta(in, VS30_ROCK);
-      double zSiteRock = siteTermStep(coeffs, VS30_ROCK);
+      double cbSite = cb14basinAmp.basinDelta(in, VS30_REF);
+      double zSiteRock = siteTermStep(coeffs, VS30_REF);
       double μRock = calcMean(coeffs, isSlab(), zSiteRock, in);
       double μCb = μRock + cbSite;
 
@@ -283,13 +282,11 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   private static final double siteTermStep(final Coefficients c, double vs30) {
-    return (vs30 >= 1000.0)
-        ? c.Ch
-        : (vs30 >= 600.0)
-            ? c.C1
-            : (vs30 >= 300.0)
-                ? c.C2
-                : c.C3;
+    return (vs30 >= 600.0)
+        ? c.C1
+        : (vs30 >= 300.0)
+            ? c.C2
+            : c.C3;
   }
 
   private static final double siteTermSmooth(final Coefficients c, double vs30) {
