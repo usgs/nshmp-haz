@@ -109,6 +109,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   private static final double SIGMA = 0.74;
   private static final double ΔC1_SLAB = -0.3;
   private static final double VS30_ROCK = 1000.0;
+  private static final double VS30_REF = 760.0; // refrence vs30 for CB basin Δ
 
   private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
       ImmutableMap.of(SA0P03, Range.closed(SA0P02, SA0P05)));
@@ -167,9 +168,9 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
     if (!Double.isNaN(in.z2p5) && basinEffect()) {
       
-      double μRock = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, VS30_ROCK);
-      double cbBasin = cb14basinAmp.basinDelta(in, VS30_ROCK);
-      double μCb = μRock + cbBasin;
+      double μRef = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, VS30_REF);
+      double cbBasin = cb14basinAmp.basinDelta(in, VS30_REF);
+      double μCb = μRef + cbBasin;
 
       /* Short-circuit lower values and short periods. */
       int imtId = coeffs.imt.ordinal();
