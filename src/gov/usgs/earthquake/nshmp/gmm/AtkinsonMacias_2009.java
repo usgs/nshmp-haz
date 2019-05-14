@@ -82,7 +82,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
 
   static final CoefficientContainer COEFFS = new CoefficientContainer("AM09.csv");
 
-  private static final double VS30_ROCK = 760.0;
+  private static final double VS30_REF = 760.0;
 
   private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
       ImmutableMap.<Imt, Range<Imt>> builder()
@@ -142,16 +142,15 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
     }
 
     double σ = coeffs.σ * BASE_10_TO_E;
-
-    double μRock = calcMean(coeffs, in);
+    double μRef = calcMean(coeffs, in);
     double μPga = calcMean(coeffsPGA, in);
-    double amSite = siteAmp.siteAmp(μPga, in.vs30);
-    double μAm = μRock + amSite;
+    double site = siteAmp.siteAmp(μPga, in.vs30);
+    double μAm = μRef + site;
 
     if (!Double.isNaN(in.z2p5) && basinEffect()) {
 
-      double cbSite = cb14basinAmp.basinDelta(in, VS30_ROCK);
-      double μCb = μRock + cbSite;
+      double cbSite = cb14basinAmp.basinDelta(in, VS30_REF);
+      double μCb = μRef + cbSite;
 
       /* Short-circuit lower values and short periods. */
       int imtId = coeffs.imt.ordinal();
