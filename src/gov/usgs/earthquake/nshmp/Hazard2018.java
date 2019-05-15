@@ -13,18 +13,16 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import gov.usgs.earthquake.nshmp.calc.CalcConfig;
@@ -160,27 +158,16 @@ public class Hazard2018 {
 
     log.info(PROGRAM + ": calculating ...");
 
-    CompletionService<Hazard> results = new ExecutorCompletionService<>(exec);
-    int qSize = models.wusConfig.performance.queueSize;
+    CalcTask.Builder calcTask = new CalcTask.Builder(models, exec);
+    WriteTask.Builder writeTask = new WriteTask.Builder(handler);
 
-    Task.Builder task = new Task.Builder(models, exec);
-
-    /* Submit first n jobs. */
-    for (Site site : Iterables.limit(sites, qSize)) {
-      results.submit(task.withSite(site));
+    Future<Path> out = null;
+    for (Site site : sites) {
+      Hazard hazard = calcTask.withSite(site).call();
+      out = exec.submit(writeTask.withResult(hazard));
     }
-
-    /* Submit the rest, conditioned on successful take and process. */
-    for (Site site : Iterables.skip(sites, qSize)) {
-      Hazard hazard = results.take().get();
-      handler.add(hazard);
-      results.submit(task.withSite(site));
-    }
-
-    /* Take and process last n. */
-    for (int i = 0; i < qSize; i++) {
-      handler.add(results.take().get());
-    }
+    /* Block shutdown until last task is returned. */
+    Path outputDir = out.get();
 
     handler.expire();
     exec.shutdown();
@@ -188,7 +175,7 @@ public class Hazard2018 {
         PROGRAM + ": %s sites completed in %s",
         handler.resultsProcessed(), handler.elapsedTime()));
 
-    return handler.outputDir();
+    return outputDir;
   }
 
   private static ExecutorService initExecutor(int threadCount) {
@@ -219,20 +206,51 @@ public class Hazard2018 {
     }
   }
 
-  private static final class Task implements Callable<Hazard> {
+  private static final class WriteTask implements Callable<Path> {
+
+    final HazardExport handler;
+    final Hazard hazard;
+
+    WriteTask(HazardExport handler, Hazard hazard) {
+      this.handler = handler;
+      this.hazard = hazard;
+    }
+
+    @Override
+    public Path call() throws IOException {
+      handler.add(hazard);
+      return handler.outputDir();
+    }
+
+    static class Builder {
+
+      final HazardExport handler;
+
+      Builder(HazardExport handler) {
+        this.handler = handler;
+      }
+
+      /* Builds and returns the task. */
+      WriteTask withResult(Hazard hazard) {
+        return new WriteTask(handler, hazard);
+      }
+    }
+  }
+
+  private static final class CalcTask implements Callable<Hazard> {
 
     final Models models;
     final Executor exec;
     final Site site;
 
-    Task(Models models, Executor exec, Site site) {
+    CalcTask(Models models, Executor exec, Site site) {
       this.models = models;
       this.exec = exec;
       this.site = site;
     }
 
     @Override
-    public Hazard call() throws Exception {
+    public Hazard call() {
       Hazard wusHazard = null;
       if (site.location.lon() <= -100.0) {
         wusHazard = HazardCalcs.hazard(models.wusModel, models.wusConfig, site, exec);
@@ -260,8 +278,8 @@ public class Hazard2018 {
       }
 
       /* Builds and returns the task. */
-      Task withSite(Site site) {
-        return new Task(models, exec, site);
+      CalcTask withSite(Site site) {
+        return new CalcTask(models, exec, site);
       }
     }
   }

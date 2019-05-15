@@ -11,7 +11,10 @@ import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P03;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P05;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P075;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P1;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P5;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P75;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA10P0;
+import static gov.usgs.earthquake.nshmp.gmm.Imt.SA1P0;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA5P0;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA7P5;
 import static java.lang.Math.exp;
@@ -31,7 +34,6 @@ import gov.usgs.earthquake.nshmp.data.Interpolator;
 import gov.usgs.earthquake.nshmp.eq.Earthquakes;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
 import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
-import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
  * Abstract implementation of the subduction ground motion model by Zhao et al.
@@ -57,15 +59,12 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * <li>Hypocentral depths for slab events are set to {@code min(zTop, 125)};
  * minimum rupture distance (rRup) is 1.0 km.</li>
  * 
- * <li>Support for spectral period 0.75s is provided using interpolated
- * coefficients ported from USGS legacy Fortran implementations.</li>
- * 
  * <li>Support for spectral period 0.01s is provided using the same coefficients
  * as PGA.</li>
  * 
- * <li>Support for spectral periods 0.02s, 0.03s, and 0.075s is provided via
- * interpolation of ground motion and sigma of adjacent periods for which there
- * are coefficients.</li>
+ * <li>Support for spectral periods 0.02s, 0.03s, 0.075s, and 0.75s is provided
+ * via interpolation of ground motion and sigma of adjacent periods for which
+ * there are coefficients.</li>
  * 
  * <li>Support for spectral periods 7.5s and 10.0s is provided via extrapolation
  * using the 2014 and 2018 NSHM GMM logic tree reference values for slab and
@@ -110,13 +109,14 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private static final double MC_I = 6.3;
   private static final double MAX_SLAB_DEPTH = 125.0;
   private static final double INTERFACE_DEPTH = 20.0;
-  private static final double VS30_ROCK = 760.0;
+  private static final double VS30_REF = 760.0;
 
   private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
       ImmutableMap.of(
           SA0P02, Range.closed(SA0P01, SA0P05),
           SA0P03, Range.closed(SA0P01, SA0P05),
-          SA0P075, Range.closed(SA0P05, SA0P1)));
+          SA0P075, Range.closed(SA0P05, SA0P1),
+          SA0P75, Range.closed(SA0P5, SA1P0)));
 
   private static final Set<Imt> EXTRAPOLATED_IMTS = Sets.immutableEnumSet(
       SA7P5,
@@ -155,7 +155,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     final double σ, τ, τS, Ps, Qi, Qs, Wi, Ws;
 
     // unused
-    // final double Sr, tauI;
+    // final double Ch, Sr, tauI;
 
     Coefficients(Imt imt, CoefficientContainer cc) {
       this.imt = imt;
@@ -221,15 +221,15 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     double μZhao = calcMean(coeffs, isSlab(), zSiteVs30, in);
 
     if (!Double.isNaN(in.z2p5) && basinEffect()) {
-      
-      double cbSite = cb14basinAmp.basinDelta(in, VS30_ROCK);
-      double zSiteRock = siteTermStep(coeffs, VS30_ROCK);
+
+      double cbSite = cb14basinAmp.basinDelta(in, VS30_REF);
+      double zSiteRock = siteTermStep(coeffs, VS30_REF);
       double μRock = calcMean(coeffs, isSlab(), zSiteRock, in);
       double μCb = μRock + cbSite;
-      
+
       /* Short-circuit lower values and short periods. */
       int imtId = coeffs.imt.ordinal();
-      if ((μCb < μZhao) || (imtId < Imt.SA0P5.ordinal())) {
+      if ((μCb < μZhao) || (imtId < Imt.SA0P75.ordinal())) {
         return DefaultScalarGroundMotion.create(μZhao, σ);
       } else if (imtId < Imt.SA1P0.ordinal()) {
         double μScaled = GmmUtils.scaleSubductionSiteAmp(coeffs.imt, μZhao, μCb);
@@ -282,7 +282,11 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   private static final double siteTermStep(final Coefficients c, double vs30) {
-    return (vs30 >= 600.0) ? c.C1 : (vs30 >= 300.0) ? c.C2 : c.C3;
+    return (vs30 >= 600.0)
+        ? c.C1
+        : (vs30 >= 300.0)
+            ? c.C2
+            : c.C3;
   }
 
   private static final double siteTermSmooth(final Coefficients c, double vs30) {

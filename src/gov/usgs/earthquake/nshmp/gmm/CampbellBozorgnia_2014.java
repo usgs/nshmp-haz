@@ -179,9 +179,9 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
   }
 
   /*
-   * Convenience method for Campbell site/basin delta relative to rock
-   * reference. vs30ref is rock reference vs30 for calling GMM, which may be
-   * different than Campbell's 1100 m/s.
+   * Convenience method for Campbell site/basin delta relative to a reference
+   * site condition, vs30ref, which may be different than Campbell's reference
+   * rock site condition of Vs30=1100 m/s.
    */
   double basinDelta(GmmInput in, double vs30ref) {
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
@@ -328,7 +328,7 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
     }
 
     double z2p5Term = calcBasinTerm(c, z2p5);
-
+    
     return (basinAmpOnly && (z2p5Term < zRefTerm)) ? zRefTerm : z2p5Term;
   }
 
