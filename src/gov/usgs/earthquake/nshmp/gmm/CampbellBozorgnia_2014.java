@@ -329,7 +329,7 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
 
     double z2p5Term = calcBasinTerm(c, z2p5);
     
-    return (basinAmpOnly && (z2p5Term > zRefTerm)) ? z2p5Term : zRefTerm;
+    return (basinAmpOnly && (z2p5Term < zRefTerm)) ? zRefTerm : z2p5Term;
   }
 
   private static double calcBasinTerm(Coefficients c, double z2p5) {
