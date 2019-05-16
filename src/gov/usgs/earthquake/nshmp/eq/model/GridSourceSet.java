@@ -13,6 +13,7 @@ import static gov.usgs.earthquake.nshmp.eq.fault.FocalMech.STRIKE_SLIP;
 import static gov.usgs.earthquake.nshmp.eq.model.PointSourceType.FIXED_STRIKE;
 import static gov.usgs.earthquake.nshmp.eq.model.SourceType.GRID;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import gov.usgs.earthquake.nshmp.eq.fault.FocalMech;
 import gov.usgs.earthquake.nshmp.eq.fault.surface.RuptureScaling;
 import gov.usgs.earthquake.nshmp.eq.model.PointSource.DepthModel;
 import gov.usgs.earthquake.nshmp.geo.Location;
+import gov.usgs.earthquake.nshmp.geo.LocationList;
 import gov.usgs.earthquake.nshmp.geo.Locations;
 import gov.usgs.earthquake.nshmp.mfd.IncrementalMfd;
 
@@ -536,20 +538,24 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
    *
    * @param loc reference point for table
    */
-  public static Function<GridSourceSet, SourceSet<? extends Source>> optimizer(Location loc) {
-    return new Optimizer(loc);
+  public static Function<GridSourceSet, SourceSet<? extends Source>> optimizer(
+      Location loc, boolean smooth) {
+    return new Optimizer(loc, smooth);
   }
 
   private static class Optimizer implements Function<GridSourceSet, SourceSet<? extends Source>> {
-    private final Location loc;
 
-    Optimizer(Location loc) {
+    private final Location loc;
+    private final boolean smooth;
+
+    Optimizer(Location loc, boolean smooth) {
       this.loc = loc;
+      this.smooth = smooth;
     }
 
     @Override
     public Table apply(GridSourceSet sources) {
-      return new Table(sources, loc);
+      return new Table(sources, loc, smooth);
     }
   }
 
@@ -598,11 +604,14 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     private int maximumSize;
     private int parentCount;
 
-    private Table(GridSourceSet parent, Location origin) {
+    private Table(GridSourceSet parent, Location origin, boolean smoothed) {
       super(parent.name(), parent.id(), parent.weight(), parent.groundMotionModels());
       this.parent = parent;
       this.origin = origin;
-      this.sources = parent.singularMechs ? initSources() : initMultiMechSources();
+      this.sources = parent.singularMechs
+          ? initSources(smoothed)
+          : initMultiMechSources(smoothed);
+
     }
 
     /**
@@ -648,9 +657,10 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     }
 
     private static final double SRC_TO_SITE_AZIMUTH = 0.0;
+    private static final double SMOOTHING_LIMIT = 40.0; // km
 
     /* creates the type of point source specified in the parent */
-    private List<PointSource> initSources() {
+    private List<PointSource> initSources(boolean smoothed) {
 
       // table keys are specified as lowermost and uppermost bin edges
       double Δm = parent.Δm;
@@ -658,6 +668,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       double mMin = parent.magMaster[0] - ΔmBy2;
       double mMax = parent.magMaster[parent.magMaster.length - 1] + ΔmBy2;
       double rMax = parent.groundMotionModels().maxDistance();
+      double[] smoothingOffsets = smoothingOffsets(rMax, 0.1);
 
       IntervalTable.Builder tableBuilder = new IntervalTable.Builder()
           .rows(0.0, rMax, distanceDiscretization(rMax))
@@ -665,10 +676,14 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
 
       for (PointSource source : parent.iterableForLocation(origin)) {
         double r = Locations.horzDistanceFast(origin, source.loc);
-        tableBuilder.add(r, source.mfd);
+        /* Experimental smoothing. */
+        if (smoothed && r < SMOOTHING_LIMIT) {
+          addSmoothed(tableBuilder, origin, source.loc, source.mfd, smoothingOffsets);
+        } else {
+          tableBuilder.add(r, source.mfd);
+        }
         parentCount++;
       }
-
       IntervalTable mfdTable = tableBuilder.build();
 
       // System.out.println(parent.name());
@@ -698,12 +713,13 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     }
 
     /* always creates finite point sources */
-    private List<PointSource> initMultiMechSources() {
+    private List<PointSource> initMultiMechSources(boolean smoothed) {
       double Δm = parent.Δm;
       double ΔmBy2 = Δm / 2.0;
       double mMin = parent.magMaster[0] - ΔmBy2;
       double mMax = parent.magMaster[parent.magMaster.length - 1] + ΔmBy2;
       double rMax = parent.groundMotionModels().maxDistance();
+      double[] smoothingOffsets = smoothingOffsets(rMax, 0.1);
 
       IntervalTable.Builder ssTableBuilder = new IntervalTable.Builder()
           .rows(0.0, rMax, distanceDiscretization(rMax))
@@ -720,18 +736,30 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
       // XySequence srcMfdSum = null;
 
       for (PointSource source : parent.iterableForLocation(origin)) {
+        double r = Locations.horzDistanceFast(origin, source.loc);
+
         // if (srcMfdSum == null) {
         // srcMfdSum = XySequence.emptyCopyOf(source.mfd);
         // }
         // srcMfdSum.add(source.mfd);
 
-        double r = Locations.horzDistanceFast(origin, source.loc);
-        ssTableBuilder.add(r, XySequence.copyOf(source.mfd)
-            .multiply(source.mechWtMap.get(STRIKE_SLIP)));
-        rTableBuilder.add(r, XySequence.copyOf(source.mfd)
-            .multiply(source.mechWtMap.get(REVERSE)));
-        nTableBuilder.add(r, XySequence.copyOf(source.mfd)
-            .multiply(source.mechWtMap.get(NORMAL)));
+        XySequence ssMfd = XySequence.copyOf(source.mfd).multiply(
+            source.mechWtMap.get(STRIKE_SLIP));
+        XySequence rMfd = XySequence.copyOf(source.mfd).multiply(
+            source.mechWtMap.get(REVERSE));
+        XySequence nMfd = XySequence.copyOf(source.mfd).multiply(
+            source.mechWtMap.get(NORMAL));
+        
+        if (smoothed && r < SMOOTHING_LIMIT) {
+          addSmoothed(ssTableBuilder, origin, source.loc, ssMfd, smoothingOffsets);
+          addSmoothed(rTableBuilder, origin, source.loc, rMfd, smoothingOffsets);
+          addSmoothed(nTableBuilder, origin, source.loc, nMfd, smoothingOffsets);
+        } else {
+          ssTableBuilder.add(r, ssMfd);
+          rTableBuilder.add(r, rMfd);
+          nTableBuilder.add(r, nMfd);
+        }
+
         parentCount++;
       }
 
@@ -822,6 +850,58 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     private static double distanceDiscretization(double r) {
       return r < 400.0 ? 1.0 : 5.0;
     }
+
+    private static double[] smoothingOffsets(double r, double cellScale) {
+      return offsets(cellScale, r < 400.0 ? OFFSET_SCALE_10 : OFFSET_SCALE_4);
+    }
+  }
+
+  static void addSmoothed(
+      IntervalTable.Builder builder,
+      Location site,
+      Location source,
+      XySequence mfd,
+      double[] smoothingOffsets) {
+
+    LocationList distributedLocs = distributedLocations(source, smoothingOffsets);
+    double rateScale = 1.0 / distributedLocs.size();
+    XySequence scaledMfd = XySequence.copyOf(mfd).multiply(rateScale);
+    for (Location loc : distributedLocs) {
+      double r = Locations.horzDistanceFast(site, loc);
+      builder.add(r, scaledMfd);
+    }
+  }
+
+  static LocationList distributedLocations(Location loc, double[] offsets) {
+    double lon = loc.lon();
+    double lat = loc.lat();
+    LocationList.Builder locations = LocationList.builder();
+    for (double Δlat : offsets) {
+      double offsetLat = lat + Δlat;
+      for (double Δlon : offsets) {
+        double offsetLon = lon + Δlon;
+        locations.add(Location.create(offsetLat, offsetLon));
+      }
+    }
+    return locations.build();
+  }
+
+  private static final int PRECISION = 5;
+  private static final double[] OFFSET_SCALE_10 = Data.buildCleanSequence(
+      -0.45, 0.45, 0.1, true, 2);
+  private static final double[] OFFSET_SCALE_4 = Data.buildCleanSequence(
+      -0.375, 0.375, 0.25, true, 3);
+
+  /*
+   * Create lat-lon offset values for use when building list of distributed
+   * point source locations.
+   * 
+   * NOTE DataArray would be cleaner here
+   */
+  private static double[] offsets(double cellScale, double[] offsetArray) {
+    return Data.round(PRECISION, Data.multiply(
+        cellScale,
+        Arrays.copyOf(offsetArray, offsetArray.length)));
   }
 
 }

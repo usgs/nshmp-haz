@@ -1034,6 +1034,13 @@ public final class CalcConfig {
     public final boolean optimizeGrids;
 
     /**
+     * Whether to distribute grid sources near a site to smooth event rates.
+     *
+     * <p><b>Default:</b> {@code false}
+     */
+    public final boolean smoothGrids;
+
+    /**
      * Whether to collapse/combine magnitude-frequency distributions, or not.
      * Doing so prevents uncertainty analysis as logic-tree branches are
      * obscured.
@@ -1057,65 +1064,61 @@ public final class CalcConfig {
      */
     public final ThreadCount threadCount;
     
-    /**
-     * The number of tasks to keep in a work queue.
-     *
-     * <p><b>Default:</b> {@code 1}
-     */
-    public final int queueSize;
-
     private Performance(
         boolean optimizeGrids,
+        boolean smoothGrids,
         boolean collapseMfds,
         int systemPartition,
-        ThreadCount threadCount,
-        int queueSize) {
+        ThreadCount threadCount) {
 
       this.optimizeGrids = optimizeGrids;
+      this.smoothGrids = smoothGrids;
       this.collapseMfds = collapseMfds;
       this.systemPartition = systemPartition;
       this.threadCount = threadCount;
-      this.queueSize = queueSize;
     }
 
     private StringBuilder asString() {
       return new StringBuilder()
           .append(LOG_INDENT).append("Performance")
           .append(formatEntry(Key.OPTIMIZE_GRIDS, optimizeGrids))
+          .append(formatEntry(Key.SMOOTH_GRIDS, smoothGrids))
           .append(formatEntry(Key.COLLAPSE_MFDS, collapseMfds))
           .append(formatEntry(Key.SYSTEM_PARTITION, systemPartition))
-          .append(formatEntry(Key.THREAD_COUNT, threadCount.name()))
-          .append(formatEntry(Key.QUEUE_SIZE, queueSize));
+          .append(formatEntry(Key.THREAD_COUNT, threadCount.name()));
     }
 
     private static final class Builder {
 
       Boolean optimizeGrids;
+      Boolean smoothGrids;
       Boolean collapseMfds;
       Integer systemPartition;
       ThreadCount threadCount;
-      Integer queueSize;
 
       Performance build() {
         return new Performance(
             optimizeGrids,
+            smoothGrids,
             collapseMfds,
             systemPartition,
-            threadCount,
-            queueSize);
+            threadCount);
       }
 
       void copy(Performance that) {
         this.optimizeGrids = that.optimizeGrids;
+        this.smoothGrids = that.smoothGrids;
         this.collapseMfds = that.collapseMfds;
         this.systemPartition = that.systemPartition;
         this.threadCount = that.threadCount;
-        this.queueSize = that.queueSize;
       }
 
       void extend(Builder that) {
         if (that.optimizeGrids != null) {
           this.optimizeGrids = that.optimizeGrids;
+        }
+        if (that.smoothGrids != null) {
+          this.smoothGrids = that.smoothGrids;
         }
         if (that.collapseMfds != null) {
           this.collapseMfds = that.collapseMfds;
@@ -1126,27 +1129,24 @@ public final class CalcConfig {
         if (that.threadCount != null) {
           this.threadCount = that.threadCount;
         }
-        if (that.queueSize != null) {
-          this.queueSize = that.queueSize;
-        }
       }
 
       static Builder defaults() {
         Builder b = new Builder();
         b.optimizeGrids = true;
+        b.smoothGrids = false;
         b.collapseMfds = true;
         b.systemPartition = 1000;
         b.threadCount = ThreadCount.ALL;
-        b.queueSize = 1;
         return b;
       }
 
       void validate() {
         checkNotNull(optimizeGrids, STATE_ERROR, Performance.ID, Key.OPTIMIZE_GRIDS);
+        checkNotNull(smoothGrids, STATE_ERROR, Performance.ID, Key.SMOOTH_GRIDS);
         checkNotNull(collapseMfds, STATE_ERROR, Performance.ID, Key.COLLAPSE_MFDS);
         checkNotNull(systemPartition, STATE_ERROR, Performance.ID, Key.SYSTEM_PARTITION);
         checkNotNull(threadCount, STATE_ERROR, Performance.ID, Key.THREAD_COUNT);
-        checkNotNull(queueSize, STATE_ERROR, Performance.ID, Key.QUEUE_SIZE);
       }
     }
   }
@@ -1172,6 +1172,7 @@ public final class CalcConfig {
     BASIN_DATA_PROVIDER,
     /* performance */
     OPTIMIZE_GRIDS,
+    SMOOTH_GRIDS,
     COLLAPSE_MFDS,
     SYSTEM_PARTITION,
     THREAD_COUNT,
