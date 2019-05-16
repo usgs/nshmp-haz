@@ -47,6 +47,7 @@ readonly LOG_FILE="docker-entrypoint.log";
 #   (string) GET_NSHMP_PROGRAM_RETURN - The return of get_nshmp_program
 #   (string) CHECK_CONFIG_FILE_RETURN - The return of check_config_file
 #   (string) CHECK_SITE_FILE_RETURN - The return of check_site_file
+#   (numnber) IML - The intensity measure level for deagg-iml
 #   (string) JAVA_XMS - Java initial memory
 #   (string) JAVA_XMX - Java max memory
 #   (string) MODEL - The nshm
@@ -101,6 +102,7 @@ main() {
       "${nshmp_model_path}" \
       "${site_file}" \
       ${RETURN_PERIOD:+ "${RETURN_PERIOD}"} \
+      ${IML:+ "${IML}"} \
       "${config_file}" 2> ${LOG_FILE} || \
       error_exit "Failed running nshmp-haz" "$(tail -n 55 ${LOG_FILE})";
 
@@ -232,7 +234,7 @@ get_cous_model() {
       nshmp_model_path="nshm-cous-2018/";
       ;;
     *)
-      error_exit "Model [${MODEL}] not supported for program ${PROGRAM}" "Model not supported";
+      error_exit "Model [${MODEL}] not supported for program [${PROGRAM}]" "Model not supported";
       ;;
   esac
 
@@ -277,7 +279,7 @@ get_model() {
       nshmp_model_path="nshm-cous-2018/Western US/";
       ;;
     *)
-      error_exit "Model [${MODEL}] not supported for program ${PROGRAM}" "Model not supported";
+      error_exit "Model [${MODEL}] not supported for program [${PROGRAM}]" "Model not supported";
       ;;
   esac
   
@@ -331,6 +333,9 @@ get_nshmp_program() {
       ;;
     "deagg-epsilon")
       nshmp_program="DeaggEpsilon";
+      ;;
+    "deagg-iml")
+      nshmp_program="DeaggIml";
       ;;
     "hazard-2018")
       nshmp_program="Hazard2018";

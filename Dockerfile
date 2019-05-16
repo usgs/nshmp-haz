@@ -84,7 +84,7 @@ COPY --from=builder ${builder_workdir}/models .
 COPY docker-entrypoint.sh .
 
 # Set Java memory
-ENV JAVA_XMS 1g
+ENV JAVA_XMS 8g
 ENV JAVA_XMX 8g
 
 # NSHM
@@ -95,6 +95,9 @@ ENV PROGRAM hazard
 
 # Return period for deagg
 ENV RETURN_PERIOD ""
+
+# Intensity measure level (in units of g) for deagg-iml
+ENV IML ""
 
 # Optional config file
 ENV CONFIG_FILE "config.json"
