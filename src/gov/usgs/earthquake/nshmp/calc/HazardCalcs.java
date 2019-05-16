@@ -208,7 +208,9 @@ public class HazardCalcs {
           if (config.performance.optimizeGrids && gss.optimizable()) {
             gridTables.add(transform(
                 immediateFuture(gss),
-                GridSourceSet.optimizer(site.location)::apply,
+                GridSourceSet.optimizer(
+                    site.location,
+                    config.performance.optimizeGrids)::apply,
                 ex));
             break;
           }
@@ -262,7 +264,9 @@ public class HazardCalcs {
         case GRID:
           GridSourceSet gss = (GridSourceSet) sourceSet;
           if (config.performance.optimizeGrids && gss.optimizable()) {
-            sourceSet = GridSourceSet.optimizer(site.location).apply(gss);
+            sourceSet = GridSourceSet.optimizer(
+                site.location,
+                config.performance.smoothGrids).apply(gss);
             log(log, MSSG_GRID_INIT, sourceSet.name(), duration(swSource));
           }
           curveSets.add(sourcesToCurves(sourceSet, config, site));
