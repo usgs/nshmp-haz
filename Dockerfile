@@ -1,10 +1,22 @@
-################################
+####
 # Dockerfile for nshmp-haz.
+#
+# Usage:
+#   docker run \
+#       -e PROGRAM=<deagg | deagg-epsilon | deagg-iml | hazard | hazard-2018 | rate> \
+#       -e MODEL=<WUS-20[08|14|18] | CEUS-20[08|14|18] | COUS-20[08|14|18] | AK-2007> \
+#       -e ACCESS_VISUALVM=<true | false> \
+#       -e VISUALVM_PORT=<port> \
+#       -e VISUALVM_HOSTNAME=<hostname> \
+#       -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \
+#       -v /absolute/path/to/config/file:/app/config.json \
+#       -v /absolute/path/to/output:/app/output \
+#       usgs/nshmp-haz
 #
 # Note: Models load as requested. While all supported models are
 # available, requesting them all will eventually result in an
 # OutOfMemoryError. Increase -Xmx to -Xmx16g or -Xmx24g, if available.
-################################
+####
 
 # Project
 ARG project=nshmp-haz
@@ -17,20 +29,13 @@ ARG jar_path=${builder_workdir}/build/libs/${project}.jar
 
 ####
 # Builder Image: Java 8 in usgs/centos image
-#   - Install git, curl, and bash
-#   - Download models (docker-builder-entrypoint.sh)
+#   - Install git
 #   - Build nshmp-haz
 ####
 FROM usgsnshmp/nshmp-openjdk:jdk8 as builder
 
 # Get builder workdir
 ARG builder_workdir
-
-# Repository versions
-ARG NSHM_COUS_2018_VERSION=master
-ARG NSHM_COUS_2014_VERSION=master
-ARG NSHM_COUS_2008_VERSION=master
-ARG NSHM_AK_2007_VERSION=master
 
 # Set working directory
 WORKDIR ${builder_workdir} 
@@ -44,17 +49,12 @@ RUN yum install -y git
 # Build nshmp-haz
 RUN ./gradlew assemble
 
-# Change working directory
-WORKDIR ${builder_workdir}/models
-
-# Download models
-RUN bash ${builder_workdir}/docker-builder-entrypoint.sh
-
 ####
 # Application Image: Java 8 in usgs/centos image
 #   - Install jq
 #   - Copy JAR file from builder image
-#   - Run nshmp-haz
+#   - Download model
+#   - Run nshmp-haz (docker-entrypoint.sh)
 ####
 FROM usgsnshmp/nshmp-openjdk:jdk8
 
@@ -77,14 +77,14 @@ ARG builder_workdir
 # Copy JAR file from builder image
 COPY --from=builder ${jar_path} .
 
-# Copy models
-COPY --from=builder ${builder_workdir}/models .
-
 # Copy entrypoint script
 COPY docker-entrypoint.sh .
 
+# NSHM repository version
+ENV NSHM_VERSION=master
+
 # Set Java memory
-ENV JAVA_XMS 1g
+ENV JAVA_XMS 8g
 ENV JAVA_XMX 8g
 
 # NSHM
@@ -95,6 +95,9 @@ ENV PROGRAM hazard
 
 # Return period for deagg
 ENV RETURN_PERIOD ""
+
+# Intensity measure level (in units of g) for deagg-iml
+ENV IML ""
 
 # Optional config file
 ENV CONFIG_FILE "config.json"
