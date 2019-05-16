@@ -657,7 +657,7 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
     }
 
     private static final double SRC_TO_SITE_AZIMUTH = 0.0;
-    private static final double SMOOTHING_LIMIT = 26.0; // km
+    private static final double SMOOTHING_LIMIT = 40.0; // km
 
     /* creates the type of point source specified in the parent */
     private List<PointSource> initSources(boolean smoothed) {
@@ -684,7 +684,6 @@ public class GridSourceSet extends AbstractSourceSet<PointSource> {
         }
         parentCount++;
       }
-
       IntervalTable mfdTable = tableBuilder.build();
 
       // System.out.println(parent.name());
