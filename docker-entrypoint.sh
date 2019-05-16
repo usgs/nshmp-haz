@@ -2,18 +2,6 @@
 
 ####
 # Docker entrypoint to run nshmp-haz.
-#
-# Usage:
-#   docker run \
-#       -e PROGRAM=<deagg | deagg-epsilon | hazard | rate> \
-#       -e MODEL=<WUS-20[08|14|18] | CEUS-20[08|14|18] | COUS-20[08|14|18] | AK-2007> \
-#       -e ACCESS_VISUALVM=<true | false> \
-#       -e VISUALVM_PORT=<port> \
-#       -e VISUALVM_HOSTNAME=<hostname> \
-#       -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \
-#       -v /absolute/path/to/config/file:/app/config.json \
-#       -v /absolute/path/to/output:/app/output \
-#       usgs/nshmp-haz
 ####
 
 set -o errexit;
@@ -165,6 +153,24 @@ check_sites_file() {
 }
 
 ####
+# Download a USGS repository from Github.
+# Arguments:
+#   (string) repo - The project to download
+#   (string) version - The version to download
+# Returns:
+#   None
+####
+download_repo() {
+  local repo=${1};
+  local version=${2};
+  local url="https://github.com/usgs/${repo}/archive/${version}.tar.gz";
+
+  printf "\n Downloading [${url}] \n\n";
+  curl -L ${url} | tar -xz;
+  mv ${repo}-${version#v*} ${repo};
+}
+
+####
 # Exit script with error.
 # Globals:
 #   None
@@ -215,6 +221,7 @@ error_exit() {
 #   (string) MODEL - The nshm
 #   (string) PROGRAM - The program to run
 #   (string) GET_COUS_MODEL_RETURN - The return for the function
+#   (string) NSHM_VERSION - The NSHM repository version
 # Arguments:
 #   None
 # Returns:
@@ -226,12 +233,15 @@ get_cous_model() {
   case ${MODEL} in
     "COUS-2008")
       nshmp_model_path="nshm-cous-2008/";
+      download_repo "nshm-cous-2008" ${NSHM_VERSION};
       ;;
     "COUS-2014")
       nshmp_model_path="nshm-cous-2014/";
+      download_repo "nshm-cous-2014" ${NSHM_VERSION};
       ;;
     "COUS-2018")
       nshmp_model_path="nshm-cous-2018/";
+      download_repo "nshm-cous-2018" ${NSHM_VERSION};
       ;;
     *)
       error_exit "Model [${MODEL}] not supported for program [${PROGRAM}]" "Model not supported";
@@ -248,6 +258,7 @@ get_cous_model() {
 #   (string) MODEL - The nshm
 #   (string) PROGRAM - The program to run
 #   (string) GET_MODEL_RETURN - The return for the function
+#   (string) NSHM_VERSION - The NSHM repository version
 # Arguments:
 #   None
 # Returns:
@@ -259,24 +270,31 @@ get_model() {
   case ${MODEL} in
     "AK-2007")
       nshmp_model_path="nshm-ak-2007";
+      download_repo "nshm-ak-2007" ${NSHM_VERSION};
       ;;
     "CEUS-2008")
       nshmp_model_path="nshm-cous-2008/Central & Eastern US/";
+      download_repo "nshm-cous-2008" ${NSHM_VERSION};
       ;;
     "CEUS-2014")
       nshmp_model_path="nshm-cous-2014/Central & Eastern US/";
+      download_repo "nshm-cous-2014" ${NSHM_VERSION};
       ;;
     "CEUS-2018")
       nshmp_model_path="nshm-cous-2018/Central & Eastern US/";
+      download_repo "nshm-cous-2018" ${NSHM_VERSION};
       ;;
     "WUS-2008")
       nshmp_model_path="nshm-cous-2008/Western US/";
+      download_repo "nshm-cous-2008" ${NSHM_VERSION};
       ;;
     "WUS-2014")
       nshmp_model_path="nshm-cous-2014/Western US/";
+      download_repo "nshm-cous-2014" ${NSHM_VERSION};
       ;;
     "WUS-2018")
       nshmp_model_path="nshm-cous-2018/Western US/";
+      download_repo "nshm-cous-2018" ${NSHM_VERSION};
       ;;
     *)
       error_exit "Model [${MODEL}] not supported for program [${PROGRAM}]" "Model not supported";
