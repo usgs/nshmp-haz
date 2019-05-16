@@ -210,7 +210,7 @@ public class HazardCalcs {
                 immediateFuture(gss),
                 GridSourceSet.optimizer(
                     site.location,
-                    config.performance.optimizeGrids)::apply,
+                    config.performance.smoothGrids)::apply,
                 ex));
             break;
           }
