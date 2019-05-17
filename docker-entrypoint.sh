@@ -166,7 +166,8 @@ download_repo() {
   local url="https://github.com/usgs/${repo}/archive/${version}.tar.gz";
 
   printf "\n Downloading [${url}] \n\n";
-  curl -L ${url} | tar -xz;
+  curl -L ${url} | tar -xz 2> ${LOG_FILE} || \
+      error_exit "Could not download [${url}]" "$(< ${LOG_FILE})";
   mv ${repo}-${version#v*} ${repo};
 }
 
