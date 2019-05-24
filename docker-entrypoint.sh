@@ -7,6 +7,9 @@
 set -o errexit;
 set -o errtrace;
 
+# Import bash functions from usgsnshmp/centos
+. ${BASH_FUNCTIONS}
+
 # check_config_file global return variable
 CHECK_CONFIG_FILE_RETURN="";
 
@@ -28,6 +31,20 @@ GET_NSHMP_PROGRAM_RETURN="";
 # Log file
 readonly LOG_FILE="docker-entrypoint.log";
 
+# Docker usage
+readonly USAGE="
+  docker run \\
+      -e PROGRAM=<deagg | deagg-epsilon | hazard | rate> \\
+      -e MODEL=<WUS-20[08|14|18] | CEUS-20[08|14|18] | COUS-20[08|14|18] | AK-2007> \\
+      -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \\
+      -e ACCESS_VISUALVM=<true | false> \\
+      -e VISUALVM_PORT=<port> \\
+      -e VISUALVM_HOSTNAME=<hostname> \\
+      -v /absolute/path/to/config/file:/app/config.json \\
+      -v /absolute/path/to/output:/app/output \\
+      usgs/nshmp-haz
+";
+
 ####
 # Run nshmp-haz.
 # Globals:
@@ -48,7 +65,7 @@ readonly LOG_FILE="docker-entrypoint.log";
 ####
 main() {
   # Set trap for uncaught errors
-  trap 'error_exit "${BASH_COMMAND}" "$(< ${LOG_FILE})"' ERR;
+  trap 'error_exit "${BASH_COMMAND}" "$(< ${LOG_FILE})" "${USAGE}"' ERR;
 
   # Get Java class to run
   get_nshmp_program 2> ${LOG_FILE};
@@ -92,7 +109,7 @@ main() {
       ${RETURN_PERIOD:+ "${RETURN_PERIOD}"} \
       ${IML:+ "${IML}"} \
       "${config_file}" 2> ${LOG_FILE} || \
-      error_exit "Failed running nshmp-haz" "$(tail -n 55 ${LOG_FILE})";
+      error_exit "Failed running nshmp-haz" "$(tail -n 55 ${LOG_FILE})" "${USAGE}";
 
   # Move artifacts to mounted volume
   move_to_output_volume 2> ${LOG_FILE};
@@ -111,7 +128,7 @@ main() {
 check_config_file() {
   # Check if file is valid JSON
   jq empty < ${CONFIG_FILE} 2> ${LOG_FILE} || \
-      error_exit "Config file is not valid JSON" "$(< ${LOG_FILE})";
+      error_exit "Config file is not valid JSON" "$(< ${LOG_FILE})" "${USAGE}";
 
   # Return 
   CHECK_CONFIG_FILE_RETURN=${CONFIG_FILE};
@@ -128,92 +145,29 @@ check_config_file() {
 ####
 check_sites_file() {
   local site_file=$(ls sites*) 2> ${LOG_FILE} || \
-      error_exit "Site file does not exist." "$(< ${LOG_FILE})";
+      error_exit "Site file does not exist." "$(< ${LOG_FILE})" "${USAGE}";
 
   # Check if valid JSON or ASCII file
   case ${site_file} in
     *.geojson)
       jq empty < ${site_file} 2> ${LOG_FILE} || \
-          error_exit "Site file [${site_file}] is not valid JSON" "$(< ${LOG_FILE})";
+          error_exit "Site file [${site_file}] is not valid JSON" "$(< ${LOG_FILE})" "${USAGE}";
       ;;
     *.csv)
       if [[ "$(file ${site_file} -b)" != "ASCII text"* ]]; then
         error_exit \
             "Site file [${site_file}] is not valid ASCII" \
-            "Site file is not valid ASCII";
+            "Site file is not valid ASCII" \
+            "${USAGE}";
       fi
       ;;
     *)
-      error_exit "Bad site file [${site_file}]." "Bad site file.";
+      error_exit "Bad site file [${site_file}]." "Bad site file." "${USAGE}";
       ;;
   esac
 
   # Return
   CHECK_SITE_FILE_RETURN=${site_file};
-}
-
-####
-# Download a USGS repository from Github.
-# Arguments:
-#   (string) repo - The project to download
-#   (string) version - The version to download
-# Returns:
-#   None
-####
-download_repo() {
-  local repo=${1};
-  local version=${2};
-  local url="https://github.com/usgs/${repo}/archive/${version}.tar.gz";
-
-  printf "\n Downloading [${url}] \n\n";
-  curl -L ${url} | tar -xz 2> ${LOG_FILE} || \
-      error_exit "Could not download [${url}]" "$(< ${LOG_FILE})";
-  mv ${repo}-${version#v*} ${repo};
-}
-
-####
-# Exit script with error.
-# Globals:
-#   None
-# Arguments:
-#   (string) message - The error message
-#   (string) logs - The log for the error
-# Returns:
-#   None
-####
-error_exit() {
-  local usage="
-    docker run \\
-        -e PROGRAM=<deagg | deagg-epsilon | hazard | rate> \\
-        -e MODEL=<WUS-20[08|14|18] | CEUS-20[08|14|18] | COUS-20[08|14|18] | AK-2007> \\
-        -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \\
-        -e ACCESS_VISUALVM=<true | false> \\
-        -e VISUALVM_PORT=<port> \\
-        -e VISUALVM_HOSTNAME=<hostname> \\
-        -v /absolute/path/to/config/file:/app/config.json \\
-        -v /absolute/path/to/output:/app/output \\
-        usgs/nshmp-haz
-  ";
-
-  local message="
-    nshmp-haz Docker error:
-    ${1}
-
-    ----------
-    Logs:
-
-    ${2}
-
-    ----------
-    Usage:
-
-    ${usage}
-
-  ";
-
-  printf "${message}";
-
-  exit -1;
 }
 
 ####
@@ -234,18 +188,21 @@ get_cous_model() {
   case ${MODEL} in
     "COUS-2008")
       nshmp_model_path="nshm-cous-2008/";
-      download_repo "nshm-cous-2008" ${NSHM_VERSION};
+      download_repo "usgs" "nshm-cous-2008" ${NSHM_VERSION};
       ;;
     "COUS-2014")
       nshmp_model_path="nshm-cous-2014/";
-      download_repo "nshm-cous-2014" ${NSHM_VERSION};
+      download_repo "usgs" "nshm-cous-2014" ${NSHM_VERSION};
       ;;
     "COUS-2018")
       nshmp_model_path="nshm-cous-2018/";
-      download_repo "nshm-cous-2018" ${NSHM_VERSION};
+      download_repo "usgs" "nshm-cous-2018" ${NSHM_VERSION};
       ;;
     *)
-      error_exit "Model [${MODEL}] not supported for program [${PROGRAM}]" "Model not supported";
+      error_exit \
+          "Model [${MODEL}] not supported for program [${PROGRAM}]" \
+          "Model not supported" \
+          "${USAGE}";
       ;;
   esac
 
@@ -271,34 +228,37 @@ get_model() {
   case ${MODEL} in
     "AK-2007")
       nshmp_model_path="nshm-ak-2007";
-      download_repo "nshm-ak-2007" ${NSHM_VERSION};
+      download_repo "usgs" "nshm-ak-2007" ${NSHM_VERSION};
       ;;
     "CEUS-2008")
       nshmp_model_path="nshm-cous-2008/Central & Eastern US/";
-      download_repo "nshm-cous-2008" ${NSHM_VERSION};
+      download_repo "usgs" "nshm-cous-2008" ${NSHM_VERSION};
       ;;
     "CEUS-2014")
       nshmp_model_path="nshm-cous-2014/Central & Eastern US/";
-      download_repo "nshm-cous-2014" ${NSHM_VERSION};
+      download_repo "usgs" "nshm-cous-2014" ${NSHM_VERSION};
       ;;
     "CEUS-2018")
       nshmp_model_path="nshm-cous-2018/Central & Eastern US/";
-      download_repo "nshm-cous-2018" ${NSHM_VERSION};
+      download_repo "usgs" "nshm-cous-2018" ${NSHM_VERSION};
       ;;
     "WUS-2008")
       nshmp_model_path="nshm-cous-2008/Western US/";
-      download_repo "nshm-cous-2008" ${NSHM_VERSION};
+      download_repo "usgs" "nshm-cous-2008" ${NSHM_VERSION};
       ;;
     "WUS-2014")
       nshmp_model_path="nshm-cous-2014/Western US/";
-      download_repo "nshm-cous-2014" ${NSHM_VERSION};
+      download_repo "usgs" "nshm-cous-2014" ${NSHM_VERSION};
       ;;
     "WUS-2018")
       nshmp_model_path="nshm-cous-2018/Western US/";
-      download_repo "nshm-cous-2018" ${NSHM_VERSION};
+      download_repo "usgs" "nshm-cous-2018" ${NSHM_VERSION};
       ;;
     *)
-      error_exit "Model [${MODEL}] not supported for program [${PROGRAM}]" "Model not supported";
+      error_exit \
+          "Model [${MODEL}] not supported for program [${PROGRAM}]" \
+          "Model not supported" \
+          "${USAGE}";
       ;;
   esac
   
@@ -366,7 +326,7 @@ get_nshmp_program() {
       nshmp_program="RateCalc";
       ;;
     *)
-      error_exit "Program [${PROGRAM}] not supported" "Program not supported";
+      error_exit "Program [${PROGRAM}] not supported" "Program not supported" "${USAGE}";
       ;;
   esac
   
