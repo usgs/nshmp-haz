@@ -1036,7 +1036,7 @@ public final class CalcConfig {
     /**
      * Whether to distribute grid sources near a site to smooth event rates.
      *
-     * <p><b>Default:</b> {@code false}
+     * <p><b>Default:</b> {@code true}
      */
     public final boolean smoothGrids;
 
@@ -1134,7 +1134,7 @@ public final class CalcConfig {
       static Builder defaults() {
         Builder b = new Builder();
         b.optimizeGrids = true;
-        b.smoothGrids = false;
+        b.smoothGrids = true;
         b.collapseMfds = true;
         b.systemPartition = 1000;
         b.threadCount = ThreadCount.ALL;
