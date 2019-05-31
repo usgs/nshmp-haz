@@ -13,6 +13,19 @@
 #       -v /absolute/path/to/output:/app/output \
 #       usgs/nshmp-haz
 #
+# Usage with custom model:
+#   docker run \
+#       -e PROGRAM=<deagg | deagg-epsilon | deagg-iml | hazard | hazard-2018 | rate> \
+#       -e ACCESS_VISUALVM=<true | false> \
+#       -e VISUALVM_PORT=<port> \
+#       -e VISUALVM_HOSTNAME=<hostname> \
+#       -e MOUNT_MODEL=true \
+#       -v /absolute/path/to/model:/app/model \
+#       -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \
+#       -v /absolute/path/to/config/file:/app/config.json \
+#       -v /absolute/path/to/output:/app/output \
+#       usgs/nshmp-haz
+#
 # Note: Models load as requested. While all supported models are
 # available, requesting them all will eventually result in an
 # OutOfMemoryError. Increase -Xmx to -Xmx16g or -Xmx24g, if available.
@@ -89,6 +102,9 @@ ENV JAVA_XMX 8g
 
 # NSHM
 ENV MODEL ""
+
+# Whether to mount the model instead of selecting a model
+ENV MOUNT_MODEL false
 
 # Program to run: deagg | deagg-epsilon | hazard | rate
 ENV PROGRAM hazard
