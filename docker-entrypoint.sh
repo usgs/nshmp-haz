@@ -56,6 +56,7 @@ readonly USAGE="
 #   (string) JAVA_XMS - Java initial memory
 #   (string) JAVA_XMX - Java max memory
 #   (string) MODEL - The nshm
+#   (boolean) MOUNT_MODEL - Whether to mount the model instead of selecting model
 #   (string) PROGRAM - The program to run
 #   (number) RETURN_PERIOD - The return period for deagg
 # Arguments:
@@ -72,8 +73,13 @@ main() {
   local nshmp_program="${GET_NSHMP_PROGRAM_RETURN}";
 
   # Get model path
-  get_model_path 2> ${LOG_FILE};
-  local nshmp_model_path="${GET_MODEL_PATH_RETURN}";
+  local nshmp_model_path="";
+  if [ ${MOUNT_MODEL} = true ]; then
+    nshmp_model_path="model";
+  else
+    get_model_path 2> ${LOG_FILE};
+    nshmp_model_path="${GET_MODEL_PATH_RETURN}";
+  fi
 
   # Check site file
   check_sites_file 2> ${LOG_FILE};
