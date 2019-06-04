@@ -309,42 +309,4 @@ public final class GmmUtils {
     }
     return μ;
   }
-
-  /* */
-  static double scaleSubductionSiteAmp(Imt imt, double lo, double hi) {
-    double scale = subductionBasinPeriodScale(imt);
-    return lo + (hi - lo) * scale;
-  }
-
-  /* natural log scaling for periods between 0.2s and 1.0s */
-  static double subductionBasinPeriodScale(Imt imt) {
-    switch (imt) {
-
-      // scaling from 0.5s to 1.0s
-      case SA0P75:
-        return 0.585;
-
-      // scaling from 0.4s to 1.0s
-      // case SA0P5:
-      // return 0.243;
-      // case SA0P75:
-      // return 0.686;
-
-      // scaling from 0.2s to 1.0s
-      // case SA0P25:
-      // return 0.139;
-      // case SA0P3:
-      // return 0.252;
-      // case SA0P4:
-      // return 0.431;
-      // case SA0P5:
-      // return 0.569;
-      // case SA0P75:
-      // return 0.821;
-
-      default:
-        return 1.0;
-    }
-  }
-
 }

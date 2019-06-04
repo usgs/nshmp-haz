@@ -109,7 +109,6 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   private static final double SIGMA = 0.74;
   private static final double ΔC1_SLAB = -0.3;
   private static final double VS30_ROCK = 1000.0;
-  private static final double VS30_REF = 760.0; // refrence vs30 for CB basin Δ
 
   private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
       ImmutableMap.of(SA0P03, Range.closed(SA0P02, SA0P05)));
@@ -141,7 +140,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
   private final Coefficients coeffs;
   private final Coefficients coeffsPGA;
-  private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
+  private final CampbellBozorgnia_2014 cb14;
 
   // interpolatedGmm = null if !interpolated
   private final boolean interpolated;
@@ -150,7 +149,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   BcHydro_2012(final Imt imt, Gmm subtype) {
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
-    cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
+    cb14 = new CampbellBozorgnia_2014(imt);
     interpolated = INTERPOLATED_IMTS.containsKey(imt);
     interpolatedGmm = interpolated
         ? new InterpolatedGmm(subtype, imt, INTERPOLATED_IMTS.get(imt))
@@ -166,22 +165,20 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     double pgaRock = exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, VS30_ROCK));
     double μAsk = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
 
-    if (!Double.isNaN(in.z2p5) && basinEffect()) {
-      
-      double μRef = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, VS30_REF);
-      double cbBasin = cb14basinAmp.basinDelta(in, VS30_REF);
-      double μCb = μRef + cbBasin;
-
-      /* Short-circuit lower values and short periods. */
-      int imtId = coeffs.imt.ordinal();
-      if ((μCb < μAsk) || (imtId < Imt.SA0P75.ordinal())) {
-        return DefaultScalarGroundMotion.create(μAsk, SIGMA);
-      } else if (imtId < Imt.SA1P0.ordinal()) {
-        double μScaled = GmmUtils.scaleSubductionSiteAmp(coeffs.imt, μAsk, μCb);
-        return DefaultScalarGroundMotion.create(μScaled, SIGMA);
+    /*
+     * Add CB14 deep basin amplification term if (1) z2p5 is non-NaN, (2) this
+     * instance is basin amplifying and (3) T>0.5s
+     */
+    if (!Double.isNaN(in.z2p5) &&
+        basinEffect() &&
+        coeffs.imt.ordinal() > Imt.SA0P5.ordinal()) {
+      double cbBasinTerm = cb14.deepBasinAmplification(in.z2p5);
+      if (coeffs.imt == Imt.SA0P75) {
+        cbBasinTerm *= 0.585;// log T scaling at 0.75s
       }
-      return DefaultScalarGroundMotion.create(μCb, SIGMA);
+      μAsk += cbBasinTerm;
     }
+
     return DefaultScalarGroundMotion.create(μAsk, SIGMA);
   }
 

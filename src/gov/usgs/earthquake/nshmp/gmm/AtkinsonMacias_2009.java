@@ -114,7 +114,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
   private final Coefficients coeffs;
   private final Coefficients coeffsPGA;
   private final BooreAtkinson_2008 siteAmp;
-  private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
+  private final CampbellBozorgnia_2014 cb14;
 
   // interpolatedGmm = null if !interpolated
   private final boolean interpolated;
@@ -128,7 +128,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
     siteAmp = new BooreAtkinson_2008(imt);
-    cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
+    cb14 = new CampbellBozorgnia_2014(imt);
     interpolated = INTERPOLATED_IMTS.containsKey(imt);
     interpolatedGmm = interpolated
         ? new InterpolatedGmm(subtype, imt, INTERPOLATED_IMTS.get(imt))
@@ -147,21 +147,20 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
     double site = siteAmp.siteAmp(μPga, in.vs30);
     double μAm = μRef + site;
 
-    if (!Double.isNaN(in.z2p5) && basinEffect()) {
-
-      double cbSite = cb14basinAmp.basinDelta(in, VS30_REF);
-      double μCb = μRef + cbSite;
-
-      /* Short-circuit lower values and short periods. */
-      int imtId = coeffs.imt.ordinal();
-      if ((μCb < μAm) || (imtId < Imt.SA0P75.ordinal())) {
-        return DefaultScalarGroundMotion.create(μAm, σ);
-      } else if (imtId < Imt.SA1P0.ordinal()) {
-        double μScaled = GmmUtils.scaleSubductionSiteAmp(coeffs.imt, μAm, μCb);
-        return DefaultScalarGroundMotion.create(μScaled, σ);
+    /*
+     * Add CB14 deep basin amplification term if (1) z2p5 is non-NaN, (2) this
+     * instance is basin amplifying and (3) T>0.5s
+     */
+    if (!Double.isNaN(in.z2p5) &&
+        basinEffect() &&
+        coeffs.imt.ordinal() > Imt.SA0P5.ordinal()) {
+      double cbBasinTerm = cb14.deepBasinAmplification(in.z2p5);
+      if (coeffs.imt == Imt.SA0P75) {
+        cbBasinTerm *= 0.585; // log T scaling at 0.75s
       }
-      return DefaultScalarGroundMotion.create(μCb, σ);
+      μAm += cbBasinTerm;
     }
+
     return DefaultScalarGroundMotion.create(μAm, σ);
   }
 

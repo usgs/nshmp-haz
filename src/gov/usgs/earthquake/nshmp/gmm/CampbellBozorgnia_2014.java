@@ -179,27 +179,11 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
   }
 
   /*
-   * Convenience method for Campbell site/basin delta relative to a reference
-   * site condition, vs30ref, which may be different than Campbell's reference
-   * rock site condition of Vs30=1100 m/s.
+   * Return the CB14 basin amplification term for deep basins only, z2.5 > 3km
+   * and Fsed > 0.
    */
-  double basinDelta(GmmInput in, double vs30ref) {
-    FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
-    boolean basinAmp = basinAmpOnly();
-
-    /* Rock reference value with default basin term. */
-    double pgaRock = (vs30ref < coeffs.k1)
-        ? exp(calcMean(coeffsPGA, style, 1100.0, 0.398, 0.0, in, basinAmp))
-        : 0.0;
-    double μRock = calcMean(coeffs, style, vs30ref, Double.NaN, pgaRock, in, basinAmp);
-
-    /* Now with site/basin effect. */
-    pgaRock = (in.vs30 < coeffs.k1)
-        ? exp(calcMean(coeffsPGA, style, 1100.0, 0.398, 0.0, in, basinAmp))
-        : 0.0;
-    double μBasin = calcMean(coeffs, style, in.vs30, in.z2p5, pgaRock, in, basinAmp);
-
-    return μBasin - μRock;
+  double deepBasinAmplification(double z2p5) {
+    return Math.max(calcBasinTerm(coeffs, z2p5), 0.0);
   }
 
   // Mean ground motion model -- we use supplied vs30 and z2p5 rather than
