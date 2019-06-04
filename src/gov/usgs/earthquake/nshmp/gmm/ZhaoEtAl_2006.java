@@ -109,7 +109,6 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private static final double MC_I = 6.3;
   private static final double MAX_SLAB_DEPTH = 125.0;
   private static final double INTERFACE_DEPTH = 20.0;
-  private static final double VS30_REF = 760.0;
 
   private static final Map<Imt, Range<Imt>> INTERPOLATED_IMTS = Maps.immutableEnumMap(
       ImmutableMap.of(
@@ -184,7 +183,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   private final Coefficients coeffs;
-  private final CampbellBozorgnia_2014.BasinAmp cb14basinAmp;
+  private final CampbellBozorgnia_2014 cb14;
 
   /* gmms = null if !flag */
   private final boolean interpolated;
@@ -194,7 +193,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
   ZhaoEtAl_2006(final Imt imt, Gmm subtype) {
     coeffs = new Coefficients(imt, COEFFS);
-    cb14basinAmp = new CampbellBozorgnia_2014.BasinAmp(imt);
+    cb14 = new CampbellBozorgnia_2014(imt);
     interpolated = INTERPOLATED_IMTS.containsKey(imt);
     interpolatedGmm = interpolated
         ? new InterpolatedGmm(subtype, imt, INTERPOLATED_IMTS.get(imt))
@@ -220,23 +219,20 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     double zSiteVs30 = siteTermStep(coeffs, in.vs30);
     double μZhao = calcMean(coeffs, isSlab(), zSiteVs30, in);
 
-    if (!Double.isNaN(in.z2p5) && basinEffect()) {
-
-      double cbSite = cb14basinAmp.basinDelta(in, VS30_REF);
-      double zSiteRock = siteTermStep(coeffs, VS30_REF);
-      double μRock = calcMean(coeffs, isSlab(), zSiteRock, in);
-      double μCb = μRock + cbSite;
-
-      /* Short-circuit lower values and short periods. */
-      int imtId = coeffs.imt.ordinal();
-      if ((μCb < μZhao) || (imtId < Imt.SA0P75.ordinal())) {
-        return DefaultScalarGroundMotion.create(μZhao, σ);
-      } else if (imtId < Imt.SA1P0.ordinal()) {
-        double μScaled = GmmUtils.scaleSubductionSiteAmp(coeffs.imt, μZhao, μCb);
-        return DefaultScalarGroundMotion.create(μScaled, σ);
+    /*
+     * Add CB14 deep basin amplification term if (1) z2p5 is non-NaN, (2) this
+     * instance is basin amplifying and (3) T>0.5s
+     */
+    if (!Double.isNaN(in.z2p5) &&
+        basinEffect() &&
+        coeffs.imt.ordinal() > Imt.SA0P5.ordinal()) {
+      double cbBasinTerm = cb14.deepBasinAmplification(in.z2p5);
+      if (coeffs.imt == Imt.SA0P75) {
+        cbBasinTerm *= 0.585;// log T scaling at 0.75s
       }
-      return DefaultScalarGroundMotion.create(μCb, σ);
+      μZhao += cbBasinTerm;
     }
+
     return DefaultScalarGroundMotion.create(μZhao, σ);
   }
 
