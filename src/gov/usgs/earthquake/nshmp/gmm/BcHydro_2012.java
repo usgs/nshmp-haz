@@ -167,16 +167,10 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
     /*
      * Add CB14 deep basin amplification term if (1) z2p5 is non-NaN, (2) this
-     * instance is basin amplifying and (3) T>0.5s
+     * instance is basin amplifying and (3) T>0.5s (handled in CB14)
      */
-    if (!Double.isNaN(in.z2p5) &&
-        basinEffect() &&
-        coeffs.imt.ordinal() > Imt.SA0P5.ordinal()) {
-      double cbBasinTerm = cb14.deepBasinAmplification(in.z2p5);
-      if (coeffs.imt == Imt.SA0P75) {
-        cbBasinTerm *= 0.585;// log T scaling at 0.75s
-      }
-      μAsk += cbBasinTerm;
+    if (basinEffect()) {
+      μAsk += cb14.deepBasinAmplification(in.z2p5);
     }
 
     return DefaultScalarGroundMotion.create(μAsk, SIGMA);

@@ -179,11 +179,23 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
   }
 
   /*
-   * Return the CB14 basin amplification term for deep basins only, z2.5 > 3km
-   * and Fsed > 0.
+   * Return the CB14 basin amplification term for deep basins (if z2.5 > 3km
+   * then Fsed > 0), and long periods T > 0.5s (blending 0.75s using log T
+   * scaling of 0.585)
    */
   double deepBasinAmplification(double z2p5) {
-    return Math.max(calcBasinTerm(coeffs, z2p5), 0.0);
+    if (checkBasinValueAndPeriod(coeffs.imt, z2p5)) {
+      double basinAmp = calcBasinTerm(coeffs, z2p5);
+      return (coeffs.imt == Imt.SA0P75) ? basinAmp * 0.585 : basinAmp;
+    }
+    return 0.0;
+  }
+  
+  /* Return true if T > 0.5s and z2p5 > 3.0 km */
+  private static boolean checkBasinValueAndPeriod(Imt imt, double z2p5) {
+    return !Double.isNaN(z2p5) &&
+        z2p5 > 3.0 &&
+        imt.ordinal() > Imt.SA0P5.ordinal();
   }
 
   // Mean ground motion model -- we use supplied vs30 and z2p5 rather than
