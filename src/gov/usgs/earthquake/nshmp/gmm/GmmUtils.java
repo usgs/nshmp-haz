@@ -18,6 +18,7 @@ import java.util.Map;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
 
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionTables.GroundMotionTable;
 import gov.usgs.earthquake.nshmp.internal.Parsing;
@@ -63,6 +64,39 @@ public final class GmmUtils {
     }
     return (rake >= 45 && rake <= 135) ? REVERSE
         : (rake >= -135 && rake <= -45) ? NORMAL : STRIKE_SLIP;
+  }
+
+  /* Derived from z2p5 via mmoschetti's 2018 ngaw2 db regressions */
+  static final double BASIN_Z1P0_UPPER = 0.3;
+  static final double BASIN_Z1P0_LOWER = 0.5;
+
+  /* Based on Campbell & Bozorgnia (2014) */
+  static final double BASIN_Z2P5_UPPER = 1.0;
+  static final double BASIN_Z2P5_LOWER = 3.0;
+
+  /* Return true if T > 0.5s and z > zMin km */
+  static boolean checkBasin(Imt imt, double z, double zMin) {
+    return !Double.isNaN(z) &&
+        z > zMin &&
+        imt.ordinal() > Imt.SA0P5.ordinal();
+  }
+
+  /* Compute linear scaling between two depth values */
+  static double basinScale(double z, double upper, double lower) {
+    double constrained = Doubles.constrainToRange(z, upper, lower);
+    return (constrained - upper) / (lower - upper);
+  }
+
+  /* Compute the Δz1 scaling for z1p0 based GMMs. */
+  static double deltaZ1scale(Imt imt, double z1p0) {
+    if (GmmUtils.checkBasin(imt, z1p0, GmmUtils.BASIN_Z1P0_UPPER)) {
+      double zScale = GmmUtils.basinScale(
+          z1p0,
+          GmmUtils.BASIN_Z1P0_UPPER,
+          GmmUtils.BASIN_Z1P0_LOWER);
+      return (imt == Imt.SA0P75) ? zScale * 0.585 : zScale;
+    }
+    return 0.0;
   }
 
   // internally values are converted and/or scaled up to
