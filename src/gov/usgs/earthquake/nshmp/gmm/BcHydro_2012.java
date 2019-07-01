@@ -79,8 +79,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * @author Peter Powers
  * @see Gmm#BCHYDRO_12_INTERFACE
  * @see Gmm#BCHYDRO_12_SLAB
- * @see Gmm#BCHYDRO_12_INTERFACE_BASIN_AMP
- * @see Gmm#BCHYDRO_12_SLAB_BASIN_AMP
+ * @see Gmm#BCHYDRO_12_INTERFACE_BASIN
+ * @see Gmm#BCHYDRO_12_SLAB_BASIN
  */
 public abstract class BcHydro_2012 implements GroundMotionModel {
 
@@ -165,10 +165,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     double pgaRock = exp(calcMean(coeffsPGA, isSlab(), 0.0, in.Mw, in.rRup, in.zTop, VS30_ROCK));
     double μAsk = calcMean(coeffs, isSlab(), pgaRock, in.Mw, in.rRup, in.zTop, in.vs30);
 
-    /*
-     * Add CB14 deep basin amplification term if (1) z2p5 is non-NaN, (2) this
-     * instance is basin amplifying and (3) T>0.5s (handled in CB14)
-     */
+    /* Add (possibly depth-tapered) CB14 deep basin term. */
     if (deepBasinEffect()) {
       μAsk += cb14.deepBasinScaling(in.z2p5);
     }
