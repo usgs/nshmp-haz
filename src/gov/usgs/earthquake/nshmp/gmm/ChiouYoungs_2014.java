@@ -140,23 +140,23 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
     coeffs = new Coefficients(imt, COEFFS);
   }
 
-  boolean basinAmpOnly() {
+  boolean deepBasinEffect() {
     return false;
   }
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    return calc(coeffs, in, basinAmpOnly());
+    return calc(coeffs, in, deepBasinEffect());
   }
 
   private static final ScalarGroundMotion calc(final Coefficients c, final GmmInput in,
-      boolean basinAmpOnly) {
+      boolean deepBasinEffect) {
 
     // terms used by both mean and stdDev
     double saRef = calcSAref(c, in);
     double soilNonLin = calcSoilNonLin(c, in.vs30);
 
-    double μ = calcMean(c, in.vs30, in.z1p0, soilNonLin, saRef, basinAmpOnly);
+    double μ = calcMean(c, in.vs30, in.z1p0, soilNonLin, saRef, deepBasinEffect);
     double σ = calcStdDev(c, in.Mw, in.vsInf, soilNonLin, saRef);
 
     return DefaultScalarGroundMotion.create(μ, σ);
@@ -221,7 +221,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
 
   // Mean ground motion model -- Equation 12
   private static final double calcMean(final Coefficients c, final double vs30,
-      final double z1p0, final double snl, final double saRef, boolean basinAmpOnly) {
+      final double z1p0, final double snl, final double saRef, boolean deepBasinEffect) {
 
     // Soil effect: linear response
     double sl = c.φ1 * min(log(vs30 / 1130.0), 0.0);
@@ -232,7 +232,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
     // Soil effect: sediment thickness
     double dZ1 = calcDeltaZ1(c.imt, z1p0, vs30);
     double rkdepth = c.φ5 * (1.0 - exp(-dZ1 / PHI6));
-    if (basinAmpOnly) {
+    if (deepBasinEffect) {
       rkdepth *= GmmUtils.deltaZ1scale(c.imt, z1p0);
     }
 
@@ -288,15 +288,15 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
     return sqrt(τ * τ * NL0sq + σNL0 * σNL0);
   }
 
-  static final class BasinAmp extends ChiouYoungs_2014 {
-    static final String NAME = ChiouYoungs_2014.NAME + " : Basin Amp";
+  static final class Basin extends ChiouYoungs_2014 {
+    static final String NAME = ChiouYoungs_2014.NAME + " : Basin";
 
-    BasinAmp(Imt imt) {
+    Basin(Imt imt) {
       super(imt);
     }
 
     @Override
-    boolean basinAmpOnly() {
+    boolean deepBasinEffect() {
       return true;
     }
   }

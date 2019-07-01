@@ -122,7 +122,7 @@ public class BooreEtAl_2014 implements GroundMotionModel {
     coeffsPGA = new Coefficients(PGA, COEFFS);
   }
 
-  boolean basinAmpOnly() {
+  boolean deepBasinEffect() {
     return false;
   }
 
@@ -130,16 +130,16 @@ public class BooreEtAl_2014 implements GroundMotionModel {
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    return calc(coeffs, coeffsPGA, in, basinAmpOnly());
+    return calc(coeffs, coeffsPGA, in, deepBasinEffect());
   }
 
   private static final ScalarGroundMotion calc(final Coefficients c, final Coefficients cPGA,
-      final GmmInput in, boolean basinAmpOnly) {
+      final GmmInput in, boolean deepBasinEffect) {
 
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
     double pgaRock = calcPGArock(cPGA, in.Mw, in.rJB, style);
 
-    double μ = calcMean(c, style, pgaRock, in, basinAmpOnly);
+    double μ = calcMean(c, style, pgaRock, in, deepBasinEffect);
     double σ = calcStdDev(c, in);
 
     return DefaultScalarGroundMotion.create(μ, σ);
@@ -147,7 +147,7 @@ public class BooreEtAl_2014 implements GroundMotionModel {
 
   // Mean ground motion model
   private static final double calcMean(final Coefficients c, final FaultStyle style,
-      final double pgaRock, final GmmInput in, boolean basinAmpOnly) {
+      final double pgaRock, final GmmInput in, boolean deepBasinEffect) {
 
     double Mw = in.Mw;
     double rJB = in.rJB;
@@ -169,13 +169,13 @@ public class BooreEtAl_2014 implements GroundMotionModel {
     double lnFnl = F1 + f2 * log((pgaRock + F3) / F3);
 
     // Basin depth term -- Equations 9, 10 , 11
-    double DZ1 = calcDeltaZ1(c.imt, in.z1p0, vs30, basinAmpOnly);
+    double DZ1 = calcDeltaZ1(c.imt, in.z1p0, vs30, deepBasinEffect);
     double Fdz1 = (c.imt.isSA() && c.imt.period() >= 0.65)
         ? (DZ1 <= c.f7 / c.f6)
             ? c.f6 * DZ1
             : c.f7
         : 0.0;
-    if (basinAmpOnly) {
+    if (deepBasinEffect) {
       Fdz1 *= GmmUtils.deltaZ1scale(c.imt, in.z1p0);
     }
 
@@ -276,15 +276,15 @@ public class BooreEtAl_2014 implements GroundMotionModel {
     return sqrt(φ_mrv * φ_mrv + τ * τ);
   }
 
-  static final class BasinAmp extends BooreEtAl_2014 {
-    static final String NAME = BooreEtAl_2014.NAME + " : Basin Amp";
+  static final class Basin extends BooreEtAl_2014 {
+    static final String NAME = BooreEtAl_2014.NAME + " : Basin";
 
-    BasinAmp(Imt imt) {
+    Basin(Imt imt) {
       super(imt);
     }
 
     @Override
-    boolean basinAmpOnly() {
+    boolean deepBasinEffect() {
       return true;
     }
   }

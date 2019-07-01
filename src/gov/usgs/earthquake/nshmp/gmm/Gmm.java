@@ -132,32 +132,32 @@ public enum Gmm {
    */
 
   /** @see AbrahamsonEtAl_2014 */
-  ASK_14_BASIN_AMP(
-      AbrahamsonEtAl_2014.BasinAmp.class,
-      AbrahamsonEtAl_2014.BasinAmp.NAME,
-      AbrahamsonEtAl_2014.BasinAmp.COEFFS,
-      AbrahamsonEtAl_2014.BasinAmp.CONSTRAINTS),
+  ASK_14_BASIN(
+      AbrahamsonEtAl_2014.Basin.class,
+      AbrahamsonEtAl_2014.Basin.NAME,
+      AbrahamsonEtAl_2014.Basin.COEFFS,
+      AbrahamsonEtAl_2014.Basin.CONSTRAINTS),
 
   /** @see BooreEtAl_2014 */
-  BSSA_14_BASIN_AMP(
-      BooreEtAl_2014.BasinAmp.class,
-      BooreEtAl_2014.BasinAmp.NAME,
-      BooreEtAl_2014.BasinAmp.COEFFS,
-      BooreEtAl_2014.BasinAmp.CONSTRAINTS),
+  BSSA_14_BASIN(
+      BooreEtAl_2014.Basin.class,
+      BooreEtAl_2014.Basin.NAME,
+      BooreEtAl_2014.Basin.COEFFS,
+      BooreEtAl_2014.Basin.CONSTRAINTS),
 
   /** @see CampbellBozorgnia_2014 */
-  CB_14_BASIN_AMP(
-      CampbellBozorgnia_2014.BasinAmp.class,
-      CampbellBozorgnia_2014.BasinAmp.NAME,
-      CampbellBozorgnia_2014.BasinAmp.COEFFS,
-      CampbellBozorgnia_2014.BasinAmp.CONSTRAINTS),
+  CB_14_BASIN(
+      CampbellBozorgnia_2014.Basin.class,
+      CampbellBozorgnia_2014.Basin.NAME,
+      CampbellBozorgnia_2014.Basin.COEFFS,
+      CampbellBozorgnia_2014.Basin.CONSTRAINTS),
 
   /** @see ChiouYoungs_2014 */
-  CY_14_BASIN_AMP(
-      ChiouYoungs_2014.BasinAmp.class,
-      ChiouYoungs_2014.BasinAmp.NAME,
-      ChiouYoungs_2014.BasinAmp.COEFFS,
-      ChiouYoungs_2014.BasinAmp.CONSTRAINTS),
+  CY_14_BASIN(
+      ChiouYoungs_2014.Basin.class,
+      ChiouYoungs_2014.Basin.NAME,
+      ChiouYoungs_2014.Basin.COEFFS,
+      ChiouYoungs_2014.Basin.CONSTRAINTS),
 
   /* Active Continent AK 2007, HI 1998 */
 
@@ -255,7 +255,7 @@ public enum Gmm {
       AtkinsonMacias_2009.CONSTRAINTS),
 
   /** @see AtkinsonMacias_2009 */
-  AM_09_INTERFACE_BASIN_AMP(
+  AM_09_INTERFACE_BASIN(
       AtkinsonMacias_2009.Basin.class,
       AtkinsonMacias_2009.Basin.NAME,
       AtkinsonMacias_2009.COEFFS,
@@ -304,14 +304,14 @@ public enum Gmm {
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  BCHYDRO_12_INTERFACE_BASIN_AMP(
+  BCHYDRO_12_INTERFACE_BASIN(
       BcHydro_2012.BasinInterface.class,
       BcHydro_2012.BasinInterface.NAME,
       BcHydro_2012.COEFFS,
       BcHydro_2012.CONSTRAINTS),
 
   /** @see BcHydro_2012 */
-  BCHYDRO_12_SLAB_BASIN_AMP(
+  BCHYDRO_12_SLAB_BASIN(
       BcHydro_2012.BasinSlab.class,
       BcHydro_2012.BasinSlab.NAME,
       BcHydro_2012.COEFFS,
@@ -346,14 +346,14 @@ public enum Gmm {
       ZhaoEtAl_2006.CONSTRAINTS),
 
   /** @see ZhaoEtAl_2006 */
-  ZHAO_06_INTERFACE_BASIN_AMP(
+  ZHAO_06_INTERFACE_BASIN(
       ZhaoEtAl_2006.BasinInterface.class,
       ZhaoEtAl_2006.BasinInterface.NAME,
       ZhaoEtAl_2006.COEFFS,
       ZhaoEtAl_2006.CONSTRAINTS),
 
   /** @see ZhaoEtAl_2006 */
-  ZHAO_06_SLAB_BASIN_AMP(
+  ZHAO_06_SLAB_BASIN(
       ZhaoEtAl_2006.BasinSlab.class,
       ZhaoEtAl_2006.BasinSlab.NAME,
       ZhaoEtAl_2006.COEFFS,
@@ -1151,10 +1151,10 @@ public enum Gmm {
     WUS_18_ACTIVE_CRUST(
         "2018 Active Crust (WUS)",
         ImmutableList.of(
-            ASK_14_BASIN_AMP,
-            BSSA_14_BASIN_AMP,
-            CB_14_BASIN_AMP,
-            CY_14_BASIN_AMP)),
+            ASK_14_BASIN,
+            BSSA_14_BASIN,
+            CB_14_BASIN,
+            CY_14_BASIN)),
 
     WUS_14_INTERFACE(
         "2014 Subduction Interface (WUS)",
@@ -1167,9 +1167,9 @@ public enum Gmm {
     WUS_18_INTERFACE(
         "2018 Subduction Interface (WUS) beta",
         ImmutableList.of(
-            AM_09_INTERFACE_BASIN_AMP,
-            BCHYDRO_12_INTERFACE_BASIN_AMP,
-            ZHAO_06_INTERFACE_BASIN_AMP)),
+            AM_09_INTERFACE_BASIN,
+            BCHYDRO_12_INTERFACE_BASIN,
+            ZHAO_06_INTERFACE_BASIN)),
 
     WUS_14_SLAB(
         "2014 Subduction Intraslab (WUS)",
@@ -1182,8 +1182,8 @@ public enum Gmm {
     WUS_18_SLAB(
         "2018 Subduction Intraslab (WUS) beta",
         ImmutableList.of(
-            BCHYDRO_12_SLAB_BASIN_AMP,
-            ZHAO_06_SLAB_BASIN_AMP)),
+            BCHYDRO_12_SLAB_BASIN,
+            ZHAO_06_SLAB_BASIN)),
 
     NGA_SUBDUCTION(
         "2018 NGA-Subduction",

@@ -1,14 +1,14 @@
 package gov.usgs.earthquake.nshmp.gmm;
 
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.AM_09_INTERFACE_BASIN_AMP;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.ASK_14_BASIN_AMP;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.BCHYDRO_12_INTERFACE_BASIN_AMP;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.BCHYDRO_12_SLAB_BASIN_AMP;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.BSSA_14_BASIN_AMP;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CB_14_BASIN_AMP;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CY_14_BASIN_AMP;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.ZHAO_06_INTERFACE_BASIN_AMP;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.ZHAO_06_SLAB_BASIN_AMP;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.AM_09_INTERFACE_BASIN;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.ASK_14_BASIN;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.BCHYDRO_12_INTERFACE_BASIN;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.BCHYDRO_12_SLAB_BASIN;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.BSSA_14_BASIN;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.CB_14_BASIN;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.CY_14_BASIN;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.ZHAO_06_INTERFACE_BASIN;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.ZHAO_06_SLAB_BASIN;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.PGA;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P02;
 import static gov.usgs.earthquake.nshmp.gmm.Imt.SA0P2;
@@ -48,15 +48,15 @@ public class BasinAmplified extends GmmTest {
 
   /* Result generation sets */
   private static Set<Gmm> gmms = EnumSet.of(
-      ASK_14_BASIN_AMP,
-      BSSA_14_BASIN_AMP,
-      CB_14_BASIN_AMP,
-      CY_14_BASIN_AMP,
-      AM_09_INTERFACE_BASIN_AMP,
-      BCHYDRO_12_INTERFACE_BASIN_AMP,
-      ZHAO_06_INTERFACE_BASIN_AMP,
-      BCHYDRO_12_SLAB_BASIN_AMP,
-      ZHAO_06_SLAB_BASIN_AMP);
+      ASK_14_BASIN,
+      BSSA_14_BASIN,
+      CB_14_BASIN,
+      CY_14_BASIN,
+      AM_09_INTERFACE_BASIN,
+      BCHYDRO_12_INTERFACE_BASIN,
+      ZHAO_06_INTERFACE_BASIN,
+      BCHYDRO_12_SLAB_BASIN,
+      ZHAO_06_SLAB_BASIN);
 
   private static Set<Imt> imts = EnumSet.of(PGA, SA0P02, SA0P2, SA0P5, SA1P0, SA3P0, SA5P0, SA10P0);
 

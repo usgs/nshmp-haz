@@ -2,15 +2,15 @@ package gov.usgs.earthquake.nshmp.gmm;
 
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.AB_06_PRIME;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.ASK_14;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.ASK_14_BASIN_AMP;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.ASK_14_BASIN;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.ATKINSON_08_PRIME;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.BSSA_14;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.BSSA_14_BASIN_AMP;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.BSSA_14_BASIN;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.CAMPBELL_03;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.CB_14;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CB_14_BASIN_AMP;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.CB_14_BASIN;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.CY_14;
-import static gov.usgs.earthquake.nshmp.gmm.Gmm.CY_14_BASIN_AMP;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.CY_14_BASIN;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.FRANKEL_96;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.IDRISS_14;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS;
@@ -176,16 +176,16 @@ class CombinedGmm implements GroundMotionModel {
   }
 
   private static final Map<Gmm, Double> WUS_2018 = ImmutableMap.<Gmm, Double> builder()
-      .put(ASK_14_BASIN_AMP, 0.25)
-      .put(BSSA_14_BASIN_AMP, 0.25)
-      .put(CB_14_BASIN_AMP, 0.25)
-      .put(CY_14_BASIN_AMP, 0.25)
+      .put(ASK_14_BASIN, 0.25)
+      .put(BSSA_14_BASIN, 0.25)
+      .put(CB_14_BASIN, 0.25)
+      .put(CY_14_BASIN, 0.25)
       .build();
 
   /* No Idriss. */
   static final class Wus2018 extends CombinedGmm {
 
-    static final String NAME = CombinedGmm.NAME + "WUS 2018 (5.0, basin amp)";
+    static final String NAME = CombinedGmm.NAME + "WUS 2018 (5.0, deep basins)";
     static final Constraints CONSTRAINTS = CampbellBozorgnia_2014.CONSTRAINTS;
     static final CoefficientContainer COEFFS = CampbellBozorgnia_2014.COEFFS;
 
