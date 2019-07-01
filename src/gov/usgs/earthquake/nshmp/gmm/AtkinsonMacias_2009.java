@@ -151,14 +151,14 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
      * Add CB14 deep basin amplification term if (1) z2p5 is non-NaN, (2) this
      * instance is basin amplifying and (3) T>0.5s (handled in CB14)
      */
-    if (basinEffect()) {
-      μAm += cb14.deepBasinAmplification(in.z2p5);
+    if (deepBasinEffect()) {
+      μAm += cb14.deepBasinScaling(in.z2p5);
     }
 
     return DefaultScalarGroundMotion.create(μAm, σ);
   }
 
-  boolean basinEffect() {
+  boolean deepBasinEffect() {
     return false;
   }
 
@@ -181,14 +181,14 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
    */
 
   static final class Basin extends AtkinsonMacias_2009 {
-    static final String NAME = AtkinsonMacias_2009.NAME + " : Basin Amp";
+    static final String NAME = AtkinsonMacias_2009.NAME + " : Basin";
 
     Basin(Imt imt) {
-      super(imt, Gmm.AM_09_INTERFACE_BASIN_AMP);
+      super(imt, Gmm.AM_09_INTERFACE_BASIN);
     }
 
     @Override
-    final boolean basinEffect() {
+    final boolean deepBasinEffect() {
       return true;
     }
   }

@@ -141,13 +141,13 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
     coeffsPGA = new Coefficients(PGA, COEFFS);
   }
 
-  boolean basinAmpOnly() {
+  boolean deepBasinEffect() {
     return false;
   }
 
   @Override
   public final ScalarGroundMotion calc(GmmInput in) {
-    return calc(coeffs, coeffsPGA, in, in.vs30, in.z2p5, basinAmpOnly());
+    return calc(coeffs, coeffsPGA, in, in.vs30, in.z2p5, deepBasinEffect());
   }
 
   private static ScalarGroundMotion calc(
@@ -156,20 +156,20 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
       GmmInput in,
       double vs30,
       double z2p5,
-      boolean basinAmpOnly) {
+      boolean deepBasinEffect) {
 
     FaultStyle style = GmmUtils.rakeToFaultStyle_NSHMP(in.rake);
 
     // calc pga rock reference value using CA vs30 z2p5 value: 0.398
     double pgaRock = (vs30 < c.k1)
-        ? exp(calcMean(cPGA, style, 1100.0, 0.398, 0.0, in, basinAmpOnly))
+        ? exp(calcMean(cPGA, style, 1100.0, 0.398, 0.0, in, deepBasinEffect))
         : 0.0;
 
-    double μ = calcMean(c, style, vs30, z2p5, pgaRock, in, basinAmpOnly);
+    double μ = calcMean(c, style, vs30, z2p5, pgaRock, in, deepBasinEffect);
 
     // prevent SA<PGA for short periods
     if (SHORT_PERIODS.contains(c.imt)) {
-      double pgaMean = calcMean(cPGA, style, vs30, z2p5, pgaRock, in, basinAmpOnly);
+      double pgaMean = calcMean(cPGA, style, vs30, z2p5, pgaRock, in, deepBasinEffect);
       μ = max(μ, pgaMean);
     }
 
@@ -184,7 +184,7 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
    * value at long periods T > 0.5s (blending 0.75s using log T scaling of
    * 0.585)
    */
-  double deepBasinAmplification(double z2p5) {
+  double deepBasinScaling(double z2p5) {
     if (GmmUtils.checkBasin(coeffs.imt, z2p5, GmmUtils.BASIN_Z2P5_UPPER)) {
       double zScale = GmmUtils.basinScale(
           z2p5,
@@ -403,15 +403,15 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
     return hi + (lo - hi) * (5.5 - Mw);
   }
 
-  static final class BasinAmp extends CampbellBozorgnia_2014 {
-    static final String NAME = CampbellBozorgnia_2014.NAME + " : Basin Amp";
+  static final class Basin extends CampbellBozorgnia_2014 {
+    static final String NAME = CampbellBozorgnia_2014.NAME + " : Basin";
 
-    BasinAmp(Imt imt) {
+    Basin(Imt imt) {
       super(imt);
     }
 
     @Override
-    boolean basinAmpOnly() {
+    boolean deepBasinEffect() {
       return true;
     }
   }

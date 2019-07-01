@@ -131,17 +131,17 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
       case ZHAO_06_SLAB:
         return ImmutableMap.of(
             Gmm.BCHYDRO_12_SLAB, 1.0);
-      case ZHAO_06_SLAB_BASIN_AMP:
+      case ZHAO_06_SLAB_BASIN:
         return ImmutableMap.of(
-            Gmm.BCHYDRO_12_SLAB_BASIN_AMP, 1.0);
+            Gmm.BCHYDRO_12_SLAB_BASIN, 1.0);
       case ZHAO_06_INTERFACE:
         return ImmutableMap.of(
             Gmm.BCHYDRO_12_INTERFACE, 0.5,
             Gmm.AM_09_INTERFACE, 0.5);
-      case ZHAO_06_INTERFACE_BASIN_AMP:
+      case ZHAO_06_INTERFACE_BASIN:
         return ImmutableMap.of(
-            Gmm.BCHYDRO_12_INTERFACE_BASIN_AMP, 0.5,
-            Gmm.AM_09_INTERFACE_BASIN_AMP, 0.5);
+            Gmm.BCHYDRO_12_INTERFACE_BASIN, 0.5,
+            Gmm.AM_09_INTERFACE_BASIN, 0.5);
       default:
         throw new IllegalArgumentException();
     }
@@ -224,7 +224,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
      * instance is basin amplifying and (3) T>0.5s (handled in CB14)
      */
     if (basinEffect()) {
-      μZhao += cb14.deepBasinAmplification(in.z2p5);
+      μZhao += cb14.deepBasinScaling(in.z2p5);
     }
 
     return DefaultScalarGroundMotion.create(μZhao, σ);
@@ -342,10 +342,10 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   static final class BasinInterface extends Interface {
-    static final String NAME = Interface.NAME + " : Basin Amp";
+    static final String NAME = Interface.NAME + " : Basin";
 
     BasinInterface(Imt imt) {
-      super(imt, Gmm.ZHAO_06_INTERFACE_BASIN_AMP);
+      super(imt, Gmm.ZHAO_06_INTERFACE_BASIN);
     }
 
     @Override
@@ -377,10 +377,10 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   }
 
   static final class BasinSlab extends Slab {
-    static final String NAME = Slab.NAME + " : Basin Amp";
+    static final String NAME = Slab.NAME + " : Basin";
 
     BasinSlab(Imt imt) {
-      super(imt, Gmm.ZHAO_06_SLAB_BASIN_AMP);
+      super(imt, Gmm.ZHAO_06_SLAB_BASIN);
     }
 
     @Override

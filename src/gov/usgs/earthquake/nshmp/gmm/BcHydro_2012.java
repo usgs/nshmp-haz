@@ -169,8 +169,8 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
      * Add CB14 deep basin amplification term if (1) z2p5 is non-NaN, (2) this
      * instance is basin amplifying and (3) T>0.5s (handled in CB14)
      */
-    if (basinEffect()) {
-      μAsk += cb14.deepBasinAmplification(in.z2p5);
+    if (deepBasinEffect()) {
+      μAsk += cb14.deepBasinScaling(in.z2p5);
     }
 
     return DefaultScalarGroundMotion.create(μAsk, SIGMA);
@@ -178,7 +178,7 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
   abstract boolean isSlab();
 
-  abstract boolean basinEffect();
+  abstract boolean deepBasinEffect();
 
   private static final double calcMean(
       final Coefficients c,
@@ -243,20 +243,20 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
 
     @Override
-    boolean basinEffect() {
+    boolean deepBasinEffect() {
       return false;
     }
   }
 
   static final class BasinInterface extends Interface {
-    static final String NAME = Interface.NAME + " : Basin Amp";
+    static final String NAME = Interface.NAME + " : Basin";
 
     BasinInterface(Imt imt) {
-      super(imt, Gmm.BCHYDRO_12_INTERFACE_BASIN_AMP);
+      super(imt, Gmm.BCHYDRO_12_INTERFACE_BASIN);
     }
 
     @Override
-    final boolean basinEffect() {
+    final boolean deepBasinEffect() {
       return true;
     }
   }
@@ -278,20 +278,20 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
     }
 
     @Override
-    boolean basinEffect() {
+    boolean deepBasinEffect() {
       return false;
     }
   }
 
   static final class BasinSlab extends Slab {
-    static final String NAME = Slab.NAME + " : Basin Amp";
+    static final String NAME = Slab.NAME + " : Basin";
 
     BasinSlab(Imt imt) {
-      super(imt, Gmm.BCHYDRO_12_SLAB);
+      super(imt, Gmm.BCHYDRO_12_SLAB_BASIN);
     }
 
     @Override
-    final boolean basinEffect() {
+    final boolean deepBasinEffect() {
       return true;
     }
   }

@@ -136,17 +136,17 @@ public class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    return calc(coeffs, in, basinAmpOnly());
+    return calc(coeffs, in, deepBasinEffect());
   }
 
-  boolean basinAmpOnly() {
+  boolean deepBasinEffect() {
     return false;
   }
 
   private static final ScalarGroundMotion calc(
       final Coefficients c,
       final GmmInput in,
-      boolean basinAmpOnly) {
+      boolean deepBasinEffect) {
 
     // frequently used method locals
     double Mw = in.Mw;
@@ -243,7 +243,7 @@ public class AbrahamsonEtAl_2014 implements GroundMotionModel {
 
     // Soil Depth Model -- Equation 17
     double f10 = calcSoilTerm(c, vs30, in.z1p0);
-    if (basinAmpOnly) {
+    if (deepBasinEffect) {
       f10 *= GmmUtils.deltaZ1scale(c.imt, in.z1p0);
     }
     
@@ -362,15 +362,15 @@ public class AbrahamsonEtAl_2014 implements GroundMotionModel {
         (b * saRock) / (saRock + c * pow(vs30 / vLin, N));
   }
 
-  static final class BasinAmp extends AbrahamsonEtAl_2014 {
-    static final String NAME = AbrahamsonEtAl_2014.NAME + " : Basin Amp";
+  static final class Basin extends AbrahamsonEtAl_2014 {
+    static final String NAME = AbrahamsonEtAl_2014.NAME + " : Basin";
 
-    BasinAmp(Imt imt) {
+    Basin(Imt imt) {
       super(imt);
     }
 
     @Override
-    boolean basinAmpOnly() {
+    boolean deepBasinEffect() {
       return true;
     }
   }
