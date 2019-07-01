@@ -84,8 +84,8 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * @author Peter Powers
  * @see Gmm#ZHAO_06_INTERFACE
  * @see Gmm#ZHAO_06_SLAB
- * @see Gmm#ZHAO_06_INTERFACE_BASIN_AMP
- * @see Gmm#ZHAO_06_SLAB_BASIN_AMP
+ * @see Gmm#ZHAO_06_INTERFACE_BASIN
+ * @see Gmm#ZHAO_06_SLAB_BASIN
  */
 public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
@@ -219,10 +219,7 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
     double zSiteVs30 = siteTermStep(coeffs, in.vs30);
     double μZhao = calcMean(coeffs, isSlab(), zSiteVs30, in);
 
-    /*
-     * Add CB14 deep basin amplification term if (1) z2p5 is non-NaN, (2) this
-     * instance is basin amplifying and (3) T>0.5s (handled in CB14)
-     */
+    /* Add (possibly depth-tapered) CB14 deep basin term. */
     if (basinEffect()) {
       μZhao += cb14.deepBasinScaling(in.z2p5);
     }

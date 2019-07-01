@@ -45,7 +45,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  *
  * @author Peter Powers
  * @see Gmm#ASK_14
- * @see Gmm#ASK_14_BASIN_AMP
+ * @see Gmm#ASK_14_BASIN
  */
 public class AbrahamsonEtAl_2014 implements GroundMotionModel {
 

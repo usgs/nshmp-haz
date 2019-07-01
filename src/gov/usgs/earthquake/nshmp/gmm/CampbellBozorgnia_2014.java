@@ -179,7 +179,7 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
   }
 
   /*
-   * Return the CB14 basin amplification term for deep basins. If z2.5 > 3km,
+   * Return the CB14 basin term for deep basins. If z2.5 > 3km,
    * returns full scaling term; tapers to 0 weight at 1km. Only returns non-zero
    * value at long periods T > 0.5s (blending 0.75s using log T scaling of
    * 0.585)
@@ -335,7 +335,6 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
         return zRefTerm;
       }
     }
-
     return z2p5Term;
   }
 

@@ -64,7 +64,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  *
  * @author Peter Powers
  * @see Gmm#AM_09_INTERFACE
- * @see Gmm#AM_09_INTERFACE_BASIN_AMP
+ * @see Gmm#AM_09_INTERFACE_BASIN
  */
 public class AtkinsonMacias_2009 implements GroundMotionModel {
 
@@ -147,10 +147,7 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
     double site = siteAmp.siteAmp(μPga, in.vs30);
     double μAm = μRef + site;
 
-    /*
-     * Add CB14 deep basin amplification term if (1) z2p5 is non-NaN, (2) this
-     * instance is basin amplifying and (3) T>0.5s (handled in CB14)
-     */
+    /* Add (possibly depth-tapered) CB14 deep basin term. */
     if (deepBasinEffect()) {
       μAm += cb14.deepBasinScaling(in.z2p5);
     }

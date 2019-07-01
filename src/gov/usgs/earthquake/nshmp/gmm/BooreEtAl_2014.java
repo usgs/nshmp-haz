@@ -236,13 +236,7 @@ public class BooreEtAl_2014 implements GroundMotionModel {
 
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     double z1ref = exp(-7.15 / 4.0 * log((vsPow4 + A) / B)) / 1000.0;
-    double Δz1 = z1p0 - z1ref;
-
-    // if (basinAmpOnly) {
-    // double Δz1scale = GmmUtils.deltaZ1scale(imt, z1p0);
-    // return Δz1 * Δz1scale;
-    // }
-    return Δz1;
+    return z1p0 - z1ref;
   }
 
   // Aleatory uncertainty model
