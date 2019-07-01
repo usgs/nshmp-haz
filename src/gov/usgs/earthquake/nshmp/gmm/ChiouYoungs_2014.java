@@ -230,8 +230,11 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
     double snl_mod = snl * log((saRef + c.φ4) / c.φ4);
 
     // Soil effect: sediment thickness
-    double dZ1 = calcDeltaZ1(c.imt, z1p0, vs30, basinAmpOnly);
+    double dZ1 = calcDeltaZ1(c.imt, z1p0, vs30);
     double rkdepth = c.φ5 * (1.0 - exp(-dZ1 / PHI6));
+    if (basinAmpOnly) {
+      rkdepth *= GmmUtils.deltaZ1scale(c.imt, z1p0);
+    }
 
     // total model
     return log(saRef) + sl + snl_mod + rkdepth;
@@ -252,8 +255,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
   private static double calcDeltaZ1(
       Imt imt,
       double z1p0,
-      double vs30,
-      boolean basinAmpOnly) {
+      double vs30) {
 
     if (Double.isNaN(z1p0)) {
       return 0.0;
@@ -261,9 +263,7 @@ public class ChiouYoungs_2014 implements GroundMotionModel {
     double vsPow4 = vs30 * vs30 * vs30 * vs30;
     double z1ref = exp(-7.15 / 4 * log((vsPow4 + A) / B));
     double z1m = z1p0 * 1000.0;
-    double Δz1 = z1m - z1ref;
-
-    return (basinAmpOnly && (Δz1 < 0.0)) ? 0.0 : Δz1;
+    return z1m - z1ref;
   }
 
   // Aleatory uncertainty model -- Equation 3.9

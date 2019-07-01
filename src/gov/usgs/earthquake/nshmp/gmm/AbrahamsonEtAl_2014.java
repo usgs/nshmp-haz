@@ -242,8 +242,11 @@ public class AbrahamsonEtAl_2014 implements GroundMotionModel {
         : 0.0;
 
     // Soil Depth Model -- Equation 17
-    double f10 = calcSoilTerm(c, vs30, in.z1p0, basinAmpOnly);
-
+    double f10 = calcSoilTerm(c, vs30, in.z1p0);
+    if (basinAmpOnly) {
+      f10 *= GmmUtils.deltaZ1scale(c.imt, in.z1p0);
+    }
+    
     // Site Response Model
     double f5 = 0.0;
     double v1 = getV1(c.imt); // -- Equation 9
@@ -321,8 +324,7 @@ public class AbrahamsonEtAl_2014 implements GroundMotionModel {
   private static final double calcSoilTerm(
       final Coefficients c,
       final double vs30,
-      final double z1p0,
-      boolean basinAmpOnly) {
+      final double z1p0) {
 
     // short circuit; default z1 will be the same as z1ref
     if (Double.isNaN(z1p0)) {
@@ -337,8 +339,7 @@ public class AbrahamsonEtAl_2014 implements GroundMotionModel {
     double[] vsCoeff = { c.a43, c.a44, c.a45, c.a46, c.a46 };
     double z1c = Interpolate.findY(VS_BINS, vsCoeff, vs30);
     z1c *= log((z1p0 + 0.01) / (z1ref + 0.01));
-
-    return (basinAmpOnly && (z1c < 0.0)) ? 0.0 : z1c;
+    return z1c;
   }
 
   // -- Equation 24

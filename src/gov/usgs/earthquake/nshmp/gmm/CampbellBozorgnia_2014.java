@@ -179,11 +179,21 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
   }
 
   /*
-   * Return the CB14 basin amplification term for deep basins only, z2.5 > 3km
-   * and Fsed > 0.
+   * Return the CB14 basin amplification term for deep basins. If z2.5 > 3km,
+   * returns full scaling term; tapers to 0 weight at 1km. Only returns non-zero
+   * value at long periods T > 0.5s (blending 0.75s using log T scaling of
+   * 0.585)
    */
   double deepBasinAmplification(double z2p5) {
-    return Math.max(calcBasinTerm(coeffs, z2p5), 0.0);
+    if (GmmUtils.checkBasin(coeffs.imt, z2p5, GmmUtils.BASIN_Z2P5_UPPER)) {
+      double zScale = GmmUtils.basinScale(
+          z2p5,
+          GmmUtils.BASIN_Z2P5_UPPER,
+          GmmUtils.BASIN_Z2P5_LOWER);
+      double basinAmp = calcBasinTerm(coeffs, z2p5) * zScale;
+      return (coeffs.imt == Imt.SA0P75) ? basinAmp * 0.585 : basinAmp;
+    }
+    return 0.0;
   }
 
   // Mean ground motion model -- we use supplied vs30 and z2p5 rather than
@@ -312,8 +322,21 @@ public class CampbellBozorgnia_2014 implements GroundMotionModel {
     }
 
     double z2p5Term = calcBasinTerm(c, z2p5);
-    
-    return (basinAmpOnly && (z2p5Term < zRefTerm)) ? zRefTerm : z2p5Term;
+
+    if (basinAmpOnly) {
+      if (GmmUtils.checkBasin(c.imt, z2p5, GmmUtils.BASIN_Z2P5_UPPER)) {
+        double zScale = GmmUtils.basinScale(
+            z2p5,
+            GmmUtils.BASIN_Z2P5_UPPER,
+            GmmUtils.BASIN_Z2P5_LOWER);
+        double zScaled = zRefTerm * (1.0 - zScale) + z2p5Term * zScale;
+        return (c.imt == Imt.SA0P75) ? zScaled * 0.585 : zScaled;
+      } else {
+        return zRefTerm;
+      }
+    }
+
+    return z2p5Term;
   }
 
   private static double calcBasinTerm(Coefficients c, double z2p5) {

@@ -21,7 +21,6 @@ import com.google.common.collect.Range;
 
 import gov.usgs.earthquake.nshmp.eq.fault.Faults;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
-import gov.usgs.earthquake.nshmp.util.Maths;
 
 /**
  * Implementation of the Boore, Stewart, Seyhan, & Atkinson (2014) next
@@ -172,7 +171,13 @@ public class BooreEtAl_2014 implements GroundMotionModel {
     // Basin depth term -- Equations 9, 10 , 11
     double DZ1 = calcDeltaZ1(c.imt, in.z1p0, vs30, basinAmpOnly);
     double Fdz1 = (c.imt.isSA() && c.imt.period() >= 0.65)
-        ? (DZ1 <= c.f7 / c.f6) ? c.f6 * DZ1 : c.f7 : 0.0;
+        ? (DZ1 <= c.f7 / c.f6)
+            ? c.f6 * DZ1
+            : c.f7
+        : 0.0;
+    if (basinAmpOnly) {
+      Fdz1 *= GmmUtils.deltaZ1scale(c.imt, in.z1p0);
+    }
 
     // Total site term -- Equation 5
     double Fs = lnFlin + lnFnl + Fdz1;
@@ -233,7 +238,11 @@ public class BooreEtAl_2014 implements GroundMotionModel {
     double z1ref = exp(-7.15 / 4.0 * log((vsPow4 + A) / B)) / 1000.0;
     double Δz1 = z1p0 - z1ref;
 
-    return (basinAmpOnly && (Δz1 < 0.0)) ? 0.0 : Δz1;
+    // if (basinAmpOnly) {
+    // double Δz1scale = GmmUtils.deltaZ1scale(imt, z1p0);
+    // return Δz1 * Δz1scale;
+    // }
+    return Δz1;
   }
 
   // Aleatory uncertainty model
