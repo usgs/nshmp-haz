@@ -140,19 +140,19 @@ public class DeaggCalc {
 
     log.info(PROGRAM + ": calculating ...");
 
-    HazardExport handler = HazardExport.create(config, sites, log);
+    HazardExport handler = HazardExport.create(model, config, sites, log);
 
     for (Site site : sites) {
       Hazard hazard = HazardCalcs.hazard(model, config, site, exec);
       Deaggregation deagg = HazardCalcs.deaggReturnPeriod(hazard, returnPeriod, exec);
-      handler.add(hazard, Optional.of(deagg));
+      handler.write(hazard, Optional.of(deagg));
       log.fine(hazard.toString());
     }
     handler.expire();
 
     log.info(String.format(
         PROGRAM + ": %s sites completed in %s",
-        handler.resultsProcessed(), handler.elapsedTime()));
+        handler.resultCount(), handler.elapsedTime()));
 
     exec.shutdown();
     return handler.outputDir();

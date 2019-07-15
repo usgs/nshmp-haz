@@ -943,52 +943,37 @@ public final class CalcConfig {
      */
     public final Set<DataType> dataTypes;
 
-    /**
-     * The number of results (one per {@code Site}) to store before writing to
-     * file(s). A larger number requires more memory.
-     *
-     * <p><b>Default:</b> {@code 1}
-     */
-    @Deprecated
-    public final int flushLimit;
-
     private Output(
         Path directory,
-        Set<DataType> dataTypes,
-        int flushLimit) {
+        Set<DataType> dataTypes) {
 
       this.directory = directory;
       this.dataTypes = Sets.immutableEnumSet(
           DataType.TOTAL,
           dataTypes.toArray(new DataType[dataTypes.size()]));
-      this.flushLimit = flushLimit;
     }
 
     private StringBuilder asString() {
       return new StringBuilder()
           .append(LOG_INDENT).append("Output")
           .append(formatEntry(Key.DIRECTORY, directory.toAbsolutePath().normalize()))
-          .append(formatEntry(Key.DATA_TYPES, enumsToString(dataTypes, DataType.class)))
-          .append(formatEntry(Key.FLUSH_LIMIT, flushLimit));
+          .append(formatEntry(Key.DATA_TYPES, enumsToString(dataTypes, DataType.class)));
     }
 
     private static final class Builder {
 
       Path directory;
       Set<DataType> dataTypes;
-      Integer flushLimit;
 
       Output build() {
         return new Output(
             directory,
-            dataTypes,
-            flushLimit);
+            dataTypes);
       }
 
       void copy(Output that) {
         this.directory = that.directory;
         this.dataTypes = that.dataTypes;
-        this.flushLimit = that.flushLimit;
       }
 
       void extend(Builder that) {
@@ -998,23 +983,18 @@ public final class CalcConfig {
         if (that.dataTypes != null) {
           this.dataTypes = that.dataTypes;
         }
-        if (that.flushLimit != null) {
-          this.flushLimit = that.flushLimit;
-        }
       }
 
       static Builder defaults() {
         Builder b = new Builder();
         b.directory = Paths.get(DEFAULT_OUT);
         b.dataTypes = EnumSet.of(DataType.TOTAL);
-        b.flushLimit = 1;
         return b;
       }
 
       void validate() {
         checkNotNull(directory, STATE_ERROR, Output.ID, Key.DIRECTORY);
         checkNotNull(dataTypes, STATE_ERROR, Output.ID, Key.DATA_TYPES);
-        checkNotNull(flushLimit, STATE_ERROR, Output.ID, Key.FLUSH_LIMIT);
       }
     }
   }
@@ -1180,7 +1160,6 @@ public final class CalcConfig {
     /* output */
     DIRECTORY,
     DATA_TYPES,
-    FLUSH_LIMIT,
     /* deagg */
     BINS,
     CONTRIBUTOR_LIMIT,

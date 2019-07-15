@@ -1,6 +1,5 @@
 package gov.usgs.earthquake.nshmp.calc;
 
-import static gov.usgs.earthquake.nshmp.calc.HazardExport.WRITE;
 import static gov.usgs.earthquake.nshmp.internal.TextUtils.NEWLINE;
 import static java.lang.Math.exp;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -77,7 +76,7 @@ final class DeaggExport {
     this.dc = dc;
     this.id = id;
 
-    summary = summaryFlag ? createSummaryElements(ddTotal, dd, dc): null;
+    summary = summaryFlag ? createSummaryElements(ddTotal, dd, dc) : null;
     data = εDataFlag ? createDistanceMagnitudeData(ddTotal, dd) : null;
     sources = jsonFlag ? createJsonContributorList(ddTotal, dd, dc.contributorLimit) : null;
   }
@@ -88,16 +87,14 @@ final class DeaggExport {
     Path dataPath = siteDir.resolve(DEAGG_DATA);
     Files.write(
         dataPath,
-        data.toString().getBytes(UTF_8),
-        WRITE);
+        data.toString().getBytes(UTF_8));
     Path summaryPath = siteDir.resolve(DEAGG_SUMMARY);
     String summaryString = summaryStringBuilder()
         .append(DATASET_SEPARATOR)
         .toString();
     Files.write(
         summaryPath,
-        summaryString.getBytes(UTF_8),
-        WRITE);
+        summaryString.getBytes(UTF_8));
   }
 
   @Override

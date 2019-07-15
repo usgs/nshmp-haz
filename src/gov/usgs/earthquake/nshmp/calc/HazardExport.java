@@ -2,6 +2,7 @@ package gov.usgs.earthquake.nshmp.calc;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static gov.usgs.earthquake.nshmp.calc.ValueFormat.POISSON_PROBABILITY;
 import static gov.usgs.earthquake.nshmp.data.XySequence.emptyCopyOf;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -14,9 +15,7 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,9 +24,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
-import javax.management.RuntimeErrorException;
-
-import com.google.common.base.Functions;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
@@ -40,6 +36,7 @@ import com.google.common.primitives.Doubles;
 import gov.usgs.earthquake.nshmp.calc.Deaggregation.ImtDeagg;
 import gov.usgs.earthquake.nshmp.calc.HazardExport.Metadata.Builder;
 import gov.usgs.earthquake.nshmp.data.XySequence;
+import gov.usgs.earthquake.nshmp.eq.model.HazardModel;
 import gov.usgs.earthquake.nshmp.eq.model.Source;
 import gov.usgs.earthquake.nshmp.eq.model.SourceSet;
 import gov.usgs.earthquake.nshmp.eq.model.SourceType;
@@ -58,27 +55,30 @@ import gov.usgs.earthquake.nshmp.mfd.Mfds;
  */
 public final class HazardExport {
 
+  /*
+   * Developer notes
+   * 
+   * Export of gmm and source type is unreliable for results where multiple
+   * models may have been run (e.g. Hazard2018) because the model.types() and
+   * model.gmms() methods will only reflect a single model.
+   */
+
   static final String DEAGG_DIR = "deagg";
   static final String GMM_DIR = "gmm";
   static final String TYPE_DIR = "source";
   static final String CURVE_FILE_ASCII = "curves.csv";
   static final String CURVE_FILE_BINARY = "curves.bin";
-  static final String RATE_FMT = "%.8e";
-
-  static final OpenOption[] WRITE = new OpenOption[] {
-      StandardOpenOption.CREATE,
-      StandardOpenOption.TRUNCATE_EXISTING,
-      StandardOpenOption.WRITE };
-
-  static final OpenOption[] APPEND = new OpenOption[] {
-      StandardOpenOption.APPEND };
+  static final String VALUE_FMT = "%.8e";
 
   private final Logger log;
   private final Path dir;
+  private final HazardModel model;
   private final CalcConfig config;
   private final boolean exportGmm;
   private final boolean exportSource;
   private final boolean exportBinary;
+
+  private final Function<Double, String> valueFormatter;
 
   private final Stopwatch batchWatch;
   private final Stopwatch totalWatch;
@@ -86,24 +86,29 @@ public final class HazardExport {
   private int resultCount = 0;
 
   private final boolean namedSites;
-  private boolean firstBatch = true;
   private boolean used = false;
-
-  private final List<Hazard> hazards;
-  private final List<Deaggregation> deaggs;
 
   /* Only used for binary file export. */
   private final Map<Imt, Metadata> metaMap;
 
-  private HazardExport(CalcConfig config, Sites sites, Logger log) throws IOException {
+  private HazardExport(
+      HazardModel model,
+      CalcConfig config,
+      Sites sites,
+      Logger log) throws IOException {
+
     this.log = log;
     this.dir = createOutputDir(config.output.directory);
+    this.model = model;
     this.config = config;
     this.exportGmm = config.output.dataTypes.contains(DataType.GMM);
     this.exportSource = config.output.dataTypes.contains(DataType.SOURCE);
     this.exportBinary = config.output.dataTypes.contains(DataType.BINARY);
-    this.hazards = new ArrayList<>();
-    this.deaggs = new ArrayList<>();
+
+    Function<Double, String> formatter = Parsing.formatDoubleFunction(VALUE_FMT);
+    this.valueFormatter = (config.hazard.valueFormat == POISSON_PROBABILITY)
+        ? Mfds.annualRateToProbabilityConverter().andThen(formatter)
+        : formatter;
 
     Site demoSite = sites.iterator().next();
     this.namedSites = demoSite.name() != Site.NO_NAME;
@@ -111,31 +116,14 @@ public final class HazardExport {
     this.batchWatch = Stopwatch.createStarted();
     this.totalWatch = Stopwatch.createStarted();
 
-    if (exportBinary) {
-      checkState(exportBinary && sites.mapBounds().isPresent(), BINARY_EXTENTS_REQUIRED_MSSG);
-      this.metaMap = new EnumMap<>(Imt.class);
-      Builder metaBuilder = Metadata.builder()
-          .bounds(sites.mapBounds().get())
-          .spacing(sites.mapSpacing().get())
-          .description("nshmp-haz generated curves")
-          .timestamp(new Timestamp(System.currentTimeMillis()).toString())
-          .vs30(demoSite.vs30);
-      for (Entry<Imt, XySequence> entry : config.hazard.modelCurves().entrySet()) {
-        Imt imt = entry.getKey();
-        Metadata meta = metaBuilder
-            .imt(imt)
-            .imls(entry.getValue().xValues())
-            .build();
-        this.metaMap.put(imt, meta);
-      }
-    } else {
-      this.metaMap = null;
-    }
+    this.metaMap = new EnumMap<>(Imt.class);
+    init(sites);
   }
 
   /**
    * Create a new results handler.
    * 
+   * @param model being run
    * @param config that specifies output options and formats
    * @param sites reference to the sites to be processed (not retained)
    * @param log shared logging instance from calling class
@@ -144,11 +132,86 @@ public final class HazardExport {
    *         extents.
    */
   public static HazardExport create(
+      HazardModel model,
       CalcConfig config,
       Sites sites,
       Logger log) throws IOException {
 
-    return new HazardExport(config, sites, log);
+    return new HazardExport(model, config, sites, log);
+  }
+
+  /* Prep binary headers and initialize output directories. */
+  private void init(Sites sites) throws IOException {
+
+    if (exportBinary) {
+      checkState(exportBinary && sites.mapBounds().isPresent(), BINARY_EXTENTS_REQUIRED_MSSG);
+      Builder metaBuilder = Metadata.builder()
+          .bounds(sites.mapBounds().get())
+          .spacing(sites.mapSpacing().get())
+          .description("nshmp-haz generated curves")
+          .timestamp(new Timestamp(System.currentTimeMillis()).toString())
+          .vs30(sites.iterator().next().vs30);
+      for (Entry<Imt, XySequence> entry : config.hazard.modelCurves().entrySet()) {
+        Imt imt = entry.getKey();
+        Metadata meta = metaBuilder
+            .imt(imt)
+            .imls(entry.getValue().xValues())
+            .build();
+        this.metaMap.put(imt, meta);
+      }
+    }
+
+    
+    for (Imt imt : config.hazard.imts) {
+
+      Path imtDir = dir.resolve(imt.name());
+      Files.createDirectory(imtDir);
+      Path totalFile = imtDir.resolve(CURVE_FILE_ASCII);
+
+      Iterable<?> headerValues = Iterables.concat(
+          Lists.newArrayList(namedSites ? "name" : null, "lon", "lat"),
+          config.hazard.modelCurves().get(imt).xValues());
+      String header = Parsing.join(headerValues, Delimiter.COMMA);
+      writeLine(totalFile, header);
+
+      Metadata meta = null;
+
+      if (exportBinary) {
+        Path totalBinFile = imtDir.resolve(CURVE_FILE_BINARY);
+        meta = metaMap.get(imt);
+        initBinary(totalBinFile, meta);
+      }
+
+      if (exportSource) {
+        Path typeParent = imtDir.resolve(TYPE_DIR);
+        Files.createDirectory(typeParent);
+        for (SourceType type : model.types()) {
+          Path typeDir = typeParent.resolve(type.name());
+          Files.createDirectory(typeDir);
+          Path typeFile = typeDir.resolve(CURVE_FILE_ASCII);
+          writeLine(typeFile, header);
+          if (exportBinary) {
+            Path typeBinFile = typeDir.resolve(CURVE_FILE_BINARY);
+            initBinary(typeBinFile, meta);
+          }
+        }
+      }
+
+      if (exportGmm) {
+        Path gmmParent = imtDir.resolve(GMM_DIR);
+        Files.createDirectory(gmmParent);
+        for (Gmm gmm : model.gmms()) {
+          Path gmmDir = gmmParent.resolve(gmm.name());
+          Files.createDirectory(gmmDir);
+          Path gmmFile = gmmDir.resolve(CURVE_FILE_ASCII);
+          writeLine(gmmFile, header);
+          if (exportBinary) {
+            Path gmmBinFile = gmmDir.resolve(CURVE_FILE_BINARY);
+            initBinary(gmmBinFile, meta);
+          }
+        }
+      }
+    }
   }
 
   /* Avoid clobbering exsting result directories via incrementing. */
@@ -164,52 +227,33 @@ public final class HazardExport {
   }
 
   /**
-   * Add a Hazard and optional Deaggregation result to this handler.
+   * Write a hazard result.
    * 
-   * @param hazard to add
-   * @param deagg to add
+   * @param hazard to write
    */
-  public void add(Hazard hazard, Optional<Deaggregation> deagg) throws IOException {
+  public void write(Hazard hazard) throws IOException {
+    write(hazard, Optional.empty());
+  }
+
+  /**
+   * Write a hazard and deagg result.
+   * 
+   * @param hazard to write
+   * @param deagg to write (optional)
+   */
+  public void write(Hazard hazard, Optional<Deaggregation> deagg) throws IOException {
     checkState(!used, "This result handler is expired");
-    resultCount++;
-    hazards.add(hazard);
+    writeHazard(hazard);
     if (deagg.isPresent()) {
-      deaggs.add(deagg.get());
+      writeDeagg(deagg.get());
     }
-    if (hazards.size() == config.output.flushLimit) {
-      flush();
-    }
+    resultCount++;
     if (resultCount % 10 == 0) {
       batchCount++;
       log.info(String.format(
           "     batch: %s in %s – %s sites in %s",
           batchCount, batchWatch, resultCount, totalWatch));
       batchWatch.reset().start();
-    }
-
-  }
-
-  /**
-   * Add a Hazard to this handler.
-   * 
-   * @param hazard to add
-   */
-  public void add(Hazard hazard) throws IOException {
-    add(hazard, Optional.empty());
-  }
-
-  /**
-   * Flush any stored Hazard and Deaggregation results to file, clearing
-   */
-  public void flush() throws IOException {
-    if (!hazards.isEmpty()) {
-      writeHazards();
-      hazards.clear();
-      firstBatch = false;
-    }
-    if (!deaggs.isEmpty()) {
-      writeDeaggs();
-      deaggs.clear();
     }
   }
 
@@ -218,7 +262,6 @@ public final class HazardExport {
    * this {@code Results} instance to 'used'; no more results may be added.
    */
   public void expire() throws IOException {
-    flush();
     batchWatch.stop();
     totalWatch.stop();
     used = true;
@@ -227,15 +270,8 @@ public final class HazardExport {
   /**
    * The number of hazard [and deagg] results passed to this handler thus far.
    */
-  public int resultsProcessed() {
+  public int resultCount() {
     return resultCount;
-  }
-
-  /**
-   * The number of {@code Hazard} results this handler is currently storing.
-   */
-  public int size() {
-    return hazards.size();
   }
 
   /**
@@ -253,203 +289,87 @@ public final class HazardExport {
     return dir;
   }
 
-  /*
-   * Write the current list of {@code Hazard}s to file.
-   */
-  private void writeHazards() throws IOException {
+  /* Write the supplied hazard and possible deagg results to file(s). */
+  private void writeHazard(Hazard hazard) throws IOException {
 
-    Hazard demo = hazards.get(0);
+    Set<Gmm> gmms = hazard.model.gmms();
+    Set<SourceType> types = hazard.model.types();
 
-    Set<Gmm> gmms = gmmSet(demo.model);
+    String name = namedSites ? hazard.site.name : null;
+    Location location = hazard.site.location;
 
-    OpenOption[] options = firstBatch ? WRITE : APPEND;
+    List<String> locData = Lists.newArrayList(
+        name,
+        String.format("%.5f", location.lon()),
+        String.format("%.5f", location.lat()));
 
-    Function<Double, String> formatter = Parsing.formatDoubleFunction(RATE_FMT);
-    if (demo.config.hazard.valueFormat == ValueFormat.POISSON_PROBABILITY) {
-      formatter = Functions.compose(
-          formatter::apply,
-          Mfds.annualRateToProbabilityConverter());
-    }
+    Map<Imt, Map<SourceType, XySequence>> curvesBySource = exportSource
+        ? curvesBySource(hazard)
+        : null;
 
-    /* Line maps for ascii output; may or may not be used */
-    Map<Imt, List<String>> totalLines = Maps.newEnumMap(Imt.class);
-    Map<Imt, Map<SourceType, List<String>>> typeLines = Maps.newEnumMap(Imt.class);
-    Map<Imt, Map<Gmm, List<String>>> gmmLines = Maps.newEnumMap(Imt.class);
+    Map<Imt, Map<Gmm, XySequence>> curvesByGmm = exportGmm
+        ? curvesByGmm(hazard)
+        : null;
 
-    /* Curve maps for binary output; may or may not be used */
-    Map<Imt, Map<Integer, XySequence>> totalCurves = Maps.newEnumMap(Imt.class);
-    Map<Imt, Map<SourceType, Map<Integer, XySequence>>> typeCurves = Maps.newEnumMap(Imt.class);
-    Map<Imt, Map<Gmm, Map<Integer, XySequence>>> gmmCurves = Maps.newEnumMap(Imt.class);
+    for (Entry<Imt, XySequence> imtEntry : hazard.totalCurves.entrySet()) {
+      XySequence totalCurve = imtEntry.getValue();
 
-    /* Initialize line maps. */
-    for (Imt imt : demo.totalCurves.keySet()) {
+      /* Utility empty line to write if source or gmm is missing at site */
+      Iterable<Double> emptyValues = Doubles.asList(new double[totalCurve.size()]);
+      String emptyLine = toLine(locData, emptyValues, valueFormatter);
 
-      List<String> lines = new ArrayList<>();
-      totalLines.put(imt, lines);
-
-      if (firstBatch) {
-        Iterable<?> header = Iterables.concat(
-            Lists.newArrayList(namedSites ? "name" : null, "lon", "lat"),
-            demo.config.hazard.modelCurves().get(imt).xValues());
-        lines.add(Parsing.join(header, Delimiter.COMMA));
-      }
-
-      if (exportSource) {
-        Map<SourceType, List<String>> typeMap = new EnumMap<>(SourceType.class);
-        typeLines.put(imt, typeMap);
-        for (SourceType type : demo.model.types()) {
-          typeMap.put(type, Lists.newArrayList(lines));
-        }
-      }
-
-      if (exportGmm) {
-        Map<Gmm, List<String>> gmmMap = new EnumMap<>(Gmm.class);
-        gmmLines.put(imt, gmmMap);
-        for (Gmm gmm : gmms) {
-          gmmMap.put(gmm, Lists.newArrayList(lines));
-        }
-      }
-    }
-
-    /* Initialize curve maps and binary output files. */
-    if (exportBinary) {
-      for (Imt imt : demo.totalCurves.keySet()) {
-        totalCurves.put(imt, new HashMap<Integer, XySequence>());
-
-        if (exportSource) {
-          Map<SourceType, Map<Integer, XySequence>> typeMap = new EnumMap<>(SourceType.class);
-          typeCurves.put(imt, typeMap);
-          for (SourceType type : demo.model.types()) {
-            typeMap.put(type, new HashMap<Integer, XySequence>());
-          }
-        }
-
-        if (exportGmm) {
-          Map<Gmm, Map<Integer, XySequence>> gmmMap = new EnumMap<>(Gmm.class);
-          gmmCurves.put(imt, gmmMap);
-          for (Gmm gmm : gmms) {
-            gmmMap.put(gmm, new HashMap<Integer, XySequence>());
-          }
-        }
-      }
-    }
-
-    /* Process batch */
-    for (Hazard hazard : hazards) {
-
-      String name = namedSites ? hazard.site.name : null;
-      Location location = hazard.site.location;
-
-      List<String> locData = Lists.newArrayList(
-          name,
-          String.format("%.5f", location.lon()),
-          String.format("%.5f", location.lat()));
-
-      Map<Imt, Map<SourceType, XySequence>> curvesBySource =
-          exportSource ? curvesBySource(hazard) : null;
-
-      Map<Imt, Map<Gmm, XySequence>> curvesByGmm =
-          exportGmm ? curvesByGmm(hazard) : null;
-
-      for (Entry<Imt, XySequence> imtEntry : hazard.totalCurves.entrySet()) {
-        Imt imt = imtEntry.getKey();
-
-        XySequence totalCurve = imtEntry.getValue();
-        Iterable<Double> emptyValues = Doubles.asList(new double[totalCurve.size()]);
-        String emptyLine = toLine(locData, emptyValues, formatter);
-
-        totalLines.get(imt).add(toLine(
-            locData,
-            imtEntry.getValue().yValues(),
-            formatter));
-
-        Metadata meta = null;
-        int binIndex = -1;
-        if (exportBinary) {
-          meta = metaMap.get(imt);
-          binIndex = curveIndex(meta.bounds, meta.spacing, location);
-          totalCurves.get(imt).put(binIndex, totalCurve);
-        }
-
-        if (exportSource) {
-          Map<SourceType, XySequence> sourceCurveMap = curvesBySource.get(imt);
-          for (Entry<SourceType, List<String>> typeEntry : typeLines.get(imt).entrySet()) {
-            SourceType type = typeEntry.getKey();
-            String typeLine = emptyLine;
-            if (sourceCurveMap.containsKey(type)) {
-              XySequence typeCurve = sourceCurveMap.get(type);
-              typeLine = toLine(locData, typeCurve.yValues(), formatter);
-              if (exportBinary) {
-                typeCurves.get(imt).get(type).put(binIndex, typeCurve);
-              }
-            }
-            typeEntry.getValue().add(typeLine);
-          }
-        }
-
-        if (exportGmm) {
-          Map<Gmm, XySequence> gmmCurveMap = curvesByGmm.get(imt);
-          for (Entry<Gmm, List<String>> gmmEntry : gmmLines.get(imt).entrySet()) {
-            Gmm gmm = gmmEntry.getKey();
-            String gmmLine = emptyLine;
-            if (gmmCurveMap.containsKey(gmm)) {
-              XySequence gmmCurve = gmmCurveMap.get(gmm);
-              gmmLine = toLine(locData, gmmCurveMap.get(gmm).yValues(), formatter);
-              if (exportBinary) {
-                gmmCurves.get(imt).get(gmm).put(binIndex, gmmCurve);
-              }
-            }
-            gmmEntry.getValue().add(gmmLine);
-          }
-        }
-      }
-    }
-
-    /* write/append */
-    for (Entry<Imt, List<String>> totalEntry : totalLines.entrySet()) {
-      Imt imt = totalEntry.getKey();
-
+      Imt imt = imtEntry.getKey();
       Path imtDir = dir.resolve(imt.name());
-      Files.createDirectories(imtDir);
+
+      String totalLine = toLine(locData, totalCurve.yValues(), valueFormatter);
+
       Path totalFile = imtDir.resolve(CURVE_FILE_ASCII);
-      // System.out.println(totalEntry.getValue());
-      Files.write(totalFile, totalEntry.getValue(), UTF_8, options);
+      writeLine(totalFile, totalLine, StandardOpenOption.APPEND);
 
       Metadata meta = null;
-
+      int binIndex = -1;
       if (exportBinary) {
         meta = metaMap.get(imt);
+        binIndex = curveIndex(meta.bounds, meta.spacing, location);
         Path totalBinFile = imtDir.resolve(CURVE_FILE_BINARY);
-        writeBinaryBatch(totalBinFile, meta, totalCurves.get(imt));
+        writeBinary(totalBinFile, meta, totalCurve, binIndex);
       }
 
       if (exportSource) {
+        Map<SourceType, XySequence> sourceCurveMap = curvesBySource.get(imt);
         Path typeParent = imtDir.resolve(TYPE_DIR);
-        for (Entry<SourceType, List<String>> typeEntry : typeLines.get(imt).entrySet()) {
-          SourceType type = typeEntry.getKey();
+        for (SourceType type : types) {
           Path typeDir = typeParent.resolve(type.name());
-          Files.createDirectories(typeDir);
           Path typeFile = typeDir.resolve(CURVE_FILE_ASCII);
-          Files.write(typeFile, typeEntry.getValue(), UTF_8, options);
-          if (exportBinary) {
-            Path typeBinFile = typeDir.resolve(CURVE_FILE_BINARY);
-            writeBinaryBatch(typeBinFile, meta, typeCurves.get(imt).get(type));
+          String typeLine = emptyLine;
+          if (sourceCurveMap.containsKey(type)) {
+            XySequence typeCurve = sourceCurveMap.get(type);
+            typeLine = toLine(locData, typeCurve.yValues(), valueFormatter);
+            if (exportBinary) {
+              Path typeBinFile = typeDir.resolve(CURVE_FILE_BINARY);
+              writeBinary(typeBinFile, meta, typeCurve, binIndex);
+            }
           }
+          writeLine(typeFile, typeLine, StandardOpenOption.APPEND);
         }
       }
 
       if (exportGmm) {
+        Map<Gmm, XySequence> gmmCurveMap = curvesByGmm.get(imt);
         Path gmmParent = imtDir.resolve(GMM_DIR);
-        for (Entry<Gmm, List<String>> gmmEntry : gmmLines.get(imt).entrySet()) {
-          Gmm gmm = gmmEntry.getKey();
+        for (Gmm gmm : gmms) {
           Path gmmDir = gmmParent.resolve(gmm.name());
-          Files.createDirectories(gmmDir);
           Path gmmFile = gmmDir.resolve(CURVE_FILE_ASCII);
-          Files.write(gmmFile, gmmEntry.getValue(), UTF_8, options);
-          if (exportBinary) {
-            Path gmmBinFile = gmmDir.resolve(CURVE_FILE_BINARY);
-            writeBinaryBatch(gmmBinFile, meta, gmmCurves.get(imt).get(gmm));
+          String gmmLine = emptyLine;
+          if (gmmCurveMap.containsKey(gmm)) {
+            XySequence gmmCurve = gmmCurveMap.get(gmm);
+            gmmLine = toLine(locData, gmmCurve.yValues(), valueFormatter);
+            if (exportBinary) {
+              Path gmmBinFile = gmmDir.resolve(CURVE_FILE_BINARY);
+              writeBinary(gmmBinFile, meta, gmmCurve, binIndex);
+            }
           }
+          writeLine(gmmFile, gmmLine, StandardOpenOption.APPEND);
         }
       }
     }
@@ -458,48 +378,46 @@ public final class HazardExport {
   /*
    * Write the current list of {@code Deaggregation}s to file.
    */
-  private void writeDeaggs() throws IOException {
+  private void writeDeagg(Deaggregation deagg) throws IOException {
 
     /*
      * Writing of Hazard results will have already created necessary Imt, Gmm,
      * and SourceType directories.
      */
-    for (Deaggregation deagg : deaggs) {
-      String name = namedSites ? deagg.site.name : lonLatStr(deagg.site.location);
-      for (Entry<Imt, ImtDeagg> imtEntry : deagg.deaggs.entrySet()) {
+    String name = namedSites ? deagg.site.name : lonLatStr(deagg.site.location);
+    for (Entry<Imt, ImtDeagg> imtEntry : deagg.deaggs.entrySet()) {
 
-        /* Write total dataset. */
-        ImtDeagg imtDeagg = imtEntry.getValue();
-        DeaggDataset ddTotal = imtDeagg.totalDataset;
-        DeaggConfig dc = imtDeagg.config;
-        DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total", false, true, true);
-        Path imtDir = dir.resolve(imtEntry.getKey().name());
-        Path totalDir = imtDir.resolve(DEAGG_DIR);
-        Files.createDirectories(totalDir);
-        exporter.toFile(totalDir, name);
+      /* Write total dataset. */
+      ImtDeagg imtDeagg = imtEntry.getValue();
+      DeaggDataset ddTotal = imtDeagg.totalDataset;
+      DeaggConfig dc = imtDeagg.config;
+      DeaggExport exporter = new DeaggExport(ddTotal, ddTotal, dc, "Total", false, true, true);
+      Path imtDir = dir.resolve(imtEntry.getKey().name());
+      Path totalDir = imtDir.resolve(DEAGG_DIR);
+      Files.createDirectories(totalDir);
+      exporter.toFile(totalDir, name);
 
-        if (exportSource) {
-          for (Entry<SourceType, DeaggDataset> typeEntry : imtDeagg.typeDatasets.entrySet()) {
-            SourceType type = typeEntry.getKey();
-            Path typeDir = imtDir.resolve(TYPE_DIR)
-                .resolve(type.name())
-                .resolve(DEAGG_DIR);
-            DeaggDataset ddType = typeEntry.getValue();
-            exporter = new DeaggExport(ddTotal, ddType, dc, type.toString(), false, true, true);
-            exporter.toFile(typeDir, name);
-          }
+      if (exportSource) {
+        for (Entry<SourceType, DeaggDataset> typeEntry : imtDeagg.typeDatasets.entrySet()) {
+          SourceType type = typeEntry.getKey();
+          Path typeDir = imtDir.resolve(TYPE_DIR)
+              .resolve(type.name())
+              .resolve(DEAGG_DIR);
+          DeaggDataset ddType = typeEntry.getValue();
+          exporter = new DeaggExport(ddTotal, ddType, dc, type.toString(), false, true, true);
+          exporter.toFile(typeDir, name);
         }
+      }
 
-        if (exportGmm) {
-          for (Entry<Gmm, DeaggDataset> gmmEntry : imtDeagg.gmmDatasets.entrySet()) {
-            Gmm gmm = gmmEntry.getKey();
-            Path gmmDir = imtDir.resolve(GMM_DIR)
-                .resolve(gmm.name())
-                .resolve(DEAGG_DIR);
-            DeaggDataset ddGmm = gmmEntry.getValue();
-            exporter = new DeaggExport(ddTotal, ddGmm, dc, gmm.toString(), false, true, true);
-            exporter.toFile(gmmDir, name);
-          }
+      if (exportGmm) {
+        for (Entry<Gmm, DeaggDataset> gmmEntry : imtDeagg.gmmDatasets.entrySet()) {
+          Gmm gmm = gmmEntry.getKey();
+          Path gmmDir = imtDir.resolve(GMM_DIR)
+              .resolve(gmm.name())
+              .resolve(DEAGG_DIR);
+          DeaggDataset ddGmm = gmmEntry.getValue();
+          exporter = new DeaggExport(ddTotal, ddGmm, dc, gmm.toString(), false, true, true);
+          exporter.toFile(gmmDir, name);
         }
       }
     }
@@ -524,6 +442,16 @@ public final class HazardExport {
         .append("_")
         .append(loc.lat())
         .toString();
+  }
+
+  /* No options will write a new file, supply APPEND to append. */
+  static void writeLine(Path path, String line, OpenOption... options)
+      throws IOException {
+
+    Files.write(
+        path,
+        (line + System.lineSeparator()).getBytes(UTF_8),
+        options);
   }
 
   /**
@@ -576,7 +504,12 @@ public final class HazardExport {
     return Maps.immutableEnumMap(imtMap);
   }
 
-  /* Scan the supplied source sets for the set of all GMMs used. */
+  /*
+   * Scan the supplied source sets for the set of all GMMs used.
+   * 
+   * Note that this is used when consolidating gmm result curves. Results may
+   * not span the entire range of GMMs in a model so this is commonly a subset
+   */
   // TODO Stream
   private static Set<Gmm> gmmSet(final Iterable<SourceSet<? extends Source>> sourceSets) {
     return Sets.immutableEnumSet(
@@ -728,21 +661,15 @@ public final class HazardExport {
     }
   }
 
-  private void writeBinaryBatch(
+  private void writeBinary(
       Path path,
       Metadata meta,
-      Map<Integer, XySequence> curves) throws IOException {
-
-    if (!Files.exists(path)) {
-      initBinary(path, meta);
-    }
-
+      XySequence curve,
+      int curveIndex) throws IOException {
     FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE);
-    for (Entry<Integer, XySequence> entry : curves.entrySet()) {
-      toBuffer(entry.getValue(), meta.buffer);
-      int position = HEADER_OFFSET + entry.getKey() * meta.curveByteSize;
-      channel.write(meta.buffer, position);
-    }
+    int position = HEADER_OFFSET + curveIndex * meta.curveByteSize;
+    toBuffer(curve, meta.buffer);
+    channel.write(meta.buffer, position);
     channel.close();
   }
 
@@ -755,7 +682,7 @@ public final class HazardExport {
   }
 
   private void initBinary(Path path, Metadata meta) throws IOException {
-    FileChannel channel = FileChannel.open(path, WRITE);
+    FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE);
     ByteBuffer header = createHeader(meta);
     header.flip();
     channel.write(header);
