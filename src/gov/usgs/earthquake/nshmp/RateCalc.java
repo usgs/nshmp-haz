@@ -150,17 +150,17 @@ public class RateCalc {
     } else {
       log.info("Threads: Running on calling thread");
       log.info(PROGRAM + ": calculating ...");
-      export = EqRateExport.create(config, sites, log);
+      export = EqRateExport.create(model, config, sites, log);
       for (Site site : sites) {
         EqRate rate = EqRate.create(model, config, site);
-        export.add(rate);
+        export.write(rate);
       }
     }
     export.expire();
 
     log.info(String.format(
         PROGRAM + ": %s sites completed in %s",
-        export.resultsProcessed(), export.elapsedTime()));
+        export.resultCount(), export.elapsedTime()));
 
     return export.outputDir();
   }
@@ -173,10 +173,10 @@ public class RateCalc {
       ListeningExecutorService executor)
       throws InterruptedException, ExecutionException, IOException {
 
-    EqRateExport export = EqRateExport.create(config, sites, log);
+    EqRateExport export = EqRateExport.create(model, config, sites, log);
 
-    int batchSize = config.output.flushLimit;
     int submitted = 0;
+    int batchSize = 10;
     List<ListenableFuture<EqRate>> rateFutures = new ArrayList<>(batchSize);
 
     /*
@@ -184,6 +184,9 @@ public class RateCalc {
      * there are one or more longer-running calcs in the batch, processing
      * batches of locations to a List preserves submission order; as opposed to
      * using FutureCallbacks, which will reorder sites on export.
+     * 
+     * TODO this is a terrible implementation with batch size 10. resulted from
+     * refactor to exports not queueing results
      */
     for (Site site : sites) {
       Callable<EqRate> task = EqRate.callable(model, config, site);
@@ -192,14 +195,17 @@ public class RateCalc {
 
       if (submitted == batchSize) {
         List<EqRate> rateList = Futures.allAsList(rateFutures).get();
-        export.addAll(rateList);
+        for (EqRate rate : rateList) {
+          export.write(rate);
+        }
         submitted = 0;
         rateFutures.clear();
       }
     }
     List<EqRate> lastBatch = Futures.allAsList(rateFutures).get();
-    export.addAll(lastBatch);
-
+    for (EqRate rate : lastBatch) {
+      export.write(rate);
+    }
     return export;
   }
 

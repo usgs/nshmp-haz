@@ -154,7 +154,7 @@ public class Hazard2018 {
     final ExecutorService exec = initExecutor(threadCount);
     log.info("Threads: " + ((ThreadPoolExecutor) exec).getCorePoolSize());
 
-    HazardExport handler = HazardExport.create(models.wusConfig, sites, log);
+    HazardExport handler = HazardExport.create(models.wusModel, models.wusConfig, sites, log);
 
     log.info(PROGRAM + ": calculating ...");
 
@@ -173,7 +173,7 @@ public class Hazard2018 {
     exec.shutdown();
     log.info(String.format(
         PROGRAM + ": %s sites completed in %s",
-        handler.resultsProcessed(), handler.elapsedTime()));
+        handler.resultCount(), handler.elapsedTime()));
 
     return outputDir;
   }
@@ -218,7 +218,7 @@ public class Hazard2018 {
 
     @Override
     public Path call() throws IOException {
-      handler.add(hazard);
+      handler.write(hazard);
       return handler.outputDir();
     }
 
