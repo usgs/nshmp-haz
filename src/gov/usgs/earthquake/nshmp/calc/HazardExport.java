@@ -6,6 +6,10 @@ import static gov.usgs.earthquake.nshmp.calc.ValueFormat.POISSON_PROBABILITY;
 import static gov.usgs.earthquake.nshmp.data.XySequence.emptyCopyOf;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -13,7 +17,6 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.sql.Timestamp;
 import java.util.EnumMap;
 import java.util.List;
@@ -161,7 +164,6 @@ public final class HazardExport {
       }
     }
 
-    
     for (Imt imt : config.hazard.imts) {
 
       Path imtDir = dir.resolve(imt.name());
@@ -324,7 +326,7 @@ public final class HazardExport {
       String totalLine = toLine(locData, totalCurve.yValues(), valueFormatter);
 
       Path totalFile = imtDir.resolve(CURVE_FILE_ASCII);
-      writeLine(totalFile, totalLine, StandardOpenOption.APPEND);
+      writeLine(totalFile, totalLine, APPEND);
 
       Metadata meta = null;
       int binIndex = -1;
@@ -350,7 +352,7 @@ public final class HazardExport {
               writeBinary(typeBinFile, meta, typeCurve, binIndex);
             }
           }
-          writeLine(typeFile, typeLine, StandardOpenOption.APPEND);
+          writeLine(typeFile, typeLine, APPEND);
         }
       }
 
@@ -369,7 +371,7 @@ public final class HazardExport {
               writeBinary(gmmBinFile, meta, gmmCurve, binIndex);
             }
           }
-          writeLine(gmmFile, gmmLine, StandardOpenOption.APPEND);
+          writeLine(gmmFile, gmmLine, APPEND);
         }
       }
     }
@@ -666,7 +668,7 @@ public final class HazardExport {
       Metadata meta,
       XySequence curve,
       int curveIndex) throws IOException {
-    FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE);
+    FileChannel channel = FileChannel.open(path, WRITE);
     int position = HEADER_OFFSET + curveIndex * meta.curveByteSize;
     toBuffer(curve, meta.buffer);
     channel.write(meta.buffer, position);
@@ -682,7 +684,7 @@ public final class HazardExport {
   }
 
   private void initBinary(Path path, Metadata meta) throws IOException {
-    FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE);
+    FileChannel channel = FileChannel.open(path, CREATE, TRUNCATE_EXISTING, WRITE);
     ByteBuffer header = createHeader(meta);
     header.flip();
     channel.write(header);
