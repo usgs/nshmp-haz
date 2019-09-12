@@ -1,13 +1,13 @@
 
-apply plugin: 'java'
 apply plugin: 'jacoco'
+apply plugin: 'war'
 apply plugin: 'eclipse-wtp'
 
 sourceCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
 
 jacoco {
-    toolVersion = '0.8.4'
+  toolVersion = '0.8.4'
 }
 
 repositories {
@@ -20,6 +20,14 @@ dependencies {
     transitive = false
   }
   compile 'com.google.code.gson:gson:2.8.5'
+
+  compile 'org.apache.tomcat:tomcat-catalina:8.0.45'
+  compile 'javax.websocket:javax.websocket-api:1.1'
+  compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
+  compile 'com.amazonaws:aws-java-sdk-lambda:1.11.461'
+  compile 'com.amazonaws:aws-java-sdk-s3:1.11.579'
+  compile 'com.amazonaws:aws-java-sdk-ec2:1.11.619'
+
   testCompile 'junit:junit:4.12'
 }
 
@@ -46,6 +54,31 @@ sourceSets {
 
 ext {
   projectName = 'nshmp-haz'
+
+  propsPath = '/classes/java/main/service.properties'
+  
+  /* Multi-model repository paths for version tracking */
+  repo_cous_2008 = '../nshm-cous-2008'
+  repo_cous_2014 = '../nshm-cous-2014'
+  repo_cous_2014b = '../nshm-cous-2014b'
+  repo_cous_2018 = '../nshm-cous-2018'
+  repo_ak_2007 = '../nshm-ak-2007'
+  
+  /* Explicit model paths */
+  model_wus_2008 = "${repo_cous_2008}/Western US"
+  model_ceus_2008 = "${repo_cous_2008}/Central & Eastern US"
+  model_wus_2014 = "${repo_cous_2014}/Western US"
+  model_ceus_2014 = "${repo_cous_2014}/Central & Eastern US"
+  model_wus_2014b = "${repo_cous_2014b}/Western US"
+  model_wus_2018 = "${repo_cous_2018}/Western US"
+  model_ceus_2018 = "${repo_cous_2018}/Central & Eastern US"
+  model_ak_2007 = "${repo_ak_2007}"
+
+  getGitTag = { gitDir -> 
+    def cmd = 'git --git-dir=' + gitDir + '/.git describe --tags'
+    return cmd.execute().text.replace('\n', '') ?: 'unknown'
+  }
+
   /* 
    * The git-dir option gets the correct tag when
    * build is called from nshmp-haz-ws.
@@ -107,6 +140,8 @@ javadoc {
     'https://google.github.io/guava/releases/23.0/api/docs/',
     'https://google.github.io/gson/apidocs/')
   include 'gov/usgs/earthquake/nshmp/**'
+  exclude 'gov/usgs/earthquake/nshmp/www/**'
+  exclude 'gov/usgs/earthquake/nshmp/aws/**'
   exclude 'gov/usgs/earthquake/nshmp/etc/**'
   exclude 'gov/usgs/earthquake/nshmp/internal/**'
   exclude '**/Scratch*'
@@ -134,7 +169,6 @@ javadoc {
  */
 jar {
   doFirst {
-  
     /* possible fat jar */
     if (rootProject.name == projectName && !thinJar) {
       from { configurations.compile.collect {
@@ -169,4 +203,98 @@ task thinJar(type: Jar) {
   }
   with jar
 }
-    
+
+/**
+ * Create war file with production models
+ */
+war {
+  baseName 'nshmp-haz-ws'
+  enabled = true
+  webAppDirName = 'webapp'
+  dependsOn jar
+  
+  /* 
+   * Exclude existing models directory with symlinks
+   * to support Eclipse deployments.
+   */
+  exclude 'models'
+  
+  from(model_ak_2007) { into 'models/ak/2007' }
+  from(model_ceus_2008) { into 'models/ceus/2008' }
+  from(model_ceus_2014) { into 'models/ceus/2014' }
+  from(model_wus_2008) { into 'models/wus/2008' }
+  from(model_wus_2014) { into 'models/wus/2014' }
+  from(model_wus_2014b) { into 'models/wus/2014b' }
+  
+  doFirst {
+    /* Record service and model versions */
+    writeProperties()
+  }
+}
+
+/**
+ * Create a war file with development models
+ */
+task assembleDev(type: War, dependsOn: 'war') {
+  baseName 'nshmp-haz-ws'
+  from(model_ceus_2018) { into 'models/ceus/2018' }
+  from(model_wus_2018) { into 'models/wus/2018' }
+}
+
+/**
+ * Create am exploded war file with production models
+ */
+task assembleUsgs(type: Sync) {
+  into "${libsDir}/exploded-war"
+  with war
+
+  doFirst {
+    /* Record service and model versions */
+    writeProperties()
+  }
+}
+
+/**
+ * Create am exploded war file with development models
+ */
+task assembleUsgsDev(type: Sync) {
+  into "${libsDir}/exploded-war"
+  with assembleDev
+
+  doFirst {
+    /* Record service and model versions */
+    writeProperties()
+  }
+}
+
+/**
+ * Create a zip file of all dependencies
+ */
+task dependencies(type: Zip) {
+  baseName = "nshmp-haz-ws-dependencies"
+  from {
+    configurations.compile.collect {
+      it
+    }
+  }
+
+  into("java/lib")
+  
+  destinationDir libsDir
+}
+
+/**
+ * Create properties file
+ */
+def writeProperties() {
+  def props = new Properties()
+  def propsFile = new File(project.buildDir.toString() + propsPath)
+  propsFile.createNewFile()
+  props.setProperty('app.version', getGitTag('.'))
+  props.setProperty('E2007.version', getGitTag(repo_ak_2007))
+  props.setProperty('E2008.version', getGitTag(repo_cous_2008))
+  props.setProperty('E2014.version', getGitTag(repo_cous_2014))
+  props.setProperty('E2014B.version', getGitTag(repo_cous_2014b))
+  props.setProperty('E2018.version', getGitTag(repo_cous_2018))
+  props.store(propsFile.newWriter(), null)
+}
