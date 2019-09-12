@@ -1,0 +1,38 @@
+/*
+* Styling for printing in PDF or to printer
+*/
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+@media print {
+  html {
+    height: 11in !important;
+    width: 8.5in !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    -moz-transform:rotate(90deg);
+    filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  }
+
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+    
+  img {
+    margin: 0;
+    padding: 0;
+  }
+
+  header, footer {
+    margin: 0;
+    padding: 0;
+    display: none !important;
+  }
+  
+}

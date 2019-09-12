@@ -1,0 +1,253 @@
+
+
+<!doctype html>
+
+
+<html lang="en">
+
+<!-- ......................... Head ........................................ -->
+<head>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"> 
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" 
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="css/template.css" type="text/css">
+  <link rel="stylesheet" href="css/D3View.css" type="text/css">
+  <link rel="stylesheet" href="css/Gmm.css"  type="text/css">
+ 
+</head>
+<!-- ......................... End: Head ................................... -->
+
+
+
+<!-- ........................... Body ...................................... -->
+<body>
+
+
+  <!-- ...................... Control Panel ................................ -->
+  <div class='hidden' id="control">
+    <label for="gmms" class="control-group">Ground Motion Models:</label>
+   
+    <div id="gmm-sorter" class="btn-group btn-group-xs" data-toggle="buttons">
+      <label class="btn btn-default gmm-group active"
+             data-toggle="tooltip"
+             data-container="body"
+             title="Sort by Group"
+             for="gmm-sort-group">
+        <input type="radio"
+               value="group"
+               name="gmm-sort"
+               id="gmm-sort-group"
+               aria-label="Sort by Group"
+               checked="true" />
+        <span class="glyphicon glyphicon-list"
+              aria-hidden="true" />
+      </label>
+      <label class="btn btn-default gmm-alpha"
+             data-toggle="tooltip"
+             data-container="body"
+             title="Sort Alphabetically"
+             for="gmm-sort-alpha">
+        <input type="radio"
+               value="alpha"
+               name="gmm-sort"
+               id="gmm-sort-alpha"
+               aria-label="Sort Alphabetically" />
+          <span class="glyphicon glyphicon-sort-by-alphabet"
+                aria-hidden="true" />
+        </input>
+      </label>
+    </div>
+  
+    <form id="inputs">
+      <select class="form-control input-sm" 
+          name="gmm" 
+          id="gmms" 
+          size="16" 
+          multiple="true" 
+          autofocus>
+      </select>
+    
+      <div class="form-horizontal">
+       
+       
+       <!-- ..................... IMT Menu ................................. -->
+        <div class="form-group form-group-sm">
+          <label class="control-spacer control-group"
+              for="imt"> Intensity Measure Type: </label>
+          <select class="form-control" id="imt" name="imt">
+          </select>
+        </div>
+        <!-- ................ End: Imt Menu ................................ -->
+        
+        <label class="control-spacer control-group">
+            Event Parameters:
+        </label>
+        <div class="form-group form-group-sm show-grid">
+          <label class="col-sm-2 control-label" for="Mw">
+              M<sub>W</sub>
+          </label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control" id="Mw" name="Mw">
+          </div>
+        </div>
+
+        <label class="control-spacer control-group">
+            Source Geometry:
+        </label>
+        <div class="form-group form-group-sm">
+          <label class="col-sm-2 control-label" for="zTop">
+              Z<sub>TOP</sub>
+          </label>
+          <div class="col-sm-3">
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" 
+                  id="zTop" name="zTop">
+              <span class="input-group-addon">km</span>
+            </div>
+          </div>
+          <label class="col-sm-1 control-label" for="dip">
+              Dip
+          </label>
+          <div class="col-sm-3">
+            <div class="input-group input-group-sm">
+              <input type="number" 
+                  class="form-control" 
+                  id="dip" 
+                  name="dip" 
+                  min="0" 
+                  max="90">
+              <span class="input-group-addon">°</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group form-group-sm">
+          <label class="col-sm-2 control-label" for="width">
+              Width
+          </label>
+          <div class="col-sm-3">
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" 
+                  id="width" name="width">
+              <span class="input-group-addon">km</span>
+            </div>
+          </div>
+        </div>
+    
+        <label class="control-spacer control-group">
+            Site &amp; Basin:
+        </label>
+        <div class="form-group form-group-sm">
+          <label class="col-sm-2 control-label" for="vs30">
+              V<sub>S</sub>30
+          </label>
+          <div class="col-sm-3">
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" id="vs30" name="vs30">
+              <span class="input-group-addon"><sup>m</sup>⁄<sub>s</sub></span>
+            </div>
+          </div>
+          <div class="col-sm-6 col-sm-offset-1">
+            <div id="vs-infer" 
+                class="btn-group btn-group-xs disabled" 
+                data-toggle="buttons">
+              <label class="btn btn-default" 
+                  title="Vs30 Measured" 
+                  for="vs-measured">
+                      Measured
+                <input type="radio" 
+                    value="measured" 
+                    id="vs-measured"
+                    name="vsInf">
+              </label>
+              <label class="btn btn-default active" 
+                  title="Vs30 Inferred" 
+                  for="vs-inferred">
+                      Inferred
+                <input type="radio" 
+                    value="inferred" 
+                    id="vs-inferred" 
+                    name="vsInf" 
+                    checked="true">
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group form-group-sm">
+          <label class="col-sm-2 control-label" for="z1p0">
+              Z<sub>1.0</sub>
+          </label>
+          <div class="col-sm-3">
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" 
+                  placeholder="default" 
+                  id="z1p0" 
+                  name="z1p0">
+              <span class="input-group-addon">km</span>
+            </div>
+          </div>
+          <label class="col-sm-1 control-label" for="z2p5">
+              Z<sub>2.5</sub>
+          </label>
+          <div class="col-sm-3">
+            <div class="input-group input-group-sm">
+              <input type="text" 
+                  class="form-control" 
+                  placeholder="default" 
+                  id="z2p5" 
+                  name="z2p5">
+              <span class="input-group-addon">km</span>
+            </div>
+          </div>
+        </div>
+    
+      </div>
+    </form>
+
+  </div>
+  <!-- .................... End: Control Panel ............................. -->
+
+
+
+  <!-- .......................... Plots .................................... -->
+  <div id="content">
+ 
+  </div> 
+  <!-- ..................... End: Plots .................................... -->
+
+
+
+  <!-- ..................... Import JavaScript ............................. -->
+
+  <!-- jQuery -->
+  <script 
+      src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+  </script>
+
+  <!--  Bootstrap -->
+  <script 
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+  </script>
+
+  <!-- Application Specific JavaScript -->
+  <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+  
+  <script type='module'>
+    import Config from './js/lib/Config.js';
+    import { GmmDistance } from './js/GmmDistance.js';
+     
+    Config.getConfig(GmmDistance);
+  </script>
+  <!-- ..................... End: Import JavaScript ........................ -->
+
+
+
+</body>
+<!-- ......................... End: Body ................................... -->
+
+</html>

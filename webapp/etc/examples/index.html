@@ -1,0 +1,43 @@
+<!doctype html>
+
+<html lang="en">
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"> 
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" 
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../../apps/css/template.css" type="text/css">
+    <link rel="stylesheet" href="../../apps/css/dashboard.css" type="text/css">
+  </head>
+
+
+  <body>
+
+    <!-- jQuery -->
+    <script 
+        src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
+
+    <!--  Bootstrap -->
+    <script 
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+    </script>
+
+    <!-- D3 -->
+    <script src="https://d3js.org/d3.v4.min.js"> </script>
+    
+    <!-- Application Specific JavaScript -->
+    <script type='module'>
+      import { Dashboard } from './Dashboard.js';
+
+      new Dashboard();
+    </script>
+
+  </body>
+
+</html>

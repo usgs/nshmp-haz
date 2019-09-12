@@ -1,0 +1,310 @@
+/**
+* CSS for D3View class
+*
+*/
+
+/* D3 View */
+.D3View {
+  position: relative;
+}
+
+/* Plot panel header */                           
+.D3View .panel .panel-heading {                                     
+  background-color: #f7f7f7;                                                    
+  font-family: 'HelveticaNeue-Light',sans-serif;                                
+  position: relative;
+}                                                                               
+
+.D3View .panel-title {
+  font-size: 1.25em;
+}
+
+.D3View .plot-title {
+  display: inline-block;
+  min-width: 30%;
+}
+
+/* Plot panel body */
+.D3View .panel-body {
+  padding: 0;
+  line-height: 1.5;
+}
+
+.D3View .panel-outer > .panel-body + .panel-body {
+  border-top: 1px solid #ddd;
+  position: relative;
+}
+              
+/* Plot panel footer */
+.D3View .panel .panel-footer {
+  background-color: #f7f7f7;                                                    
+  font-size: 1em;
+  position: relative;
+}
+
+.D3View .footer-btn-toolbar {
+  margin: 0 1.25em 0 0;
+}
+
+.D3View .footer-btn-group {
+  padding: 0 1%;
+}
+
+.D3View .footer-button input {
+  height: 0;
+}
+
+.D3View .panel-footer .dropdown-header {
+  font-weight: 400;
+}
+
+.D3View .panel-footer label {
+  font-weight: initial;
+  font-size: 0.75em;
+}
+
+/* Plot panel body data table */
+.D3View .panel-table td {
+  font-size: 0.75em;
+  vertical-align: initial;
+}
+
+.D3View .panel-table th {
+  font-size: 1em;
+  font-weight: 550;
+  vertical-align: initial;
+  width: 50%;
+}
+
+.D3View .panel-table tr tr td {
+  padding: 2px 5px;
+}
+
+.D3View .panel-table .data-table-title {
+  font-size: 1.25em;
+  font-weight: 800;
+}
+
+.D3View .panel-table {
+  overflow-x: scroll;
+  overflow-y: scroll;
+}
+
+.D3View .panel-table .table {
+  margin-bottom: 2em;
+}
+
+/* Panel glyphicons */
+.D3View .icon {
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 100;
+  line-height: 100%;
+  position: absolute;
+  right: 1em;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+}
+
+.D3View .d3-tooltip {
+  line-height: 1.5;
+}
+
+@media only screen and (max-width: 992px) {
+  .D3View .panel-footer label {
+    font-size: 0.45em;
+  }
+
+  .D3View .plot-title {
+    font-size: 0.75em;
+  }
+
+  .D3View .glyphicon {
+    font-size: 0.75em;
+  }
+
+  .D3View .panel-heading {
+    padding: 5px 15px;
+  }
+
+  .D3View .panel-footer {
+    padding: 5px 15px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .D3View .panel-footer label {
+    font-size: 0.3em;
+  }
+
+  .D3View .plot-title {
+    font-size: 0.5em;
+  }
+
+  .D3View .panel-heading {
+    padding: 2.5px 7.5px;
+  }
+
+  .D3View .panel-footer {
+    padding: 2.5px 7.5px;
+  }
+}
+
+@media only screen and (min-width: 1450px) {
+  .D3View.col-xl-12 {
+    width: 100%;
+  }
+  .D3View.col-xl-11 {
+    width: 91.66666667%;
+  }
+  .D3View.col-xl-10 {
+    width: 83.33333333%;
+  }
+  .D3View.col-xl-9 {
+    width: 75%;
+  }
+  .D3View.col-xl-8 {
+    width: 66.66666667%;
+  }
+  .D3View.col-xl-7 {
+    width: 58.33333333%;
+  }
+  .D3View.col-xl-6 {
+    width: 50%;
+  }
+  .D3View.col-xl-5 {
+    width: 41.66666667%;
+  }
+  .D3View.col-xl-4 {
+    width: 33.33333333%;
+  }
+  .D3View.col-xl-3 {
+    width: 25%;
+  }
+  .D3View.col-xl-2 {
+    width: 16.66666667%;
+  }
+  .D3View.col-xl-1 {
+    width: 8.33333333%;
+  }
+
+  .D3View.col-xl-offset-12 {
+    margin-left: 100%;
+  }
+  .D3View.col-xl-offset-11 {
+    margin-left: 91.66666667%;
+  }
+  .D3View.col-xl-offset-10 {
+    margin-left: 83.33333333%;
+  }
+  .D3View.col-xl-offset-9 {
+    margin-left: 75%;
+  }
+  .D3View.col-xl-offset-8 {
+    margin-left: 66.66666667%;
+  }
+  .D3View.col-xl-offset-7 {
+    margin-left: 58.33333333%;
+  }
+  .D3View.col-xl-offset-6 {
+    margin-left: 50%;
+  }
+  .D3View.col-xl-offset-5 {
+    margin-left: 41.66666667%;
+  }
+  .D3View.col-xl-offset-4 {
+    margin-left: 33.33333333%;
+  }
+  .D3View.col-xl-offset-3 {
+    margin-left: 25%;
+  }
+  .D3View.col-xl-offset-2 {
+    margin-left: 16.66666667%;
+  }
+  .D3View.col-xl-offset-1 {
+    margin-left: 8.33333333%;
+  }
+  .D3View.col-xl-offset-0 {
+    margin-left: 0;
+  }
+}
+
+@media only screen and (min-width: 1700px) {
+  .D3View.col-xxl-12 {
+    width: 100%;
+  }
+  .D3View.col-xxl-11 {
+    width: 91.66666667%;
+  }
+  .D3View.col-xxl-10 {
+    width: 83.33333333%;
+  }
+  .D3View.col-xxl-9 {
+    width: 75%;
+  }
+  .D3View.col-xxl-8 {
+    width: 66.66666667%;
+  }
+  .D3View.col-xxl-7 {
+    width: 58.33333333%;
+  }
+  .D3View.col-xxl-6 {
+    width: 50%;
+  }
+  .D3View.col-xxl-5 {
+    width: 41.66666667%;
+  }
+  .D3View.col-xxl-4 {
+    width: 33.33333333%;
+  }
+  .D3View.col-xxl-3 {
+    width: 25%;
+  }
+  .D3View.col-xxl-2 {
+    width: 16.66666667%;
+  }
+  .D3View.col-xxl-1 {
+    width: 8.33333333%;
+  }
+
+  .D3View.col-xxl-offset-12 {
+    margin-left: 100%;
+  }
+  .D3View.col-xxl-offset-11 {
+    margin-left: 91.66666667%;
+  }
+  .D3View.col-xxl-offset-10 {
+    margin-left: 83.33333333%;
+  }
+  .D3View.col-xxl-offset-9 {
+    margin-left: 75%;
+  }
+  .D3View.col-xxl-offset-8 {
+    margin-left: 66.66666667%;
+  }
+  .D3View.col-xxl-offset-7 {
+    margin-left: 58.33333333%;
+  }
+  .D3View.col-xxl-offset-6 {
+    margin-left: 50%;
+  }
+  .D3View.col-xxl-offset-5 {
+    margin-left: 41.66666667%;
+  }
+  .D3View.col-xxl-offset-4 {
+    margin-left: 33.33333333%;
+  }
+  .D3View.col-xxl-offset-3 {
+    margin-left: 25%;
+  }
+  .D3View.col-xxl-offset-2 {
+    margin-left: 16.66666667%;
+  }
+  .D3View.col-xxl-offset-1 {
+    margin-left: 8.33333333%;
+  }
+  .D3View.col-xxl-offset-0 {
+    margin-left: 0;
+  }
+}
