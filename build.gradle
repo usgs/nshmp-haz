@@ -62,6 +62,7 @@ ext {
   repo_cous_2014 = '../nshm-cous-2014'
   repo_cous_2014b = '../nshm-cous-2014b'
   repo_cous_2018 = '../nshm-cous-2018'
+  repo_hi_2020 = '../nshm-hi-2020'
   repo_ak_2007 = '../nshm-ak-2007'
   
   /* Explicit model paths */
@@ -72,6 +73,7 @@ ext {
   model_wus_2014b = "${repo_cous_2014b}/Western US"
   model_wus_2018 = "${repo_cous_2018}/Western US"
   model_ceus_2018 = "${repo_cous_2018}/Central & Eastern US"
+  model_hi_2020 = "${repo_hi_2020}"
   model_ak_2007 = "${repo_ak_2007}"
 
   /* Production models */
