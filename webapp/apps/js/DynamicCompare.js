@@ -68,8 +68,6 @@ export class DynamicCompare extends Hazard {
     this.header.setTitle('Dynamic Compare');
 
     this.options = {
-      defaultFirstModel: 'WUS_2014',
-      defaultSecondModel: 'WUS_2018',
       defaultImt: 'PGA',
       defaultReturnPeriod: 2475,
       defaultVs30: 760,
@@ -90,7 +88,7 @@ export class DynamicCompare extends Hazard {
     /** @type {HTMLElement} */
     this.testSitePickerBtnEl = document.querySelector('#test-site-picker');
     
-    /** @type {Object} */
+    /** @type {Object[]} */
     this.comparableModels = undefined;
    
     /* Get webservice usage */ 
@@ -248,18 +246,15 @@ export class DynamicCompare extends Hazard {
    */
   buildInputs() {
     this.spinner.off();
+    $(this.controlPanelEl).removeClass('hidden');
     this.setComparableModels();
     
     this.setFirstModelMenu();
     this.setSecondModelMenu();
-    this.secondModelEl.value = this.options.defaultSecondModel;
     this.setParameterMenu(this.imtEl, this.options.defaultImt);
     this.setParameterMenu(this.vs30El, this.options.defaultVs30);
     this.setDefaultReturnPeriod();
     this.addInputTooltip();
-
-    $(this.controlPanelEl).removeClass('hidden');
-
   }
   
   /**
@@ -1129,7 +1124,7 @@ export class DynamicCompare extends Hazard {
    */
   setFirstModelMenu() {
     Tools.setSelectMenu(this.firstModelEl, this.comparableModels); 
-    this.firstModelEl.value = this.options.defaultFirstModel;
+    this.firstModelEl.value = this.comparableModels[0].value; 
   }
 
   /**

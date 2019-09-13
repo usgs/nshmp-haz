@@ -11,6 +11,7 @@ import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Stream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -69,6 +71,8 @@ public class ServletUtil implements ServletContextListener {
   public static final Gson GSON;
 
   static final String MODEL_CACHE_CONTEXT_ID = "model.cache";
+  
+  static Model[] INSTALLED_MODELS;
 
   /* Stateful flag to reject requests while a result is pending. */
   static boolean uhtBusy = false;
@@ -105,7 +109,13 @@ public class ServletUtil implements ServletContextListener {
   public void contextInitialized(ServletContextEvent e) {
 
     final ServletContext context = e.getServletContext();
-
+    
+    INSTALLED_MODELS = Stream.of(Model.values())
+        .filter(model -> {
+          Path path = Paths.get(context.getRealPath(model.path));
+          return Files.isDirectory(path);
+        }).toArray(Model[]::new);
+    
     final LoadingCache<Model, HazardModel> modelCache = CacheBuilder.newBuilder().build(
         new CacheLoader<Model, HazardModel>() {
           @Override
@@ -114,20 +124,6 @@ public class ServletUtil implements ServletContextListener {
           }
         });
     context.setAttribute(MODEL_CACHE_CONTEXT_ID, modelCache);
-
-    // possibly fill (preload) cache
-    boolean preload = Boolean.valueOf(context.getInitParameter("preloadModels"));
-
-    if (preload) {
-      for (final Model model : Model.values()) {
-        CALC_EXECUTOR.submit(new Callable<HazardModel>() {
-          @Override
-          public HazardModel call() throws Exception {
-            return modelCache.getUnchecked(model);
-          }
-        });
-      }
-    }
   }
 
   private static HazardModel loadModel(ServletContext context, Model model) {

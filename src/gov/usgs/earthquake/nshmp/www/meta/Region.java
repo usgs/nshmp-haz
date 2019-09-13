@@ -54,6 +54,15 @@ public enum Region implements Constrained {
       new double[] { -100.0, -65.0 },
       EnumSet.of(PGA, SA0P1, SA0P2, SA0P3, SA0P5, SA1P0, SA2P0),
       EnumSet.of(VS_2000, VS_760)),
+  
+  HI(
+      "Hawaii",
+      new double[] { 18.0, 23.0 },
+      new double[] { -161.0, -154.0 },
+      new double[] { 18.0, 23.0 },
+      new double[] { -161.0, -154.0 },
+      EnumSet.of(PGA, SA0P1, SA0P2, SA0P3, SA0P5, SA0P75, SA1P0, SA2P0, SA3P0, SA5P0),
+      EnumSet.of(VS_1150, VS_760, VS_537, VS_360, VS_259, VS_180)),
 
   WUS(
       "Western US",

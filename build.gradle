@@ -74,6 +74,23 @@ ext {
   model_ceus_2018 = "${repo_cous_2018}/Central & Eastern US"
   model_ak_2007 = "${repo_ak_2007}"
 
+  /* Production models */
+  prod_models = [
+    [ model_ak_2007, 'models/ak/2007' ],
+    [ model_ceus_2008, 'models/ceus/2008' ],
+    [ model_wus_2008, 'models/wus/2008' ],
+    [ model_ceus_2014, 'models/ceus/2014' ],
+    [ model_wus_2014, 'models/wus/2014' ],
+    [ model_wus_2014b, 'models/wus/2014b' ]
+  ]
+
+  /* Development models */
+  dev_models = [
+    [ model_ceus_2018, 'models/ceus/2018' ],
+    [ model_wus_2018, 'models/wus/2018' ],
+    [ model_hi_2020, 'models/hi/2020' ]    
+  ]
+
   getGitTag = { gitDir -> 
     def cmd = 'git --git-dir=' + gitDir + '/.git describe --tags'
     return cmd.execute().text.replace('\n', '') ?: 'unknown'
@@ -122,7 +139,6 @@ jacocoTestReport {
   }
 }
 check.dependsOn jacocoTestReport
-
 
 javadoc {
   options.setUse(true)
@@ -208,24 +224,19 @@ task thinJar(type: Jar) {
  * Create war file with production models
  */
 war {
-  baseName 'nshmp-haz-ws'
   enabled = true
   webAppDirName = 'webapp'
-  dependsOn jar
   
   /* 
    * Exclude existing models directory with symlinks
    * to support Eclipse deployments.
    */
   exclude 'models'
-  
-  from(model_ak_2007) { into 'models/ak/2007' }
-  from(model_ceus_2008) { into 'models/ceus/2008' }
-  from(model_ceus_2014) { into 'models/ceus/2014' }
-  from(model_wus_2008) { into 'models/wus/2008' }
-  from(model_wus_2014) { into 'models/wus/2014' }
-  from(model_wus_2014b) { into 'models/wus/2014b' }
-  
+
+  prod_models.each{model ->
+    from(model[0]) { into model[1] }
+  }
+
   doFirst {
     /* Record service and model versions */
     writeProperties()
@@ -236,9 +247,13 @@ war {
  * Create a war file with development models
  */
 task assembleDev(type: War, dependsOn: 'war') {
-  baseName 'nshmp-haz-ws'
-  from(model_ceus_2018) { into 'models/ceus/2018' }
-  from(model_wus_2018) { into 'models/wus/2018' }
+  prod_models.each{model ->
+    from(model[0]) { into model[1] }
+  }
+
+  dev_models.each{model ->
+    from(model[0]) { into model[1] }
+  }
 }
 
 /**
@@ -296,5 +311,6 @@ def writeProperties() {
   props.setProperty('E2014.version', getGitTag(repo_cous_2014))
   props.setProperty('E2014B.version', getGitTag(repo_cous_2014b))
   props.setProperty('E2018.version', getGitTag(repo_cous_2018))
+  props.setProperty('E2020.version', getGitTag(repo_hi_2020))
   props.store(propsFile.newWriter(), null)
 }

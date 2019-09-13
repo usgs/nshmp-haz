@@ -1,6 +1,7 @@
 package gov.usgs.earthquake.nshmp.www;
 
 import static gov.usgs.earthquake.nshmp.www.meta.Metadata.serverData;
+import static gov.usgs.earthquake.nshmp.www.ServletUtil.INSTALLED_MODELS;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -113,7 +115,7 @@ public class SourceServices extends NshmpServlet {
       models = new SourceModelsParameter(
           "Source models",
           ParamType.STRING,
-          Stream.of(Model.values())
+          Stream.of(INSTALLED_MODELS)
               .map(SourceModel::new)
               .collect(Collectors.toList()));
 
@@ -154,14 +156,14 @@ public class SourceServices extends NshmpServlet {
 
   /* Union of IMTs across all models. */
   static Set<Imt> modelUnionImts() {
-    return EnumSet.copyOf(Stream.of(Model.values())
+    return EnumSet.copyOf(Stream.of(INSTALLED_MODELS)
         .flatMap(model -> model.imts.stream())
         .collect(Collectors.toSet()));
   }
 
   /* Union of Vs30s across all models. */
   static Set<Vs30> modelUnionVs30s() {
-    return EnumSet.copyOf(Stream.of(Model.values())
+    return EnumSet.copyOf(Stream.of(INSTALLED_MODELS)
         .flatMap(model -> model.vs30s.stream())
         .collect(Collectors.toSet()));
   }

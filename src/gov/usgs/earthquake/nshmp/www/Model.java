@@ -49,6 +49,10 @@ enum Model {
 
   WUS_2018(
       EnumSet.of(PGA, SA0P1, SA0P2, SA0P3, SA0P5, SA0P75, SA1P0, SA2P0, SA3P0, SA4P0, SA5P0),
+      EnumSet.of(VS_1150, VS_760, VS_537, VS_360, VS_259, VS_180)),
+  
+  HI_2020(
+      EnumSet.of(PGA, SA0P1, SA0P2, SA0P3, SA0P5, SA0P75, SA1P0, SA2P0, SA3P0, SA5P0),
       EnumSet.of(VS_1150, VS_760, VS_537, VS_360, VS_259, VS_180));
 
   private static final String MODEL_DIR = "models";
@@ -76,6 +80,6 @@ enum Model {
   }
 
   private static Region deriveRegion(String s) {
-    return s.startsWith("AK") ? AK : s.startsWith("WUS") ? WUS : CEUS;
+    return s.startsWith("AK") ? AK : s.startsWith("WUS") ? WUS : s.startsWith("HI") ? HI : CEUS;
   }
 }

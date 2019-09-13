@@ -10,11 +10,6 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
-	<context-param>
-		<param-name>preloadModels</param-name>
-		<param-value>false</param-value>
-	</context-param>
-
 	<servlet>
 		<servlet-name>default</servlet-name>
 		<init-param>
