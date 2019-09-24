@@ -1,0 +1,176 @@
+/*
+####################################################
+#
+#   CSS for the Spectra and GmmDistance webpage
+#
+#
+#####################################################
+*/
+
+
+.D3View .fault-form .row{
+  margin: 0;
+}
+
+.D3View label{
+  margin: 0;
+  font-weight: 700;
+}
+
+.fault-form{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 65%;
+  border-left: 1px solid #ddd;
+  padding: 1em 0.5em 0.5em 0.5em;
+  height: 100%;
+  overflow: auto;
+  font-size: 0.80vw;
+}
+
+.D3View .fault-form .form-control{
+  height: 2vw;
+  font-size: 0.75em;
+  line-height: 1.5;
+  padding: 0 0.5em;
+}
+
+.panel-lower .fault-form .input-group-addon{
+  height: 2vw;
+  font-size: 0.75em;
+  line-height: 1;
+}
+
+.panel-lower .fault-form [class*="col-"] {
+ padding: 0.2em; 
+}
+
+.D3View .fault-form .form-group{
+  margin: 0;
+  padding: 0 0.25em;
+}
+
+.D3View .fault-form .slider-form{
+  margin-bottom: 0.50em;
+}
+
+.slider{
+  margin-top: 0.45em;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 0.8em;
+  border-radius: 0.5em;
+  background: #eee;
+  border: 1px solid #ccc;
+}
+
+
+.slider:focus{
+  outline: transparent;
+}
+
+.slider::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1em;
+  width: 1em;
+  border-radius: 50%;
+  background: #337ab7;
+  border-color: #2e6da4;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb:active{
+  height: 1.35em;
+  width: 1.35em;
+}
+
+.slider::-ms-fill-lower{
+  background-color: #337ab7
+}
+
+
+optgroup {
+  color: SteelBlue;
+}
+
+
+#gmm-sorter {
+  float: right;
+}
+
+
+
+#addata {
+  float: right;
+  /*margin-top: 20px;*/
+}
+
+
+
+.form-group-sm .form-control {
+  height: 24px;
+  padding: 2px 4px;
+}
+
+.input-group-sm .input-group-addon {
+  height: 24px;
+  padding: 2px 4px;
+}
+
+#control [class*="col-sm-"],
+#control [class*='col-xs-'] {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.form-horizontal .form-group-sm .units {
+  text-align: left;
+  padding-top: 4px;
+}
+
+.secondary-input {
+  font-weight: normal;
+}
+
+.disabled {
+  color: #aaa;
+}
+
+.btn-group {
+  padding-top: 1px;
+}
+
+
+/* plot */
+
+/*text {
+  font: 10px sans-serif;
+}
+*/
+
+.axis-label {
+  font-size: 1.2em;
+  font-weight: 500;
+  text-anchor: middle;
+}
+
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.legend line,
+.lines {
+  fill: none;
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+

@@ -2,6 +2,7 @@
 .project
 .settings
 .gradle
+.vscode
 bin
 build
 classes
@@ -12,4 +13,9 @@ eq-prob*/
 eq-rate*/
 Scratch*.java
 nshmp-haz-log*
-.vscode
+webapp/models
+webapp/jsdocs
+scratch*.html
+Scratch*.js
+webapp/config.json
+config.properties

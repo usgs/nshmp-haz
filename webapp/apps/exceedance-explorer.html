@@ -1,0 +1,166 @@
+<!doctype html>
+
+<html lang="en">
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"> 
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" 
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/template.css" type="text/css">
+    <link rel="stylesheet" href="css/D3View.css" type="text/css">
+  </head>
+
+
+  <body>
+
+    <!-- Control panel -->
+    <div id="control" class="hidden">
+
+      <form id="inputs">
+        <div class="form-horizontal">
+        
+          <!-- Median input -->
+          <div class="form-group form-group-sm" id="median-form">
+            <label class="control-spacer control-group" for="median">
+              Median (g):
+            </label>
+            <div class="input-group col-xs-6">
+              <input
+                  id="median"
+                  class="form-control"
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="0.5"
+                  name="median" />
+            </div>
+          </div>
+          <!-- End: Median input -->
+
+          <!-- Sigma input -->
+          <div class="form-group form-group-sm" id="sigma-form">
+            <label class="control-spacer control-group" for="sigma">
+              Sigma (natural log units):
+            </label>
+            <div class="input-group col-xs-6">
+              <input
+                  id="sigma"
+                  class="form-control"
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="0.10"
+                  name="sigma" />
+            </div>
+          </div>
+          <!-- End: Sigma input -->
+
+          <!-- Rate input -->
+          <div class="form-group form-group-sm" id="rate-form">
+            <label class="control-spacer control-group" for="rate">
+              Annual Rate:
+            </label>
+            <div class="input-group col-xs-6">
+              <input
+                  id="rate"
+                  class="form-control"
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="0.10"
+                  name="rate" />
+            </div>
+          </div>
+          <!-- End: Rate input -->
+
+          <!-- Truncation checkbox -->
+          <div class="form-group">
+            <div class="input-group">
+              <label for="truncation" class="control-label control-spacer">
+                <input type="checkbox" id="truncation"> Truncation
+              </label>
+            </div>
+          </div>
+          <!-- End: Truncation checkbox -->
+
+          <!-- Truncation level input -->
+          <div class="form-group form-group-sm" id="trunc-level-form">
+            <label class="control-spacer control-group" for="truncation-level">
+              Truncation Level (n):
+            </label>
+            <div class="input-group col-xs-6">
+              <input
+                  id="truncation-level"
+                  class="form-control"
+                  type="number"
+                  min="0"
+                  max="5"
+                  step="1"
+                  name="truncation-level" />
+            </div>
+          </div>
+          <!-- End: Truncation level input -->
+
+          <!-- Buttons -->
+          <div class="form-group" style="padding-top: 1em">
+            <div class="btn-group" style="width: 100%">
+              <button
+                  type="button"
+                  class="btn btn-primary col-xs-3"
+                  id="add-plot">
+                Add
+              </button>
+
+              <button
+                  type="button"
+                  class="btn btn-warning col-xs-6"
+                  id="remove-plot">
+                Remove Selected
+              </button>
+
+              <button
+                  type="button"
+                  class="btn btn-danger col-xs-3"
+                  id="clear-plot">
+                Clear
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </form>
+
+    </div>
+
+    <!-- Plot -->
+    <div id="content"></div>
+
+    <!-- jQuery -->
+    <script 
+        src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
+
+    <!--  Bootstrap -->
+    <script 
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+    </script>
+
+    <!-- D3 -->
+    <script src="https://d3js.org/d3.v4.min.js"> </script>
+    
+    <!-- Application Specific JavaScript -->
+    <script type='module'>
+      import Config from './js/lib/Config.js';
+      import { ExceedanceExplorer } from './js/ExceedanceExplorer.js';
+      
+      Config.getConfig(ExceedanceExplorer);
+    </script>
+
+  </body>
+
+</html>

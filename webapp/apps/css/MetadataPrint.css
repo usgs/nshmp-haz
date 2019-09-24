@@ -1,0 +1,22 @@
+/*
+* D3SaveMetadata printing css.
+*/
+
+@media print {
+  html {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body {
+    margin: 0.25in !important;
+    padding: 0 !important;
+  }
+    
+  header, footer {
+    margin: 0;
+    padding: 0;
+    display: none !important;
+  }
+ 
+}
