@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<GroundMotionModels>
-  <!-- This model is an example and for review purposes only -->
-  <Uncertainty values="[0.37, 0.25, 0.4, 0.22, 0.23, 0.36, 0.22, 0.23, 0.33]" weights="[0.185, 0.63, 0.185]"/>
-  <ModelSet maxDistance="300.0">
-    <Model id="ASK_14" weight="0.5"/>
-    <Model id="BSSA_14" weight="0.5"/>
-  </ModelSet>
-</GroundMotionModels>
