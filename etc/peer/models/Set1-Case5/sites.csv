@@ -1,8 +1,0 @@
-name, lon, lat
-PEER S1-Fault-Site1, -122.0,   38.113
-PEER S1-Fault-Site2, -122.114, 38.113
-PEER S1-Fault-Site3, -122.57,  38.111
-PEER S1-Fault-Site4, -122.0,   38.0
-PEER S1-Fault-Site5, -122.0,   37.91
-PEER S1-Fault-Site6, -122.0,   38.225
-PEER S1-Fault-Site7, -121.886, 38.113

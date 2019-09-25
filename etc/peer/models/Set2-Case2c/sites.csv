@@ -1,7 +1,0 @@
-name, lon, lot, vs30, vsInf, z1p0, z2p5
-PEER S2-Fault3-Site1, -64.91005, 0.0,     760.0, false, 0.048, 0.607
-PEER S2-Fault3-Site2, -65.04497, 0.0,     760.0, false, 0.048, 0.607
-PEER S2-Fault3-Site3, -65.08995, 0.0,     760.0, false, 0.048, 0.607
-PEER S2-Fault3-Site4, -65.1349,  0.0,     760.0, false, 0.048, 0.607
-PEER S2-Fault3-Site5, -65.22483, 0.0,     760.0, false, 0.048, 0.607
-PEER S2-Fault3-Site6, -65.009,  -0.42718, 760.0, false, 0.048, 0.607

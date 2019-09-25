@@ -15,12 +15,7 @@ repositories {
 }
 
 dependencies {
-  compile('com.google.guava:guava:26.0-jre') {
-    /* skip optional guava dependencies */
-    transitive = false
-  }
-  compile 'com.google.code.gson:gson:2.8.5'
-
+  compile project(':nshmp-lib')
   compile 'org.apache.tomcat:tomcat-catalina:8.0.45'
   compile 'javax.websocket:javax.websocket-api:1.1'
   compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
