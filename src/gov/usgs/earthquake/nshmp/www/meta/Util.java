@@ -19,7 +19,7 @@ import gov.usgs.earthquake.nshmp.calc.Site;
 import gov.usgs.earthquake.nshmp.calc.Vs30;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput.Field;
-import gov.usgs.earthquake.nshmp.util.Maths;
+import gov.usgs.earthquake.nshmp.Maths;
 
 @SuppressWarnings("javadoc")
 public final class Util {
@@ -80,8 +80,8 @@ public final class Util {
     public JsonElement serialize(Site site, Type typeOfSrc, JsonSerializationContext context) {
       JsonObject loc = new JsonObject();
 
-      loc.addProperty("latitude", Maths.round(site.location.lat(), 3));
-      loc.addProperty("longitude", Maths.round(site.location.lon(), 3));
+      loc.addProperty("latitude", Maths.round(site.location.latitude, 3));
+      loc.addProperty("longitude", Maths.round(site.location.longitude, 3));
 
       JsonObject json = new JsonObject();
       json.add("location", loc);

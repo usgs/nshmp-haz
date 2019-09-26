@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -416,8 +417,8 @@ public final class RateService extends NshmpServlet {
         XySequence total = (!rates.totalMfd.isClear()) ? rates.totalMfd.trim() : rates.totalMfd;
         Sequence totalOut = new Sequence(
             TOTAL_KEY,
-            total.xValues(),
-            total.yValues());
+            total.xValues().boxed().collect(Collectors.toList()),
+            total.yValues().boxed().collect(Collectors.toList()));
         sequenceListBuilder.add(totalOut);
 
         /* Source type mfds. */
@@ -429,8 +430,8 @@ public final class RateService extends NshmpServlet {
           type = type.trim();
           Sequence typeOut = new Sequence(
               entry.getKey().toString(),
-              type.xValues(),
-              type.yValues());
+              type.xValues().boxed().collect(Collectors.toList()),
+              type.yValues().boxed().collect(Collectors.toList()));
           sequenceListBuilder.add(typeOut);
         }
 

@@ -2,6 +2,7 @@ package etc;
 
 import com.google.common.base.Stopwatch;
 
+import gov.usgs.earthquake.nshmp.data.MutableXySequence;
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.function.ArbitrarilyDiscretizedFunc;
 import gov.usgs.earthquake.nshmp.function.DiscretizedFunc;
@@ -86,12 +87,12 @@ class SequenceBenchmark {
     System.out.println();
 
     System.out.println("Starting XySequence...");
-    XySequence xy = XySequence.createImmutable(XS, YS);
-    XySequence xyReceiver = XySequence.emptyCopyOf(xy);
+    XySequence xy = XySequence.create(XS, YS);
+    MutableXySequence xyReceiver = MutableXySequence.emptyCopyOf(xy);
 
     sw.reset().start();
     for (int i = 0; i < its; i++) {
-      XySequence copy = XySequence.copyOf(xy);
+      MutableXySequence copy = MutableXySequence.copyOf(xy);
       xyReceiver.add(copy.multiply(xy));
     }
     System.out.println("Time: " + sw.stop());

@@ -27,12 +27,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sound.midi.Sequence;
 
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
@@ -44,6 +46,8 @@ import gov.usgs.earthquake.nshmp.calc.Hazard;
 import gov.usgs.earthquake.nshmp.calc.HazardCalcs;
 import gov.usgs.earthquake.nshmp.calc.Site;
 import gov.usgs.earthquake.nshmp.calc.Vs30;
+import gov.usgs.earthquake.nshmp.data.MutableXySequence;
+import gov.usgs.earthquake.nshmp.data.Sequences;
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.eq.model.HazardModel;
 import gov.usgs.earthquake.nshmp.eq.model.SourceType;
@@ -433,8 +437,8 @@ public final class HazardService extends NshmpServlet {
       Timer timer;
       RequestData request;
 
-      Map<Imt, Map<SourceType, XySequence>> componentMaps;
-      Map<Imt, XySequence> totalMap;
+      Map<Imt, Map<SourceType, MutableXySequence>> componentMaps;
+      Map<Imt, MutableXySequence> totalMap;
       Map<Imt, List<Double>> xValuesLinearMap;
 
       Builder hazard(Hazard hazardResult) {
@@ -444,28 +448,33 @@ public final class HazardService extends NshmpServlet {
         totalMap = new EnumMap<>(Imt.class);
         xValuesLinearMap = new EnumMap<>(Imt.class);
 
-        Map<Imt, Map<SourceType, XySequence>> typeTotalMaps = curvesBySource(hazardResult);
+        Map<Imt, Map<SourceType, ? extends XySequence>> typeTotalMaps = curvesBySource(hazardResult);
 
         for (Imt imt : hazardResult.curves().keySet()) {
 
           // total curve
-          hazardResult.curves().get(imt).addToMap(imt, totalMap);
+          Sequences.addToMap(imt, totalMap, hazardResult.curves().get(imt));
 
           // component curves
-          Map<SourceType, XySequence> typeTotalMap = typeTotalMaps.get(imt);
-          Map<SourceType, XySequence> componentMap = componentMaps.get(imt);
+          Map<SourceType, ? extends XySequence> typeTotalMap = typeTotalMaps.get(imt);
+          Map<SourceType, MutableXySequence> componentMap = componentMaps.get(imt);
           if (componentMap == null) {
             componentMap = new EnumMap<>(SourceType.class);
             componentMaps.put(imt, componentMap);
           }
 
           for (SourceType type : typeTotalMap.keySet()) {
-            typeTotalMap.get(type).addToMap(type, componentMap);
+            Sequences.addToMap(type, componentMap, typeTotalMap.get(type));
           }
 
           xValuesLinearMap.put(
               imt,
-              hazardResult.config().hazard.modelCurve(imt).xValues());
+              hazardResult.config()
+                  .hazard
+                  .modelCurve(imt)
+                  .xValues()
+                  .boxed()
+                  .collect(Collectors.toList()));
         }
         return this;
       }
@@ -500,15 +509,15 @@ public final class HazardService extends NshmpServlet {
           // total curve
           Curve totalCurve = new Curve(
               TOTAL_KEY,
-              totalMap.get(imt).yValues());
+              totalMap.get(imt).yValues().boxed().collect(Collectors.toList()));
           curveListBuilder.add(totalCurve);
 
           // component curves
-          Map<SourceType, XySequence> typeMap = componentMaps.get(imt);
+          Map<SourceType, MutableXySequence> typeMap = componentMaps.get(imt);
           for (SourceType type : typeMap.keySet()) {
             Curve curve = new Curve(
                 type.toString(),
-                typeMap.get(type).yValues());
+                typeMap.get(type).yValues().boxed().collect(Collectors.toList()));
             curveListBuilder.add(curve);
           }
 

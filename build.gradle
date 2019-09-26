@@ -15,13 +15,13 @@ repositories {
 }
 
 dependencies {
-  compile project(':nshmp-lib')
   compile 'org.apache.tomcat:tomcat-catalina:8.0.45'
   compile 'javax.websocket:javax.websocket-api:1.1'
   compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
   compile 'com.amazonaws:aws-java-sdk-lambda:1.11.461'
   compile 'com.amazonaws:aws-java-sdk-s3:1.11.579'
   compile 'com.amazonaws:aws-java-sdk-ec2:1.11.619'
+  compile project(':nshmp-lib')
 
   testCompile 'junit:junit:4.12'
 }
@@ -115,10 +115,7 @@ ext {
 
 test {
   filter {
-    includeTestsMatching "gov.usgs.earthquake.nshmp.data.*"
-    includeTestsMatching "gov.usgs.earthquake.nshmp.geo.*"
-    includeTestsMatching "gov.usgs.earthquake.nshmp.gmm.*"
-    //includeTestsMatching "gov.usgs.earthquake.nshmp.eq.model.peer.PeerTests"
+    includeTestsMatching "gov.usgs.earthquake.nshmp.programs.*"
   }
 }
 

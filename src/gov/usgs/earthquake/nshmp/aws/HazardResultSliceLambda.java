@@ -197,8 +197,8 @@ public class HazardResultSliceLambda implements RequestStreamHandler {
     data.forEach(datum -> {
       List<String> locData = Lists.newArrayList(
           datum.site.name,
-          String.format("%.5f", datum.site.location.lon()),
-          String.format("%.5f", datum.site.location.lat()));
+          String.format("%.5f", datum.site.location.longitude),
+          String.format("%.5f", datum.site.location.latitude));
       builder.append(toLine(locData, datum.values) + "\n");
     });
   }

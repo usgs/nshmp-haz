@@ -226,11 +226,11 @@ public class DeaggEpsilon {
       Map<Imt, Double> spectrum = rtrSpectra.get(i);
 
       Hazard wusHazard = null;
-      if (site.location.lon() <= -100.0) {
+      if (site.location.longitude <= -100.0) {
         wusHazard = HazardCalcs.hazard(wusModel, wusConfig, site, exec);
       }
       Hazard ceusHazard = null;
-      if (site.location.lon() > -115.0) {
+      if (site.location.longitude > -115.0) {
         ceusHazard = HazardCalcs.hazard(ceusModel, ceusConfig, site, exec);
       }
       Hazard cousHazard = (wusHazard == null)
@@ -255,8 +255,8 @@ public class DeaggEpsilon {
 
       String filename = String.format(
           "edeagg_%.2f_%.2f.json",
-          site.location.lon(),
-          site.location.lat());
+          site.location.longitude,
+          site.location.latitude);
 
       Path resultPath = siteDir.resolve(filename);
       Writer writer = Files.newBufferedWriter(resultPath);
@@ -291,8 +291,8 @@ public class DeaggEpsilon {
 
     ResponseData(List<String> models, Site site, Imt imt, double iml) {
       this.models = models;
-      this.longitude = site.location.lon();
-      this.latitude = site.location.lat();
+      this.longitude = site.location.longitude;
+      this.latitude = site.location.latitude;
       this.imt = imt.toString();
       this.iml = iml;
       this.vs30 = site.vs30;

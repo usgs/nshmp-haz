@@ -252,11 +252,11 @@ public class Hazard2018 {
     @Override
     public Hazard call() {
       Hazard wusHazard = null;
-      if (site.location.lon() <= -100.0) {
+      if (site.location.longitude <= -100.0) {
         wusHazard = HazardCalcs.hazard(models.wusModel, models.wusConfig, site, exec);
       }
       Hazard ceusHazard = null;
-      if (site.location.lon() > -115.0) {
+      if (site.location.longitude > -115.0) {
         ceusHazard = HazardCalcs.hazard(models.ceusModel, models.ceusConfig, site, exec);
       }
       Hazard cousHazard = (wusHazard == null)

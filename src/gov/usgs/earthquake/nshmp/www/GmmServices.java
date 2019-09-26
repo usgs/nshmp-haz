@@ -46,7 +46,7 @@ import com.google.gson.JsonSerializer;
 import gov.usgs.earthquake.nshmp.GroundMotions;
 import gov.usgs.earthquake.nshmp.GroundMotions.DistanceResult;
 import gov.usgs.earthquake.nshmp.ResponseSpectra.MultiResult;
-import gov.usgs.earthquake.nshmp.data.Data;
+import gov.usgs.earthquake.nshmp.data.DoubleData;
 import gov.usgs.earthquake.nshmp.data.XySequence;
 import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput;
@@ -259,12 +259,12 @@ public class GmmServices extends NshmpServlet {
       for (Gmm gmm : means.keySet()) {
         XySequence xyMeans = XySequence.create(
             x.get(gmm),
-            Data.round(ROUND, Data.exp(new ArrayList<>(means.get(gmm)))));
+            DoubleData.round(ROUND, DoubleData.exp(new ArrayList<>(means.get(gmm)))));
         this.means.add(gmm.name(), gmm.toString(), xyMeans, gmm);
 
         XySequence xySigmas = XySequence.create(
             x.get(gmm),
-            Data.round(ROUND, new ArrayList<>(sigmas.get(gmm))));
+            DoubleData.round(ROUND, new ArrayList<>(sigmas.get(gmm))));
         this.sigmas.add(gmm.name(), gmm.toString(), xySigmas, gmm);
       }
     }

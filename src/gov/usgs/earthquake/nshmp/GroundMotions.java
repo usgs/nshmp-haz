@@ -15,13 +15,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
 
-import gov.usgs.earthquake.nshmp.data.Data;
+import gov.usgs.earthquake.nshmp.data.DoubleData;
 import gov.usgs.earthquake.nshmp.gmm.Gmm;
 import gov.usgs.earthquake.nshmp.gmm.GmmInput;
 import gov.usgs.earthquake.nshmp.gmm.GroundMotionModel;
 import gov.usgs.earthquake.nshmp.gmm.Imt;
 import gov.usgs.earthquake.nshmp.gmm.ScalarGroundMotion;
-import gov.usgs.earthquake.nshmp.util.Maths;
+import gov.usgs.earthquake.nshmp.Maths;
 
 public class GroundMotions {
 
@@ -83,15 +83,15 @@ public class GroundMotions {
 
   static double[] distanceLog(double rMin, double rMax) {
     double rStep = (Math.log10(rMax / rMin)) / (R_POINTS - 1);
-    double[] distance = Data.round(ROUND, Data.pow10(
-        Data.buildSequence(Math.log10(rMin), Math.log10(rMax), rStep, true)));
+    double[] distance = DoubleData.round(ROUND, DoubleData.pow10(
+        DoubleData.buildSequence(Math.log10(rMin), Math.log10(rMax), rStep, true)));
 
     return distance;
   }
 
   static double[] distanceLinear(double rMin, double rMax) {
     double rStep = 1.0;
-    double[] distance = Data.buildCleanSequence(
+    double[] distance = DoubleData.buildCleanSequence(
         rMin, rMax, rStep, true, ROUND);
 
     return distance;
