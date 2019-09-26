@@ -14,7 +14,7 @@ cache:
 
 before_install:
   - echo "${NSHMP_LIB}"
-  - curl -L ${NSHMP_LIB} | tar -xz
+  - curl -L ${NSHMP_LIB} 
   - ls
 
 after_success:
