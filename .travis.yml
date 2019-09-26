@@ -1,7 +1,7 @@
 language: java
 
 env:
-  - NSHMP_LIB=https://code.usgs.gov/ghsc/nshmp/nshmp-lib/-/archive/nshmp-lib-master.tar.gz
+  - NSHMP_LIB=https://code.usgs.gov/ghsc/nshmp/nshmp-lib.git
 
 # Prevent upoad of Gradle cache
 before_cache:
@@ -14,7 +14,7 @@ cache:
 
 before_install:
   - echo "${NSHMP_LIB}"
-  - curl -L ${NSHMP_LIB} 
+  - git clone ${NSHMP_LIB} ../nshmp-lib
   - ls
 
 after_success:
