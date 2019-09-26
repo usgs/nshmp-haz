@@ -12,7 +12,7 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
-before_script:
+before_install:
   - ls
   - echo "Test"
   - curl -L ${NSHMP_LIB} | tar -xz
