@@ -1,5 +1,8 @@
 language: java
 
+env:
+  - NSHMP_LIB=https://code.usgs.gov/ghsc/nshmp/nshmp-lib/-/archive/nshmp-lib-master.tar.gz
+
 # Prevent upoad of Gradle cache
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -8,6 +11,9 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+before_script:
+  - curl -L ${NSHMP_LIB} | tar -xz
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
