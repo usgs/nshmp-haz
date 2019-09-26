@@ -13,9 +13,9 @@ cache:
     - $HOME/.gradle/wrapper/
 
 before_install:
-  - ls
-  - echo "Test"
+  - echo "${NSHMP_LIB}"
   - curl -L ${NSHMP_LIB} | tar -xz
+  - ls
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
