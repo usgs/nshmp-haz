@@ -228,6 +228,7 @@ task thinJar(type: Jar) {
 war {
   enabled = true
   webAppDirName = 'webapp'
+  dependsOn jar
   
   /* 
    * Exclude existing models directory with symlinks
