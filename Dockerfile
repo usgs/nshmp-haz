@@ -56,9 +56,6 @@ WORKDIR ${builder_workdir}
 # Copy project over to container
 COPY . ${builder_workdir}/. 
 
-# Install git
-RUN yum install -y git
-
 # Build nshmp-haz
 RUN ./gradlew assemble
 
@@ -78,7 +75,8 @@ LABEL maintainer="Peter Powers <pmpowers@usgs.gov>"
 WORKDIR /app
 
 # Install file and jq
-RUN yum install -y add file epel-release
+RUN yum update -y
+RUN yum install -y file epel-release
 RUN yum install -y jq
 
 # Get JAR path
