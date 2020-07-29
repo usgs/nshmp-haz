@@ -16,11 +16,11 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * horizontal peak ground acceleration (PGA) for the island of Hawaii. In
  * keeping with prior NSHMP implementations of this older model, only lava sites
  * are supported (Vs30 = 650 m/s).
- * 
+ *
  * <p>For the 1998 Hawaii NSHM, maps were calculated for rock (Vs30 = 760 m/s)
  * using the lava coefficients, as this was deemed close enough to the measured
  * Vs30 = 650 m/s of the lava site velocity (C. Thurber, personal comm., 1998).
- * 
+ *
  * <p><b>Note:</b> This GMM is only valid for PGA and 0.2 seconds. 0.2 is
  * supported through the linear scaling of log PGA ground motion. Also, for
  * larger magnitudes (M > 7), an additional magnitude term derived from Boore,
@@ -70,7 +70,7 @@ public final class MunsonThurber_1997 implements GroundMotionModel {
   @Override
   public ScalarGroundMotion calc(final GmmInput in) {
     double μ = calcMean(in.Mw, in.rJB);
-    if (imt == Imt.SA0P02) {
+    if (imt == Imt.SA0P2) {
       μ *= 2.2;
     }
     return DefaultScalarGroundMotion.create(μ, SIGMA);
