@@ -4,6 +4,8 @@ import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.MW;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.RJB;
 import static gov.usgs.earthquake.nshmp.gmm.GmmInput.Field.VS30;
 import static gov.usgs.earthquake.nshmp.gmm.GmmUtils.BASE_10_TO_E;
+import static java.lang.Math.exp;
+import static java.lang.Math.log;
 import static java.lang.Math.log10;
 import static java.lang.Math.sqrt;
 
@@ -71,7 +73,7 @@ public final class MunsonThurber_1997 implements GroundMotionModel {
   public ScalarGroundMotion calc(final GmmInput in) {
     double μ = calcMean(in.Mw, in.rJB);
     if (imt == Imt.SA0P2) {
-      μ *= 2.2;
+      μ = log(exp(μ) * 2.2);
     }
     return DefaultScalarGroundMotion.create(μ, SIGMA);
   }
