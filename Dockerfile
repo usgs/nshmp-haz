@@ -41,11 +41,11 @@ ARG builder_workdir=/app/${project}
 ARG jar_path=${builder_workdir}/build/libs/${project}.jar
 
 ####
-# Builder Image: Java 8 in usgsnshmp/centos image
+# Builder Image: Java 11 
 #   - Install git
 #   - Build nshmp-haz
 ####
-FROM usgsnshmp/openjdk:jdk8 as builder
+FROM usgs/java:11 as builder
 
 # Get builder workdir
 ARG builder_workdir
@@ -60,13 +60,13 @@ COPY . ${builder_workdir}/.
 RUN ./gradlew assemble
 
 ####
-# Application Image: Java 8 in usgsnshmp/centos image
+# Application Image: Java 11
 #   - Install jq
 #   - Copy JAR file from builder image
 #   - Download model
 #   - Run nshmp-haz (docker-entrypoint.sh)
 ####
-FROM usgsnshmp/openjdk:jdk8
+FROM usgs/java:11
 
 # Set author
 LABEL maintainer="Peter Powers <pmpowers@usgs.gov>"
