@@ -95,7 +95,7 @@ COPY docker-entrypoint.sh .
 ENV NSHM_VERSION=master
 
 # Set Java memory
-ENV JAVA_XMS 8g
+ENV JAVA_XMS 2g
 ENV JAVA_XMX 8g
 
 # NSHM
