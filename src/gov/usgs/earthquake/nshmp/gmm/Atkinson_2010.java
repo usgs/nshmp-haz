@@ -23,6 +23,11 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * deep earthquake in Hawaii. This model applies a Hawaii specific correction
  * factor to {@link BooreAtkinson_2008}.
  *
+ * <p><b>Note:</b>August 15, 2020 email from Gail Atkinson confirms that shallow
+ * event model is about 0.05 log units lower than what is shown in Figure 7 of
+ * the reference publication. At short periods, this model and
+ * {@link BooreAtkinson_2008} should be the same.
+ *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.
@@ -69,7 +74,9 @@ public final class Atkinson_2010 implements GroundMotionModel {
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    double μ = delegate.calc(in).mean() + hiTerm(in.rJB, in.zTop);
+    /* Force delegate to return ground motion for 'unkonown' focal mechanism. */
+    GmmInput inNoStrike = GmmInput.builder().fromCopy(in).rake(Double.NaN).build();
+    double μ = delegate.calc(inNoStrike).mean() + hiTerm(in.rJB, in.zTop);
     return DefaultScalarGroundMotion.create(μ, σ);
   }
 
