@@ -64,17 +64,17 @@ public final class Atkinson_2010 implements GroundMotionModel {
   /* Gail recommends use of frequency-independent sigma */
   private static final double σ = 0.26 * BASE_10_TO_E;
 
-  private final GroundMotionModel delegate;
+  private final BooreAtkinson_2008 delegate;
   private final double log10freq;
 
   Atkinson_2010(final Imt imt) {
-    delegate = Gmm.BA_08.instance(imt);
+    delegate = (BooreAtkinson_2008) Gmm.BA_08.instance(imt);
     log10freq = log10(imt.frequency());
   }
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
-    /* Force delegate to return ground motion for 'unkonown' focal mechanism. */
+    /* Force delegate to return ground motion for 'unknown' focal mechanism. */
     GmmInput inNoStrike = GmmInput.builder().fromCopy(in).rake(Double.NaN).build();
     double μ = delegate.calc(inNoStrike).mean() + hiTerm(in.rJB, in.zTop);
     return DefaultScalarGroundMotion.create(μ, σ);
