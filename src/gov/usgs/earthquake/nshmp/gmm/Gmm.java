@@ -47,7 +47,7 @@ public enum Gmm {
 
   /*
    * Developer notes:
-   * 
+   *
    * Concrete GroundMotionModel implementations that are identified in enum
    * constructors below must implement a constructor taking a single IMT
    * argument.
@@ -548,6 +548,13 @@ public enum Gmm {
   ATKINSON_10(
       Atkinson_2010.class,
       Atkinson_2010.NAME,
+      Atkinson_2010.COEFFS,
+      Atkinson_2010.CONSTRAINTS),
+
+  /** @see Atkinson_2010 */
+  ATKINSON_10_CALDERA(
+      Atkinson_2010.Caldera.class,
+      Atkinson_2010.Caldera.NAME,
       Atkinson_2010.COEFFS,
       Atkinson_2010.CONSTRAINTS),
 
@@ -1101,7 +1108,7 @@ public enum Gmm {
   /**
    * Return the {@code Set} of {@code Gmm}s that support the supplied
    * {@code Imt}.
-   * 
+   *
    * @param imt for which to return the {@code Gmm}s that support it
    */
   public static Set<Gmm> supportedGmms(final Imt imt) {
@@ -1255,16 +1262,26 @@ public enum Gmm {
             SADIGH_97,
             YOUNGS_97_SLAB)),
 
+    HI_20(
+        "2020 Active Volcanic (HI)",
+        ImmutableList.of(
+            WONG_15,
+            ATKINSON_10,
+            ATKINSON_10_CALDERA,
+            ASK_14,
+            BSSA_14,
+            CB_14,
+            CY_14,
+            BCHYDRO_12_SLAB)),
+
     OTHER(
         "Others",
         ImmutableList.of(
             GK_15,
-            WONG_15,
             ZHAO_16_SHALLOW_CRUST,
             ZHAO_16_UPPER_MANTLE,
             ZHAO_16_INTERFACE,
             ZHAO_16_SLAB,
-            ATKINSON_10,
             ATKINSON_15,
             AB_03_CASCADIA_INTERFACE,
             MCVERRY_00_CRUSTAL,
