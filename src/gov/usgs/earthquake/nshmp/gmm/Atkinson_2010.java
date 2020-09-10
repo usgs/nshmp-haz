@@ -11,6 +11,8 @@ import static java.lang.Math.log10;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import java.util.Map;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
 
@@ -45,7 +47,7 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * @see Gmm#ATKINSON_10
  */
 @Beta
-public final class Atkinson_2010 implements GroundMotionModel {
+public class Atkinson_2010 implements GroundMotionModel {
 
   static final String NAME = "Atkinson (2010) : Hawaii";
 
@@ -64,16 +66,28 @@ public final class Atkinson_2010 implements GroundMotionModel {
   /* Gail recommends use of frequency-independent sigma */
   private static final double σ = 0.26 * BASE_10_TO_E;
 
+  private static final class Coefficients {
+    /* Scale factor only used by caldera modification. */
+    final double scale;
+
+    Coefficients(Imt imt, CoefficientContainer cc) {
+      Map<String, Double> coeffs = cc.get(imt);
+      scale = coeffs.get("scale");
+    }
+  }
+
+  final Coefficients coeffs;
   private final BooreAtkinson_2008 delegate;
   private final double log10freq;
 
   Atkinson_2010(final Imt imt) {
+    coeffs = new Coefficients(imt, COEFFS);
     delegate = (BooreAtkinson_2008) Gmm.BA_08.instance(imt);
     log10freq = log10(imt.frequency());
   }
 
   @Override
-  public final ScalarGroundMotion calc(final GmmInput in) {
+  public ScalarGroundMotion calc(final GmmInput in) {
     /* Force delegate to return ground motion for 'unknown' focal mechanism. */
     GmmInput inNoStrike = GmmInput.builder().fromCopy(in).rake(Double.NaN).build();
     double μ = delegate.calc(inNoStrike).mean() + hiTerm(in.rJB, in.zTop);
@@ -90,6 +104,28 @@ public final class Atkinson_2010 implements GroundMotionModel {
     }
     double logA = x0 + x1 * log10(max(1.0, rJB));
     return logA * BASE_10_TO_E;
+  }
+
+  /*
+   * Custom version of Atkinson that applies period-dependent scale factors to
+   * bring spetrum in line with observations for caldera collapse events.
+   * Caldera events are usually ~M5.2.
+   */
+  static final class Caldera extends Atkinson_2010 {
+    static final String NAME = Atkinson_2010.NAME + " : Caldera";
+
+    Caldera(Imt imt) {
+      super(imt);
+
+    }
+
+    @Override
+    public final ScalarGroundMotion calc(final GmmInput in) {
+      ScalarGroundMotion sgm = super.calc(in);
+      return new DefaultScalarGroundMotion(
+          sgm.mean() + coeffs.scale,
+          sgm.sigma());
+    }
   }
 
 }
