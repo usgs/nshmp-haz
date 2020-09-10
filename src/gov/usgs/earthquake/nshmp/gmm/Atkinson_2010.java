@@ -123,7 +123,7 @@ public class Atkinson_2010 implements GroundMotionModel {
     public final ScalarGroundMotion calc(final GmmInput in) {
       ScalarGroundMotion sgm = super.calc(in);
       return new DefaultScalarGroundMotion(
-          sgm.mean() + coeffs.scale,
+          sgm.mean() + coeffs.scale * BASE_10_TO_E,
           sgm.sigma());
     }
   }
