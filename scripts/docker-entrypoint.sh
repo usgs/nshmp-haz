@@ -34,7 +34,7 @@ exit_status=${?};
 check_exit_status "${exit_status}";
 
 # Run nshmp-haz
-printf "\n\n  %s Starting %s\n" "${INFO}" "${PROGRAM}";
+printf "\n\n   %s Starting %s\n" "${INFO}" "${PROGRAM}";
 java -"Xmx${JAVA_XMX}" \
     -cp "/app/${PROJECT}.jar" \
     "gov.usgs.earthquake.nshmp.${nshmp_program}" \
@@ -51,6 +51,6 @@ move_to_output_volume "${CONFIG_FILE}";
 exit_status=${?};
 check_exit_status "${exit_status}";
 
-printf "\n\n%s %s complete\n" "${INFO}" "${PROGRAM}";
+printf "\n\n   %s %s complete\n" "${INFO}" "${PROGRAM}";
 
 exit ${exit_status};
