@@ -5,9 +5,6 @@
 #   docker run \
 #       -e PROGRAM=<deagg | deagg-epsilon | deagg-iml | hazard | hazard-2018 | rate> \
 #       -e MODEL=<WUS-20[08|14|18] | CEUS-20[08|14|18] | COUS-20[08|14|18] | AK-2007> \
-#       -e ACCESS_VISUALVM=<true | false> \
-#       -e VISUALVM_PORT=<port> \
-#       -e VISUALVM_HOSTNAME=<hostname> \
 #       -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \
 #       -v /absolute/path/to/config/file:/app/config.json \
 #       -v /absolute/path/to/output:/app/output \
@@ -16,9 +13,6 @@
 # Usage with custom model:
 #   docker run \
 #       -e PROGRAM=<deagg | deagg-epsilon | deagg-iml | hazard | hazard-2018 | rate> \
-#       -e ACCESS_VISUALVM=<true | false> \
-#       -e VISUALVM_PORT=<port> \
-#       -e VISUALVM_HOSTNAME=<hostname> \
 #       -e MOUNT_MODEL=true \
 #       -v /absolute/path/to/model:/app/model \
 #       -v /absolute/path/to/sites/file:/app/sites.<geojson | csv> \
@@ -68,62 +62,33 @@ RUN ./gradlew assemble
 ####
 FROM usgs/java:11
 
-# Set author
 LABEL maintainer="Peter Powers <pmpowers@usgs.gov>"
 
-# Set working directory
 WORKDIR /app
 
-# Install file and jq
 RUN yum update -y
 RUN yum install -y file epel-release
 RUN yum install -y jq
 
-# Get JAR path
 ARG jar_path
-
-# Get builder working directory
 ARG builder_workdir
 
-# Copy JAR file from builder image
 COPY --from=builder ${jar_path} .
-
-# Copy entrypoint script
-COPY docker-entrypoint.sh .
-
-# Copy scripts
 COPY scripts scripts
 
-# NSHM repository version
-ENV NSHM_VERSION=master
-
-# Set Java memory
-ENV JAVA_XMS 2g
-ENV JAVA_XMX 8g
-
-# NSHM
+ENV CONFIG_FILE ""
+ENV DEBUG false
+ENV IML ""
+ENV JAVA_XMX "8g"
+ENV LANG "en_US.UTF-8"
 ENV MODEL ""
-
-# Whether to mount the model instead of selecting a model
 ENV MOUNT_MODEL false
-
-# Program to run: deagg | deagg-epsilon | hazard | rate
+ENV NSHM_VERSION master
 ENV PROGRAM hazard
-
-# Return period for deagg
+ENV PROJECT ${project}
 ENV RETURN_PERIOD ""
 
-# Intensity measure level (in units of g) for deagg-iml
-ENV IML ""
-
-# Optional config file
-ENV CONFIG_FILE "config.json"
-
-# Set volume for output
 VOLUME [ "/app/output" ]
-
-# Create empty config file
-RUN echo "{}" > ${CONFIG_FILE}
 
 # Run nshmp-haz
 ENTRYPOINT [ "bash", "scripts/docker-entrypoint.sh" ]

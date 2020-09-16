@@ -41,7 +41,7 @@ check_sites_file() {
   esac
 
   echo "${site_file}";
-  return "${exit_status}";
+  return ${exit_status};
 }
 
 ####
@@ -111,81 +111,75 @@ get_model() {
   fi
 
   case ${nshm} in
-    "AK_2007")
+    "AK-2007")
       model="nshm-ak-2007";
       model_path="${model}";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "CEUS_2008")
+    "CEUS-2008")
       model="nshm-cous-2008";
       model_path="${model}/${CEUS}/";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "CEUS_2014")
+    "CEUS-2014")
       model="nshm-cous-2014";
       model_path="${model}/${CEUS}/";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "CEUS_2014B")
+    "CEUS-2014B")
       model="nshm-cous-2014";
       model_path="${model}/${CEUS}/";
       nshm_version="${VERSION_2014B}";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "CEUS_2018")
+    "CEUS-2018")
       model="nshm-cous-2018";
       model_path="${model}/${CEUS}/";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "CONUS_2008")
+    "CONUS-2008")
       model="nshm-cous-2008";
       model_path="${model}";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "CONUS_2014")
+    "CONUS-2014")
       model="nshm-cous-2014";
       model_path="${model}";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "CONUS_2014B")
+    "CONUS-2014B")
       model="nshm-cous-2014";
       model_path="${model}";
       nshm_version="${VERSION_2014B}";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "CONUS_2018")
+    "CONUS-2018")
       model="nshm-cous-2018";
       model_path="${model}";
       url="https://github.com/usgs/${model}.git";
-      # model="nshm-conus-2018";
-      # url="git@code.usgs.gov:ghsc/nshmp/nshm-conus-2018.git";
       ;;
-    # "CONUS_2023")
-    #   model="nshm-conus-2023";
-    #   url="git@code.usgs.gov:ghsc/nshmp/nshm-conus-2023.git";
-    #   ;;
-    "HI_2020")
+    "HI-2020")
       model="nshm-hi-2020";
       model_path="${model}";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "WUS_2008")
+    "WUS-2008")
       model="nshm-cous-2008";
       model_path="${model}/${WUS}/";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "WUS_2014")
+    "WUS-2014")
       model="nshm-cous-2014";
       model_path="${model}/${WUS}/";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "WUS_2014B")
+    "WUS-2014B")
       model="nshm-cous-2014";
       model_path="${model}/${WUS}/";
       nshm_version="${VERSION_2014B}";
       url="https://github.com/usgs/${model}.git";
       ;;
-    "WUS_2018")
+    "WUS-2018")
       model="nshm-cous-2018";
       model_path="${model}/${WUS}/";
       url="https://github.com/usgs/${model}.git";
@@ -279,7 +273,8 @@ get_nshmp_program() {
 #     The status of moving the files.
 ####
 move_to_output_volume() {
-  local config_file;
+  local config_file=${1};
+
   local hazout;
   hazout=$(jq -r ".output.directory" "${config_file}");
 

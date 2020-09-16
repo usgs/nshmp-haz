@@ -1,6 +1,8 @@
 #!/bin/bash
 # shellcheck disable=SC1090
 
+INFO="INFO";
+
 source "$(dirname "${0}")/docker-config.inc.sh";
 exit_status=${?};
 [ "${exit_status}" -eq 0 ] || exit "${exit_status}";
@@ -14,6 +16,7 @@ check_exit_status "${exit_status}";
 if [ "${MOUNT_MODEL}" = true ]; then
   nshm_path="model";
 else
+  printf "\n%s Downloading model %s \n" "${INFO}" "${MODEL}";
   nshm_path=$(get_model_path "${MODEL}" "${NSHM_VERSION}");
   exit_status=${?};
   check_exit_status "${exit_status}";
@@ -31,6 +34,7 @@ exit_status=${?};
 check_exit_status "${exit_status}";
 
 # Run nshmp-haz
+printf "\n\n  %s Starting %s\n" "${INFO}" "${PROGRAM}";
 java -"Xmx${JAVA_XMX}" \
     -cp "/app/${PROJECT}.jar" \
     "gov.usgs.earthquake.nshmp.${nshmp_program}" \
@@ -43,8 +47,10 @@ exit_status=${?};
 check_exit_status "${exit_status}";
 
 # Move results to container volume
-move_to_output_volume;
+move_to_output_volume "${CONFIG_FILE}";
 exit_status=${?};
 check_exit_status "${exit_status}";
+
+printf "\n\n%s %s complete\n" "${INFO}" "${PROGRAM}";
 
 exit ${exit_status};

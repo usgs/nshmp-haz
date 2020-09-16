@@ -15,7 +15,6 @@ fi
 
 readonly CEUS="Central & Eastern US";
 readonly CONFIG_FILE="${CONFIG_FILE:-config.json}";
-readonly CONTEXT_PATH="${CONTEXT_PATH:-/}";
 readonly JAVA_XMX="${JAVA_XMX:-8g}";
 readonly MODEL=$(echo "${MODEL:-CONUS_2008}"  | awk \{'print toupper($0)'\});
 readonly NSHM_VERSION="${NSHM_VERSION:-master}";
