@@ -91,6 +91,9 @@ COPY --from=builder ${jar_path} .
 # Copy entrypoint script
 COPY docker-entrypoint.sh .
 
+# Copy scripts
+COPY scripts scripts
+
 # NSHM repository version
 ENV NSHM_VERSION=master
 
@@ -116,15 +119,6 @@ ENV IML ""
 # Optional config file
 ENV CONFIG_FILE "config.json"
 
-# Whether to have access to Java VisualVM
-ENV ACCESS_VISUALVM false
-
-# Port for Java VisualVM
-ENV VISUALVM_PORT 9090
-
-# Java VisualVM hostname
-ENV VISUALVM_HOSTNAME localhost
-
 # Set volume for output
 VOLUME [ "/app/output" ]
 
@@ -132,7 +126,4 @@ VOLUME [ "/app/output" ]
 RUN echo "{}" > ${CONFIG_FILE}
 
 # Run nshmp-haz
-ENTRYPOINT [ "bash", "docker-entrypoint.sh" ]
-
-# Expose Java VisualVM port
-EXPOSE ${VISUALVM_PORT}
+ENTRYPOINT [ "bash", "scripts/docker-entrypoint.sh" ]
