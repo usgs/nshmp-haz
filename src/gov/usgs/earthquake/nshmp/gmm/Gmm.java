@@ -763,6 +763,13 @@ public enum Gmm {
       NgaEastUsgs_2017.COEFFS_SIGMA_PANEL,
       NgaEastUsgs_2017.CONSTRAINTS),
 
+  /** NGA-East for USGS with Guo & Chapman Gulf CPA **/
+  NGA_EAST_USGS_CPA(
+      NgaEastUsgs_2017.Usgs17Cpa.class,
+      NgaEastUsgs_2017.Usgs17Cpa.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_PANEL,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
   /* NGA-East USGS Seed Tree */
 
   /** @see NgaEastUsgs_2017 */
@@ -925,6 +932,13 @@ public enum Gmm {
   NGA_EAST_SEED_YA15(
       NgaEastUsgs_2017.Seed_YA15.class,
       NgaEastUsgs_2017.Seed_YA15.NAME,
+      NgaEastUsgs_2017.COEFFS_SIGMA_PANEL,
+      NgaEastUsgs_2017.CONSTRAINTS),
+
+  /** NGA-East for USGS Seed Models with Guo & Chapman Gulf CPA **/
+  NGA_EAST_USGS_SEEDS_CPA(
+      NgaEastUsgs_2017.UsgsSeedsCpa.class,
+      NgaEastUsgs_2017.UsgsSeedsCpa.NAME,
       NgaEastUsgs_2017.COEFFS_SIGMA_PANEL,
       NgaEastUsgs_2017.CONSTRAINTS),
 
