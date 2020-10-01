@@ -42,18 +42,18 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * composite model that consists of 17 median ground motion models with period
  * dependent weights. This class also includes the implementation of the USGS
  * Updated Seed logic tree.
- * 
+ *
  * <p>Calculation of hazard using this implementation deviates somewhat from the
  * current nshmp-haz PSHA pipeline and required implementation of a
  * {@code MultiScalarGroundMotion}. A {@code MultiScalarGroundMotion} stores
  * arrays of means and sigmas with associated weights.
- * 
+ *
  * <p>This class manages implementations of 22 'seed' models, 19 of which
  * were used to generate (via Sammons mapping) the 17 NGA-East for USGS models
  * and associated weights, and 3 of which are updates. This class also handles
  * USGS logic tree of 14 of those seed models. Ground motions for most models
  * are computed via table lookups (SP16 is the exception).
- * 
+ *
  * <p>On it's own, NGA-East is a hard rock model returning results for a site
  * class where Vs30 = 3000 m/s. To accomodate other site classes, the Stewart et
  * al. (2017) CEUS site amplification model is used. This model is applicable to
@@ -71,7 +71,7 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * Youngs, R., Graves, R., Atkinson, G., 2017, NGA-East ground-motion models for
  * the U.S. Geological Survey national seismic hazard maps: PEER Report No.
  * 2017/03, 180 p.
- * 
+ *
  * <p><b>Reference:</b> Stewart, J., Parker, G., Harmon, J., Atkinson, G.,
  * Boore, D., Darragh, R., Silva, W., and Hashash, Y., 2017, Expert panel
  * recommendations for ergodic site amplification in central and eastern North
@@ -80,11 +80,11 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * <p><b>Reference:</b> Stewart, J., Parker, G., Atkinson, G., Boore, D., and
  * Hashash, Y., and Silva, W., 2019, Ergodic site amplification model for
  * central and eastern North America: Earthquake Spectra (in review)
- * 
+ *
  * <p><b>Reference:</b> Hashash, Y., Harmon, J., Ilhan, O., Parker, G., and
  * Stewart, 2017, Recommendation for ergodic nonlinear site amplification in
  * central and eastern North America: PEER Report No. 2017/05, 62 p.
- * 
+ *
  * <p><b>Component:</b> average horizontal (RotD50)
  *
  * @author Peter Powers
@@ -94,26 +94,26 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   /*
    * Developer notes:
-   * 
+   *
    * Note: supported periods are derived from sigma coefficient files. Several
    * supported periods have been commented out because they are not represented
    * in the site amplification model.
-   * 
+   *
    * When supplied with tables for the 17 usgs models, 0.01s is present with
    * values distinct from PGA, however the seed models are missing this period.
    * We therefore duplicate PGA for 0.01s ground motion values in the seed model
    * tables. Because a coefficient table (sigma coeffs in this case) is
    * referenced for supported IMTs, the ground motion tables across seed and
    * sammons models must be consistent.
-   * 
+   *
    * Missing PGV tables: Grazier, PEER_EX, PEER_GP, PZCT15_M1SS, PZCT15_M2ES
-   * 
+   *
    * Notes on sigma:
-   * 
+   *
    * NGA-East for USGS (2017) recommended use of an updated EPRI (2013) model
    * (Table 5.5), which is currently considered as one independent branch of an
    * aleatory variability logic tree.
-   * 
+   *
    * The NSHMP asked PEER panel to develop an improved φ_s2s model. This
    * necessitated including τ and φ_ss as independent terms. Only the 'global' τ
    * and φ_ss models are considered, per Linda Al Atik's recommendation. Because
@@ -455,6 +455,19 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     /* Default sigma */
     SigmaSet calcSigma(GmmInput in) {
       return sigmaSetLogicTree(in.Mw, in.vs30);
+    }
+  }
+
+  /* Subclasses to support the Guo and Chapman Gulf Coastal Plain Amplification (CPA) model */
+  static class Usgs17Cpa extends Usgs17 {
+    Usgs17Cpa(Imt imt) {
+      super(imt);
+    }
+  }
+
+  static class UsgsSeedsCpa extends UsgsSeeds {
+    UsgsSeedsCpa(Imt imt) {
+      super(imt);
     }
   }
 
@@ -879,7 +892,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   /**
    * Stewart et al. site amplification model.
-   * 
+   *
    * The model is applicable to 200 ≤ vs30 ≤ 2000 m/s. In the current
    * implementation, for vs30 < 200, vs30 = 200 m/s; for vs30 > 2000, vs30 =
    * 3000 m/s.
@@ -942,33 +955,33 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       /*
        * Developer notes:
-       * 
+       *
        * Vs30 values outside the range 200 < Vs30 < 3000 m/s are clamped to the
        * supported range.
-       * 
+       *
        * ---------------------------------------------------------------------
-       * 
+       *
        * Comments from R implementation:
-       * 
+       *
        * This function is used to compute site amplification in ln units for
        * inputs Vs30 (in m/s) and PGAr (peak acceleration for 3000 m/s reference
        * rock in g). Outputs:
-       * 
+       *
        * 1) Linear and nonlinear site amplification (FLin, FNonlin)
-       * 
+       *
        * 2) Standard deviation (σLin, σNonlin)
-       * 
+       *
        * 3) Total site amplification (fT) and total standard deviation (σT)
-       * 
+       *
        * Notes:
-       * 
+       *
        * 1) We assume fv and f760 are independent, so variance of linear site
        * amplication is the sum of variance f760 and f760;
        *
        * 2) The third value of σc coefficient, which is used to compute
        * nonlinear site amplication. 0.12 in report, and 0.1 in excel. Here we
        * use 0.12.
-       * 
+       *
        * 3) Standard deviation of fv calculation is updated by adding a new
        * coefficient vf instead of using v1.
        */
@@ -985,7 +998,7 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
       /*
        * Vs30 dependent f760 model: impedance vs. gradient
-       * 
+       *
        * The final model gives 2/3 weight to a weight scaling model of
        * [0.9i,0.1g] to [0.1i,0.9g] and 1/3 weight to a weight scaling model of
        * [0.5i,0.5g] to [0.1i,0.9g]. This results in a final weight scaling
