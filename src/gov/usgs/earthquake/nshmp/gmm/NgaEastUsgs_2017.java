@@ -48,11 +48,11 @@ import gov.usgs.earthquake.nshmp.util.Maths;
  * {@code MultiScalarGroundMotion}. A {@code MultiScalarGroundMotion} stores
  * arrays of means and sigmas with associated weights.
  *
- * <p>This class manages implementations of 22 'seed' models, 19 of which
- * were used to generate (via Sammons mapping) the 17 NGA-East for USGS models
- * and associated weights, and 3 of which are updates. This class also handles
- * USGS logic tree of 14 of those seed models. Ground motions for most models
- * are computed via table lookups (SP16 is the exception).
+ * <p>This class manages implementations of 22 'seed' models, 19 of which were
+ * used to generate (via Sammons mapping) the 17 NGA-East for USGS models and
+ * associated weights, and 3 of which are updates. This class also handles USGS
+ * logic tree of 14 of those seed models. Ground motions for most models are
+ * computed via table lookups (SP16 is the exception).
  *
  * <p>On it's own, NGA-East is a hard rock model returning results for a site
  * class where Vs30 = 3000 m/s. To accomodate other site classes, the Stewart et
@@ -222,10 +222,12 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
 
   private final CoefficientsSigmaPanel σCoeffsPanel;
   private final CoefficientsSigmaEpri σCoeffsEpri;
+  final Imt imt;
 
   NgaEastUsgs_2017(final Imt imt) {
     σCoeffsPanel = new CoefficientsSigmaPanel(imt, COEFFS_SIGMA_PANEL);
     σCoeffsEpri = new CoefficientsSigmaEpri(imt, COEFFS_SIGMA_EPRI);
+    this.imt = imt;
   }
 
   /* Final USGS logic-tree model: Panel=0.2, EPRIu=0.8 */
@@ -394,6 +396,29 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
+  /* Guo and Chapman Gulf Coastal Plain Amplification (CPA) model. */
+  static class Usgs17Cpa extends Usgs17 {
+
+    static final String NAME = "NGA-East for USGS (2017) (Gulf Coast)";
+
+    Usgs17Cpa(Imt imt) {
+      super(imt);
+    }
+
+    @Override
+    public MultiScalarGroundMotion calc(GmmInput in) {
+      Position p = tables[0].position(in.rRup, in.Mw);
+      double[] μs = new double[weights.length];
+      double cpa = log(GuoChapman_2019.cpaPsaRatio(imt, in.z2p5, in.Mw, in.rJB));
+      for (int i = 0; i < weights.length; i++) {
+        double μ = tables[i].get(p);
+        μs[i] = μ + cpa;
+      }
+      SigmaSet σs = calcSigma(in);
+      return new MultiScalarGroundMotion(μs, weights, σs.sigmas, σs.weights);
+    }
+  }
+
   /*
    * Implementation of USGS Seed model logic tree. All models but SP16 are table
    * based; SP16 is added to the median ground motion array last. NOTE that the
@@ -458,16 +483,28 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     }
   }
 
-  /* Subclasses to support the Guo and Chapman Gulf Coastal Plain Amplification (CPA) model */
-  static class Usgs17Cpa extends Usgs17 {
-    Usgs17Cpa(Imt imt) {
-      super(imt);
-    }
-  }
-
+  /* Guo and Chapman Gulf Coastal Plain Amplification (CPA) model. */
   static class UsgsSeedsCpa extends UsgsSeeds {
+
+    static final String NAME = "NGA-East Updated Seed Tree (Gulf Coast)";
+
     UsgsSeedsCpa(Imt imt) {
       super(imt);
+    }
+
+    @Override
+    public MultiScalarGroundMotion calc(GmmInput in) {
+      Position p = tables[0].position(in.rRup, in.Mw);
+      int seedCount = ids.size();
+      double[] μs = new double[seedCount + 1];
+      double cpa = log(GuoChapman_2019.cpaPsaRatio(imt, in.z2p5, in.Mw, in.rJB));
+      for (int i = 0; i < ids.size(); i++) {
+        μs[i] = tables[i].get(p) + cpa;
+      }
+      /* add SP16; already includes NGA-East site amp */
+      μs[seedCount] = sp16.calcHardRock(in).mean() + cpa;
+      SigmaSet σs = calcSigma(in);
+      return new MultiScalarGroundMotion(μs, weights, σs.sigmas, σs.weights);
     }
   }
 

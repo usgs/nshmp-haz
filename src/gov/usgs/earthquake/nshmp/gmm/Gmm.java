@@ -964,6 +964,15 @@ public enum Gmm {
       CombinedGmm.Ceus2018.CONSTRAINTS),
 
   /**
+   * 2018 CEUS weight-averaged GMM (Gulf Coast).
+   */
+  COMBINED_CEUS_2018_CPA(
+      CombinedGmm.Ceus2018Cpa.class,
+      CombinedGmm.Ceus2018Cpa.NAME,
+      CombinedGmm.Ceus2018Cpa.COEFFS,
+      CombinedGmm.Ceus2018Cpa.CONSTRAINTS),
+
+  /**
    * 2018 WUS weight-averaged GMM. These are the basin-amplifying flavors of
    * NGA-West2 and does not include Idriss.
    */
@@ -1308,6 +1317,7 @@ public enum Gmm {
         ImmutableList.of(
             COMBINED_CEUS_2014,
             COMBINED_CEUS_2018,
+            COMBINED_CEUS_2018_CPA,
             COMBINED_WUS_2014_41,
             COMBINED_WUS_2014_42,
             COMBINED_WUS_2018)),
@@ -1316,7 +1326,9 @@ public enum Gmm {
         "NGA-East USGS Branches",
         ImmutableList.of(
             NGA_EAST_USGS,
-            NGA_EAST_USGS_SEEDS)),
+            NGA_EAST_USGS_SEEDS,
+            NGA_EAST_USGS_CPA,
+            NGA_EAST_USGS_SEEDS_CPA)),
 
     NGA_EAST_SAMMONS2(
         "NGA-East USGS Sammons",
