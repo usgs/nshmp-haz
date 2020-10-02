@@ -14,7 +14,9 @@ import static gov.usgs.earthquake.nshmp.gmm.Gmm.CY_14_BASIN;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.FRANKEL_96;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.IDRISS_14;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS_CPA;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS_SEEDS;
+import static gov.usgs.earthquake.nshmp.gmm.Gmm.NGA_EAST_USGS_SEEDS_CPA;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.PEZESHK_11;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.SILVA_02;
 import static gov.usgs.earthquake.nshmp.gmm.Gmm.SOMERVILLE_01;
@@ -135,7 +137,24 @@ class CombinedGmm implements GroundMotionModel {
       super(imt, CEUS_2018);
     }
   }
-  
+
+  /* 5.0 */
+  private static final Map<Gmm, Double> CEUS_2018_CPA = ImmutableMap.<Gmm, Double> builder()
+      .put(NGA_EAST_USGS_CPA, 0.667)
+      .put(NGA_EAST_USGS_SEEDS_CPA, 0.333)
+      .build();
+
+  static final class Ceus2018Cpa extends CombinedGmm {
+
+    static final String NAME = CombinedGmm.NAME + "CEUS 2018 (Gulf Coast)";
+    static final Constraints CONSTRAINTS = NgaEastUsgs_2017.CONSTRAINTS;
+    static final CoefficientContainer COEFFS = NgaEastUsgs_2017.COEFFS_SIGMA_PANEL;
+
+    Ceus2018Cpa(Imt imt) {
+      super(imt, CEUS_2018_CPA);
+    }
+  }
+
   private static final Map<Gmm, Double> WUS_2014_4P1 = ImmutableMap.<Gmm, Double> builder()
       .put(ASK_14, 0.22)
       .put(BSSA_14, 0.22)

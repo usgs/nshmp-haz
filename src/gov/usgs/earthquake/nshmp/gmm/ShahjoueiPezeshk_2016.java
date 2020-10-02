@@ -45,7 +45,7 @@ public final class ShahjoueiPezeshk_2016 implements GroundMotionModel {
 
   /*
    * Developer notes:
-   * 
+   *
    * Whereas some seed model updates were provided to the USGS as drop in
    * updates to the NGA-East ground motion table format (e.g. Graizer17), this
    * update was provided as the complete (mean and sigma) functional form and is
@@ -107,6 +107,13 @@ public final class ShahjoueiPezeshk_2016 implements GroundMotionModel {
     double σ = calcStdDev(coeffs, in.Mw);
     SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
     μ = fSite.apply(μ);
+    return DefaultScalarGroundMotion.create(μ, σ);
+  }
+
+  /* Internal method to compute hard rock, ignores Vs30; for Gulf Coast. */
+  final ScalarGroundMotion calcHardRock(GmmInput in) {
+    double μ = calcMean(coeffs, in.Mw, in.rJB);
+    double σ = calcStdDev(coeffs, in.Mw);
     return DefaultScalarGroundMotion.create(μ, σ);
   }
 

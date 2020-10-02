@@ -64,7 +64,6 @@ class GuoChapman_2019 {
   private static final Map<Imt, double[][][]> scales;
 
   static {
-    System.out.println(Z.length * M.length * R.length);
     scales = new EnumMap<Imt, double[][][]>(Imt.class);
     for (Imt imt : MPRS) {
       scales.put(imt, loadTable(imt));
