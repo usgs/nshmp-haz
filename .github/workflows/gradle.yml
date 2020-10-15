@@ -25,5 +25,6 @@ jobs:
         name: Test nshmp-haz
         run: |
           java -cp build/libs/nshmp-haz.jar \
+            gov.usgs.earthquake.nshmp.HazardCalc \
             etc/peer/models/Set1-Case1 \
             "Test Site, -122.0, 38.0"
