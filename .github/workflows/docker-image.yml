@@ -13,5 +13,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Build the Docker image
-      - run: docker build -t nshmp-haz .
+      -
+        name: Build the Docker image
+        run: docker build -t nshmp-haz .
