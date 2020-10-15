@@ -3,6 +3,15 @@ name: Build nshmp-haz JAR
 on: [push, pull_request]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      -
+        name: Run Tests with Gradle
+        run: ./gradlew test
+
   build:
     runs-on: ubuntu-latest
 
