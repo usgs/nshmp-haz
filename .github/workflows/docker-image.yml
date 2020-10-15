@@ -1,6 +1,10 @@
 name: Build nshmp-haz Docker Image
 
-on: [push, pull_request_target]
+on:
+  push:
+  pull_request:
+    branches:
+      - 'usgs/nshmp-haz'
 
 jobs:
   build:
