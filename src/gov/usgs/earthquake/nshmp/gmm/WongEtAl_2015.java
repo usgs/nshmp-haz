@@ -66,7 +66,7 @@ public final class WongEtAl_2015 implements GroundMotionModel {
       .set(MW, Range.closed(5.0, 8.0))
       .set(RRUP, Range.closed(0.0, 300.0))
       .set(ZTOP, Range.closed(20.0, 60.0))
-      .set(VS30, Range.singleton(760.0))
+      .set(VS30, Range.closed(180.0, 1300.0))
       .build();
 
   private static final double R_MIN = 20.0;
