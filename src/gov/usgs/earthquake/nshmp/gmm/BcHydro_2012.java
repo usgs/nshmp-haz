@@ -31,45 +31,45 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
  * desired {@link Imt}.
- * 
+ *
  * <p><b>Changes due to Abrahamson et al. (2016) update:</b><ul>
- * 
+ *
  * <li>Added coefficients for 0.02s that are identical to PGA. 0.02s ground
  * motions had previously had been computed via interpolation between 0.01s and
  * 0.05s.</li>
- * 
+ *
  * <li>Slab {@code zTop} adjusted from 125 km to 120 km.</li>
- * 
+ *
  * <li>Changed interpolation of the {@code ΔC1} magnitude-scaling break term to
  * log spectral periods and linear values; prior implementation was linear;
  * change affects the following spectral periods: 0.4s, 0.6s (disabled), 0.75s,
  * 1.5s, and 2.5s wherein the {@code ΔC1} value has decreased by 0.01</li></ul>
  *
  * <p><b>Implementation notes:</b><ul>
- * 
+ *
  * <li>Treats all sites as forearc; no backarc term is considered.</li>
- * 
+ *
  * <li>{@code zTop} is interpreted as hypocentral depth and is only used for
  * slab events; it is limited to 120 km, consistent with other subduction
  * models.</li>
- * 
+ *
  * <li>Only the middle branch of the {@code ΔC1} magnitude-scaling break term
  * for interface events is considered; the {@code ΔC1} term for slab events is
  * fixed at -0.3.</li>
- * 
+ *
  * <li>Support for spectral period 0.01s is provided using the same coefficients
  * as bounding periods PGA and 0.02s.</li>
- * 
+ *
  * <li>Support for spectral periods 0.03s is provided via interpolation of
  * ground motion and sigma of adjacent periods.</li></ul>
  *
  * <p><b>Reference:</b> Abrahamson, N., Gregor, N., and Addo, K., 2016, BC Hydro
  * ground motion prediction equations for subduction earthquakes: Earthquake
  * Spectra, v. 32, n. 1, p. 23-44.
- * 
+ *
  * <p><b>doi:</b> <a href="http://dx.doi.org/10.1193/051712EQS188MR"
  * target="_top">10.1193/051712EQS188MR</a>
- * 
+ *
  * <p><b>Reference:</b> Addo, K., Abrahamson, N., and Youngs, R., (BC Hydro),
  * 2012, Probabilistic seismic hazard analysis (PSHA) model—Ground motion
  * characterization (GMC) model: Report E658, v. 3, November.
@@ -145,8 +145,10 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
   // interpolatedGmm = null if !interpolated
   private final boolean interpolated;
   private final GroundMotionModel interpolatedGmm;
+  private final Gmm subtype;
 
   BcHydro_2012(final Imt imt, Gmm subtype) {
+    this.subtype = subtype;
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
     cb14 = new CampbellBozorgnia_2014(imt);
@@ -158,6 +160,11 @@ public abstract class BcHydro_2012 implements GroundMotionModel {
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
+
+    if (coeffs.imt == Imt.PGV) {
+      return UsgsPgvSupport.calcAB20Pgv(subtype, in);
+    }
+
     if (interpolated) {
       return interpolatedGmm.calc(in);
     }

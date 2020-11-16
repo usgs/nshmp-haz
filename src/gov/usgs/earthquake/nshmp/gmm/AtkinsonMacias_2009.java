@@ -39,16 +39,16 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * desired {@link Imt}.
  *
  * <p><b>Implementation notes:</b><ul>
- * 
+ *
  * <li>NSHM fortran implementation converts 0.13Hz to 7.7s; this implementation
  * uses 7.5s instead.</li>
- * 
+ *
  * <li>Model uses a magnitude dependent depth term and so does not impose 20km
  * hypocentral depth as other subduction interface models do.</li>
- * 
+ *
  * <li>Support for spectral period 0.01s is provided using the same coefficients
  * as PGA.</li>
- * 
+ *
  * <li>Support for spectral periods 0.02s, 0.03s, 0.075s, 0.15s, 0.25s, and 1.5s
  * is provided via interpolation of ground motion and sigma of adjacent periods
  * for which there are coefficients.</li></ul>
@@ -119,12 +119,14 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
   // interpolatedGmm = null if !interpolated
   private final boolean interpolated;
   private final GroundMotionModel interpolatedGmm;
+  private final Gmm subtype;
 
   AtkinsonMacias_2009(final Imt imt) {
     this(imt, Gmm.AM_09_INTERFACE);
   }
 
   AtkinsonMacias_2009(final Imt imt, Gmm subtype) {
+    this.subtype = subtype;
     coeffs = new Coefficients(imt, COEFFS);
     coeffsPGA = new Coefficients(PGA, COEFFS);
     siteAmp = new BooreAtkinson_2008(imt);
@@ -137,6 +139,11 @@ public class AtkinsonMacias_2009 implements GroundMotionModel {
 
   @Override
   public final ScalarGroundMotion calc(final GmmInput in) {
+
+    if (coeffs.imt == Imt.PGV) {
+      return UsgsPgvSupport.calcAB20Pgv(subtype, in);
+    }
+
     if (interpolated) {
       return interpolatedGmm.calc(in);
     }
