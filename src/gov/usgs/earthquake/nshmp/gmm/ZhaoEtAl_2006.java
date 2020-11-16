@@ -49,23 +49,23 @@ import gov.usgs.earthquake.nshmp.gmm.ZhaoEtAl_2016.SiteClass;
  * desired {@link Imt}.
  *
  * <p><b>Implementation notes:</b><ul>
- * 
+ *
  * <li>When used for interface events, sigma is computed using the generic value
  * of tau, rather than the interface specific value (see inline comments for
  * more information).<li>
- * 
+ *
  * <li>Hypocentral depths for interface events are fixed at 20km.</li>
- * 
+ *
  * <li>Hypocentral depths for slab events are set to {@code min(zTop, 125)};
  * minimum rupture distance (rRup) is 1.0 km.</li>
- * 
+ *
  * <li>Support for spectral period 0.01s is provided using the same coefficients
  * as PGA.</li>
- * 
+ *
  * <li>Support for spectral periods 0.02s, 0.03s, 0.075s, and 0.75s is provided
  * via interpolation of ground motion and sigma of adjacent periods for which
  * there are coefficients.</li>
- * 
+ *
  * <li>Support for spectral periods 7.5s and 10.0s is provided via extrapolation
  * using the 2014 and 2018 NSHM GMM logic tree reference values for slab and
  * interface source types, scaled by the ratio at 5.0s.</li></ul>
@@ -190,8 +190,10 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
   private final GroundMotionModel interpolatedGmm;
   private final boolean extrapolated;
   private final GroundMotionModel extrapolatedGmm;
+  private final Gmm subtype;
 
   ZhaoEtAl_2006(final Imt imt, Gmm subtype) {
+    this.subtype = subtype;
     coeffs = new Coefficients(imt, COEFFS);
     cb14 = new CampbellBozorgnia_2014(imt);
     interpolated = INTERPOLATED_IMTS.containsKey(imt);
@@ -206,6 +208,11 @@ public abstract class ZhaoEtAl_2006 implements GroundMotionModel {
 
   @Override
   public final ScalarGroundMotion calc(GmmInput in) {
+
+    if (coeffs.imt == Imt.PGV) {
+      return UsgsPgvSupport.calcAB20Pgv(subtype, in);
+    }
+
     if (interpolated) {
       return interpolatedGmm.calc(in);
     }
