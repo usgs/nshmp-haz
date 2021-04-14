@@ -49,7 +49,8 @@ import gov.usgs.earthquake.nshmp.gmm.GmmInput.Constraints;
  * model for use in the 2021 Hawaii NSHM update and is referenced as
  * {@link Gmm#WONG_15}. The original model is now referenced as
  * {@link Gmm#WONG_15_428}. In addition, following discussion with the model
- * devlopers, {@code WONG_15} uses a fixed sigma of 0.8.
+ * devlopers, both {@code WONG_15_428} and {@code WONG_15} use a fixed sigma of
+ * 0.8.
  *
  * <p><b>Note:</b> Direct instantiation of {@code GroundMotionModel}s is
  * prohibited. Use {@link Gmm#instance(Imt)} to retrieve an instance for a
@@ -101,6 +102,8 @@ public abstract class WongEtAl_2015 implements GroundMotionModel {
   static final CoefficientContainer COEFFS_760 = new CoefficientContainer("Wong15-760.csv");
   static final CoefficientContainer COEFFS_1080 = new CoefficientContainer("Wong15-1080.csv");
   static final CoefficientContainer COEFFS_1500 = new CoefficientContainer("Wong15-1500.csv");
+
+  private static final double SIGMA = 0.8;
 
   private static class Coefficients {
 
@@ -182,7 +185,7 @@ public abstract class WongEtAl_2015 implements GroundMotionModel {
 
       return DefaultScalarGroundMotion.create(
           μ + site,
-          coeffs.σ);
+          SIGMA);
     }
   }
 
@@ -190,7 +193,6 @@ public abstract class WongEtAl_2015 implements GroundMotionModel {
 
     private final Map<Integer, Coefficients> coeffsMap;
     private final List<Integer> vsKeys;
-    private static final double SIGMA = 0.8;
 
     Site(Imt imt) {
       super(imt, Gmm.WONG_15);
