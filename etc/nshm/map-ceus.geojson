@@ -8,17 +8,17 @@
         "type": "Polygon",
         "coordinates": [
           [
-            [-115.0, 24.6],
-            [-65.0, 24.6],
+            [-115.0, 24.4],
+            [-65.0, 24.4],
             [-65.0, 50.0],
             [-115.0, 50.0],
-            [-115.0, 24.6]
+            [-115.0, 24.4]
           ]
         ]
       },
       "properties": {
         "fill": "#AA0078",
-        "marker-color": "#AA0078",
+        "stroke": "#AA0078",
         "title": "NSHMP Central & Eastern US Map Extents"
       }
     },

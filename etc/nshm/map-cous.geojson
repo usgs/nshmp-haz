@@ -18,7 +18,7 @@
       },
       "properties": {
         "fill": "#AA0078",
-        "marker-color": "#AA0078",
+        "stroke": "#AA0078",
         "title": "NSHMP Conterminous US Map Extents"
       }
     },
