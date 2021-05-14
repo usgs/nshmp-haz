@@ -17,9 +17,9 @@
         ]
       },
       "properties": {
+        "title": "NSHMP Western US Map Extents",
         "fill": "#AA0078",
-        "stroke": "#AA0078",
-        "title": "NSHMP Western US Map Extents"
+        "stroke": "#AA0078"
       }
     },
     {
@@ -108,7 +108,7 @@
         ]
       },
       "properties": {
-        "spacing": 0.1,
+        "spacing": 0.05,
         "title": "NSHMP Western US"
       }
     }

@@ -17,9 +17,9 @@
         ]
       },
       "properties": {
+        "title": "NSHMP Alaska Map Extents",
         "fill": "#AA0078",
-        "stroke": "#AA0078",
-        "title": "NSHMP Alaska Map Extents"
+        "stroke": "#AA0078"
       }
     },
     {

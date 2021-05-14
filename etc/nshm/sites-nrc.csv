@@ -15,6 +15,14 @@ Miami FL,                     -80.20,  25.75
 Atlanta GA,                   -84.40,  33.75
 Lincolnton GA,                -82.50,  33.80
 Savannah GA,                  -81.10,  32.10
+Anderson Afb Atc GU,          144.90,  13.60
+Central GU,                   144.80,  13.50
+Dededo GU,                    144.90,  13.50
+Northeast GU,                 144.90,  13.60
+Santa Rita GU,                144.70,  13.40
+Southwest GU,                 144.70,  13.30
+Yigo GU,                      144.90,  13.50
+Yona GU,                      144.80,  13.40
 Des Moines IA,                -93.60,  41.60
 Central IL,                   -90.00,  40.00
 Chicago IL,                   -87.65,  41.85
@@ -34,6 +42,9 @@ Minneapolis MN,               -93.30,  45.00
 Cape Girardeau MO,            -89.50,  37.30
 New Madrid MO,                -89.55,  36.60
 St Louis MO,                  -90.20,  38.60
+Saipan Central MP,            145.70,  15.20
+Saipan MP,                    145.80,  15.20
+Tinian MP,                    145.60,  15.00
 Jackson MS,                   -90.20,  32.30
 Charlotte NC,                 -80.85,  35.25
 Fargo ND,                     -96.80,  46.90
@@ -51,6 +62,18 @@ Elgin OK,                     -98.30,  34.80
 Oklahoma City OK,             -97.50,  35.50
 Philadelphia PA,              -75.15,  39.95
 Pittsburg PA,                 -80.00,  40.45
+Arecibo PR,                   -66.72,  18.47
+Bayamon PR,                   -66.16,  18.40
+Caguas PR,                    -66.04,  18.24
+Culebra Barrio PR,            -65.30,  18.30
+Fajardo PR,                   -65.65,  18.34
+Isabel Ii PR,                 -65.44,  18.15
+Mayaguez PR,                  -67.14,  18.20
+Ponce PR,                     -66.62,  18.00
+San Juan Atc PR,              -66.10,  18.45
+San Juan PR,                  -66.12,  18.47
+Utuado PR,                    -66.70,  18.27
+Yabucoa PR,                   -65.88,  18.05
 Providence RI,                -71.40,  41.80
 Charleston SC,                -79.95,  32.80
 Edgemont SD,                 -103.85,  43.30
@@ -68,6 +91,10 @@ San Antonio TX,               -98.50,  29.40
 Snyder TX,                   -100.90,  32.70
 Blacksburg VA,                -80.40,  37.25
 Richmond VA,                  -77.45,  37.55
+Charlotte Amalie 1 VI,        -64.93,  18.34
+Charlotte Amalie 2 VI,        -64.95,  18.35
+Christiansted VI,             -64.70,  17.75
+Cruz Bay VI,                  -64.79,  18.33
 Burlington VT,                -73.20,  44.50
 Milwaukee WI,                 -87.90,  43.05
 Charleston WV,                -81.65,  38.35

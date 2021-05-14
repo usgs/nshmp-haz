@@ -8,8 +8,8 @@
         "coordinates": [-87.5, 31.0]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Atmore AL"
+        "title": "Atmore AL",
+        "marker-size": "small"
       }
     },
     {
@@ -19,8 +19,8 @@
         "coordinates": [-86.8, 33.5]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Birmingham AL"
+        "title": "Birmingham AL",
+        "marker-size": "small"
       }
     },
     {
@@ -30,8 +30,8 @@
         "coordinates": [-92.7, 33.2]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "El Dorado AR"
+        "title": "El Dorado AR",
+        "marker-size": "small"
       }
     },
     {
@@ -41,8 +41,8 @@
         "coordinates": [-92.4, 35.2]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Greenbrier AR"
+        "title": "Greenbrier AR",
+        "marker-size": "small"
       }
     },
     {
@@ -52,8 +52,8 @@
         "coordinates": [-92.3, 34.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Little Rock AR"
+        "title": "Little Rock AR",
+        "marker-size": "small"
       }
     },
     {
@@ -63,8 +63,8 @@
         "coordinates": [-105.0, 39.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Denver CO"
+        "title": "Denver CO",
+        "marker-size": "small"
       }
     },
     {
@@ -74,8 +74,8 @@
         "coordinates": [-103.55, 38.0]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "La Junta CO"
+        "title": "La Junta CO",
+        "marker-size": "small"
       }
     },
     {
@@ -85,8 +85,8 @@
         "coordinates": [-104.5, 37.2]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Trinidad CO"
+        "title": "Trinidad CO",
+        "marker-size": "small"
       }
     },
     {
@@ -96,8 +96,8 @@
         "coordinates": [-72.7, 41.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Hartford CT"
+        "title": "Hartford CT",
+        "marker-size": "small"
       }
     },
     {
@@ -107,8 +107,8 @@
         "coordinates": [-77.05, 38.9]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Washington DC"
+        "title": "Washington DC",
+        "marker-size": "small"
       }
     },
     {
@@ -118,8 +118,8 @@
         "coordinates": [-75.55, 39.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Wilmington DE"
+        "title": "Wilmington DE",
+        "marker-size": "small"
       }
     },
     {
@@ -129,8 +129,8 @@
         "coordinates": [-81.65, 30.35]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Jacksonville FL"
+        "title": "Jacksonville FL",
+        "marker-size": "small"
       }
     },
     {
@@ -140,8 +140,8 @@
         "coordinates": [-80.2, 25.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Miami FL"
+        "title": "Miami FL",
+        "marker-size": "small"
       }
     },
     {
@@ -151,8 +151,8 @@
         "coordinates": [-84.4, 33.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Atlanta GA"
+        "title": "Atlanta GA",
+        "marker-size": "small"
       }
     },
     {
@@ -162,8 +162,8 @@
         "coordinates": [-82.5, 33.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Lincolnton GA"
+        "title": "Lincolnton GA",
+        "marker-size": "small"
       }
     },
     {
@@ -173,8 +173,96 @@
         "coordinates": [-81.1, 32.1]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Savannah GA"
+        "title": "Savannah GA",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.9, 13.6]
+      },
+      "properties": {
+        "title": "Anderson Afb Atc GU",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.8, 13.5]
+      },
+      "properties": {
+        "title": "Central GU",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.9, 13.5]
+      },
+      "properties": {
+        "title": "Dededo GU",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.9, 13.6]
+      },
+      "properties": {
+        "title": "Northeast GU",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.7, 13.4]
+      },
+      "properties": {
+        "title": "Santa Rita GU",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.7, 13.3]
+      },
+      "properties": {
+        "title": "Southwest GU",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.9, 13.5]
+      },
+      "properties": {
+        "title": "Yigo GU",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.8, 13.4]
+      },
+      "properties": {
+        "title": "Yona GU",
+        "marker-size": "small"
       }
     },
     {
@@ -184,8 +272,8 @@
         "coordinates": [-93.6, 41.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Des Moines IA"
+        "title": "Des Moines IA",
+        "marker-size": "small"
       }
     },
     {
@@ -195,8 +283,8 @@
         "coordinates": [-90.0, 40.0]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Central IL"
+        "title": "Central IL",
+        "marker-size": "small"
       }
     },
     {
@@ -206,8 +294,8 @@
         "coordinates": [-87.65, 41.85]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Chicago IL"
+        "title": "Chicago IL",
+        "marker-size": "small"
       }
     },
     {
@@ -217,8 +305,8 @@
         "coordinates": [-87.6, 38.0]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Evansville IN"
+        "title": "Evansville IN",
+        "marker-size": "small"
       }
     },
     {
@@ -228,8 +316,8 @@
         "coordinates": [-86.15, 39.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Indianapolis IN"
+        "title": "Indianapolis IN",
+        "marker-size": "small"
       }
     },
     {
@@ -239,8 +327,8 @@
         "coordinates": [-95.7, 39.05]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Topeka KS"
+        "title": "Topeka KS",
+        "marker-size": "small"
       }
     },
     {
@@ -250,8 +338,8 @@
         "coordinates": [-97.35, 37.7]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Wichita KS"
+        "title": "Wichita KS",
+        "marker-size": "small"
       }
     },
     {
@@ -261,8 +349,8 @@
         "coordinates": [-85.75, 38.25]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Louisville KY"
+        "title": "Louisville KY",
+        "marker-size": "small"
       }
     },
     {
@@ -272,8 +360,8 @@
         "coordinates": [-90.05, 29.95]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "New Orleans LA"
+        "title": "New Orleans LA",
+        "marker-size": "small"
       }
     },
     {
@@ -283,8 +371,8 @@
         "coordinates": [-71.05, 42.35]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Boston MA"
+        "title": "Boston MA",
+        "marker-size": "small"
       }
     },
     {
@@ -294,8 +382,8 @@
         "coordinates": [-76.6, 39.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Baltimore MD"
+        "title": "Baltimore MD",
+        "marker-size": "small"
       }
     },
     {
@@ -305,8 +393,8 @@
         "coordinates": [-69.8, 44.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Augusta ME"
+        "title": "Augusta ME",
+        "marker-size": "small"
       }
     },
     {
@@ -316,8 +404,8 @@
         "coordinates": [-68.8, 44.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Bangor ME"
+        "title": "Bangor ME",
+        "marker-size": "small"
       }
     },
     {
@@ -327,8 +415,8 @@
         "coordinates": [-70.25, 43.65]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Portland ME"
+        "title": "Portland ME",
+        "marker-size": "small"
       }
     },
     {
@@ -338,8 +426,8 @@
         "coordinates": [-83.05, 42.35]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Detroit MI"
+        "title": "Detroit MI",
+        "marker-size": "small"
       }
     },
     {
@@ -349,8 +437,8 @@
         "coordinates": [-93.3, 45.0]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Minneapolis MN"
+        "title": "Minneapolis MN",
+        "marker-size": "small"
       }
     },
     {
@@ -360,8 +448,8 @@
         "coordinates": [-89.5, 37.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Cape Girardeau MO"
+        "title": "Cape Girardeau MO",
+        "marker-size": "small"
       }
     },
     {
@@ -371,8 +459,8 @@
         "coordinates": [-89.55, 36.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "New Madrid MO"
+        "title": "New Madrid MO",
+        "marker-size": "small"
       }
     },
     {
@@ -382,8 +470,41 @@
         "coordinates": [-90.2, 38.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "St Louis MO"
+        "title": "St Louis MO",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [145.7, 15.2]
+      },
+      "properties": {
+        "title": "Saipan Central MP",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [145.8, 15.2]
+      },
+      "properties": {
+        "title": "Saipan MP",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [145.6, 15.0]
+      },
+      "properties": {
+        "title": "Tinian MP",
+        "marker-size": "small"
       }
     },
     {
@@ -393,8 +514,8 @@
         "coordinates": [-90.2, 32.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Jackson MS"
+        "title": "Jackson MS",
+        "marker-size": "small"
       }
     },
     {
@@ -404,8 +525,8 @@
         "coordinates": [-80.85, 35.25]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Charlotte NC"
+        "title": "Charlotte NC",
+        "marker-size": "small"
       }
     },
     {
@@ -415,8 +536,8 @@
         "coordinates": [-96.8, 46.9]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Fargo ND"
+        "title": "Fargo ND",
+        "marker-size": "small"
       }
     },
     {
@@ -426,8 +547,8 @@
         "coordinates": [-96.0, 41.25]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Omaha NE"
+        "title": "Omaha NE",
+        "marker-size": "small"
       }
     },
     {
@@ -437,8 +558,8 @@
         "coordinates": [-71.45, 43.0]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Manchester NH"
+        "title": "Manchester NH",
+        "marker-size": "small"
       }
     },
     {
@@ -448,8 +569,8 @@
         "coordinates": [-74.75, 40.2]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Trenton NJ"
+        "title": "Trenton NJ",
+        "marker-size": "small"
       }
     },
     {
@@ -459,8 +580,8 @@
         "coordinates": [-104.4, 32.85]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Artesia NM"
+        "title": "Artesia NM",
+        "marker-size": "small"
       }
     },
     {
@@ -470,8 +591,8 @@
         "coordinates": [-78.2, 43.0]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Batavia NY"
+        "title": "Batavia NY",
+        "marker-size": "small"
       }
     },
     {
@@ -481,8 +602,8 @@
         "coordinates": [-74.3, 44.85]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Malone NY"
+        "title": "Malone NY",
+        "marker-size": "small"
       }
     },
     {
@@ -492,8 +613,8 @@
         "coordinates": [-74.0, 40.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "New York NY"
+        "title": "New York NY",
+        "marker-size": "small"
       }
     },
     {
@@ -503,8 +624,8 @@
         "coordinates": [-83.0, 39.95]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Columbus OH"
+        "title": "Columbus OH",
+        "marker-size": "small"
       }
     },
     {
@@ -514,8 +635,8 @@
         "coordinates": [-84.15, 40.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Sidney OH"
+        "title": "Sidney OH",
+        "marker-size": "small"
       }
     },
     {
@@ -525,8 +646,8 @@
         "coordinates": [-80.65, 41.1]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Youngstown OH"
+        "title": "Youngstown OH",
+        "marker-size": "small"
       }
     },
     {
@@ -536,8 +657,8 @@
         "coordinates": [-98.3, 34.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Elgin OK"
+        "title": "Elgin OK",
+        "marker-size": "small"
       }
     },
     {
@@ -547,8 +668,8 @@
         "coordinates": [-97.5, 35.5]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Oklahoma City OK"
+        "title": "Oklahoma City OK",
+        "marker-size": "small"
       }
     },
     {
@@ -558,8 +679,8 @@
         "coordinates": [-75.15, 39.95]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Philadelphia PA"
+        "title": "Philadelphia PA",
+        "marker-size": "small"
       }
     },
     {
@@ -569,8 +690,140 @@
         "coordinates": [-80.0, 40.45]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Pittsburg PA"
+        "title": "Pittsburg PA",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-66.72, 18.47]
+      },
+      "properties": {
+        "title": "Arecibo PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-66.16, 18.4]
+      },
+      "properties": {
+        "title": "Bayamon PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-66.04, 18.24]
+      },
+      "properties": {
+        "title": "Caguas PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-65.3, 18.3]
+      },
+      "properties": {
+        "title": "Culebra Barrio PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-65.65, 18.34]
+      },
+      "properties": {
+        "title": "Fajardo PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-65.44, 18.15]
+      },
+      "properties": {
+        "title": "Isabel Ii PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-67.14, 18.2]
+      },
+      "properties": {
+        "title": "Mayaguez PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-66.62, 18.0]
+      },
+      "properties": {
+        "title": "Ponce PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-66.1, 18.45]
+      },
+      "properties": {
+        "title": "San Juan Atc PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-66.12, 18.47]
+      },
+      "properties": {
+        "title": "San Juan PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-66.7, 18.27]
+      },
+      "properties": {
+        "title": "Utuado PR",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-65.88, 18.05]
+      },
+      "properties": {
+        "title": "Yabucoa PR",
+        "marker-size": "small"
       }
     },
     {
@@ -580,8 +833,8 @@
         "coordinates": [-71.4, 41.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Providence RI"
+        "title": "Providence RI",
+        "marker-size": "small"
       }
     },
     {
@@ -591,8 +844,8 @@
         "coordinates": [-79.95, 32.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Charleston SC"
+        "title": "Charleston SC",
+        "marker-size": "small"
       }
     },
     {
@@ -602,8 +855,8 @@
         "coordinates": [-103.85, 43.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Edgemont SD"
+        "title": "Edgemont SD",
+        "marker-size": "small"
       }
     },
     {
@@ -613,8 +866,8 @@
         "coordinates": [-98.85, 43.4]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Platte SD"
+        "title": "Platte SD",
+        "marker-size": "small"
       }
     },
     {
@@ -624,8 +877,8 @@
         "coordinates": [-96.75, 43.55]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Sioux Falls SD"
+        "title": "Sioux Falls SD",
+        "marker-size": "small"
       }
     },
     {
@@ -635,8 +888,8 @@
         "coordinates": [-85.25, 35.05]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Chattanooga TN"
+        "title": "Chattanooga TN",
+        "marker-size": "small"
       }
     },
     {
@@ -646,8 +899,8 @@
         "coordinates": [-83.9, 35.95]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Knoxville TN"
+        "title": "Knoxville TN",
+        "marker-size": "small"
       }
     },
     {
@@ -657,8 +910,8 @@
         "coordinates": [-84.0, 35.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Maryville TN"
+        "title": "Maryville TN",
+        "marker-size": "small"
       }
     },
     {
@@ -668,8 +921,8 @@
         "coordinates": [-90.05, 35.15]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Memphis TN"
+        "title": "Memphis TN",
+        "marker-size": "small"
       }
     },
     {
@@ -679,8 +932,8 @@
         "coordinates": [-101.85, 35.2]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Amarillo TX"
+        "title": "Amarillo TX",
+        "marker-size": "small"
       }
     },
     {
@@ -690,8 +943,8 @@
         "coordinates": [-96.8, 32.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Dallas TX"
+        "title": "Dallas TX",
+        "marker-size": "small"
       }
     },
     {
@@ -701,8 +954,8 @@
         "coordinates": [-95.35, 29.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Houston TX"
+        "title": "Houston TX",
+        "marker-size": "small"
       }
     },
     {
@@ -712,8 +965,8 @@
         "coordinates": [-103.1, 31.85]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Kermit TX"
+        "title": "Kermit TX",
+        "marker-size": "small"
       }
     },
     {
@@ -723,8 +976,8 @@
         "coordinates": [-98.5, 29.4]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "San Antonio TX"
+        "title": "San Antonio TX",
+        "marker-size": "small"
       }
     },
     {
@@ -734,8 +987,8 @@
         "coordinates": [-100.9, 32.7]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Snyder TX"
+        "title": "Snyder TX",
+        "marker-size": "small"
       }
     },
     {
@@ -745,8 +998,8 @@
         "coordinates": [-80.4, 37.25]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Blacksburg VA"
+        "title": "Blacksburg VA",
+        "marker-size": "small"
       }
     },
     {
@@ -756,8 +1009,52 @@
         "coordinates": [-77.45, 37.55]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Richmond VA"
+        "title": "Richmond VA",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-64.93, 18.34]
+      },
+      "properties": {
+        "title": "Charlotte Amalie 1 VI",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-64.95, 18.35]
+      },
+      "properties": {
+        "title": "Charlotte Amalie 2 VI",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-64.7, 17.75]
+      },
+      "properties": {
+        "title": "Christiansted VI",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-64.79, 18.33]
+      },
+      "properties": {
+        "title": "Cruz Bay VI",
+        "marker-size": "small"
       }
     },
     {
@@ -767,8 +1064,8 @@
         "coordinates": [-73.2, 44.5]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Burlington VT"
+        "title": "Burlington VT",
+        "marker-size": "small"
       }
     },
     {
@@ -778,8 +1075,8 @@
         "coordinates": [-87.9, 43.05]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Milwaukee WI"
+        "title": "Milwaukee WI",
+        "marker-size": "small"
       }
     },
     {
@@ -789,8 +1086,8 @@
         "coordinates": [-81.65, 38.35]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Charleston WV"
+        "title": "Charleston WV",
+        "marker-size": "small"
       }
     },
     {
@@ -800,8 +1097,8 @@
         "coordinates": [-104.8, 41.15]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Cheyenne WY"
+        "title": "Cheyenne WY",
+        "marker-size": "small"
       }
     }
   ]
