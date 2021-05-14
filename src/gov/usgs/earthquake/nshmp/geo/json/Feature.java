@@ -23,12 +23,12 @@ import gov.usgs.earthquake.nshmp.geo.json.GeoJson.Type;
 
 /**
  * A GeoJSON feature.
- * 
+ *
  * <p>This class provides factory methods to create single-use GeoJSON feature
  * builders for different geometries.
- * 
+ *
  * <p>See {@link GeoJson} for examples.
- * 
+ *
  * @author Peter Powers
  * @author Brandon Clayton
  */
@@ -50,7 +50,7 @@ public class Feature {
 
   /**
    * Create a single-use point feature builder.
-   * 
+   *
    * @param location of point
    */
   public static Builder point(Location location) {
@@ -59,7 +59,7 @@ public class Feature {
 
   /**
    * Create a single-use line string feature builder.
-   * 
+   *
    * @param line locations
    */
   public static Builder lineString(LocationList line) {
@@ -68,7 +68,7 @@ public class Feature {
 
   /**
    * Create a single-use polygon feature builder.
-   * 
+   *
    * @param exterior linear ring boundary of polygon
    * @param interiors optional interior linear rings
    */
@@ -85,7 +85,7 @@ public class Feature {
 
   /**
    * The 'id' of this feature as a string.
-   * 
+   *
    * @throws NullPointerException if this feature does not contain an 'id'
    *         member. Use {@link #hasId()} to test whether 'id' member exists.
    */
@@ -99,7 +99,7 @@ public class Feature {
 
   /**
    * The 'id' of this feature as an integer.
-   * 
+   *
    * @throws NullPointerException if this feature does not contain an 'id'
    *         member. Use {@link #hasId()} to test whether 'id' member exists.
    */
@@ -125,7 +125,7 @@ public class Feature {
   /**
    * The GeoJSON geometry type of this feature, one of:
    * {@code [POINT, LINE_STRING, POLYGON]}.
-   * 
+   *
    * @see Type
    */
   public Type type() {
@@ -134,7 +134,7 @@ public class Feature {
 
   /**
    * Return the geometry of this feature as a point.
-   * 
+   *
    * @throws UnsupportedOperationException if feature is not a point.
    */
   public Location asPoint() {
@@ -143,7 +143,7 @@ public class Feature {
 
   /**
    * Return the geometry of this feature as a line string.
-   * 
+   *
    * @throws UnsupportedOperationException if feature is not a line string.
    */
   public LocationList asLineString() {
@@ -152,7 +152,7 @@ public class Feature {
 
   /**
    * Return the border of this polygon feature.
-   * 
+   *
    * @throws UnsupportedOperationException if feature is not a polygon.
    */
   public LocationList asPolygonBorder() {
@@ -174,7 +174,7 @@ public class Feature {
      * is therefore initialized with an empty map that may be replaced later.
      * Although the properties field can be serialized as null, we prefer to
      * limit null serialization to the elements of the properties map.
-     * 
+     *
      * 'id' and 'bbox' serialization will be skipped if null. See developer
      * notes in GeoJson for details on how this is handled.
      */
@@ -192,7 +192,7 @@ public class Feature {
 
     /**
      * Set the optional {@code id} field of this feature as an integer.
-     * 
+     *
      * @param id to set
      * @return this feature
      */
@@ -203,7 +203,7 @@ public class Feature {
 
     /**
      * Set the optional {@code id} field of this feature as a string.
-     * 
+     *
      * @param id to set
      * @return this builder
      */
@@ -216,7 +216,7 @@ public class Feature {
      * Set the optional {@code bbox} (bounding box) field of this feature. See
      * the GeoJSON <a href="http://geojson.org" target="_top">specification</a
      * for details on bounding boxes.
-     * 
+     *
      * @throws IllegalArgument
      * @param bbox to set
      * @return this builder
@@ -229,7 +229,7 @@ public class Feature {
 
     /**
      * Set the properties of this feature.
-     * 
+     *
      * @param properties to set
      * @return this builder
      */
@@ -252,7 +252,7 @@ public class Feature {
 
     /**
      * Return the serialized form of a new GeoJSON feature.
-     * 
+     *
      * @throws IllegalStateException if builder is empty
      */
     public String toJson() {
@@ -263,7 +263,7 @@ public class Feature {
     /**
      * Write the serialized form of a new GeoJSON feature to the file at
      * {@code path}.
-     * 
+     *
      * @throws IllegalStateException if builder is empty
      */
     public void write(Path path) throws IOException {
@@ -290,6 +290,9 @@ public class Feature {
 
       if (feature.bbox() == null) {
         jObj.remove("bbox");
+      }
+      if (feature.id == null) {
+        jObj.remove("id");
       }
       return jObj;
     }
