@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ComparisonChain;
 
 import gov.usgs.earthquake.nshmp.geo.Location;
+import gov.usgs.earthquake.nshmp.geo.LocationList;
 import gov.usgs.earthquake.nshmp.util.NamedLocation;
 
 /**
  * Locations that are used for NSHMP hazard comparisons.
  *
- * @author Allison Shumway
- * @author Peter Powers
+ * @author U.S. Geological Survey
  */
 @SuppressWarnings("javadoc")
 public enum NshmpSite implements NamedLocation {
@@ -203,61 +203,122 @@ public enum NshmpSite implements NamedLocation {
   CHARLESTON_WV(-81.65, 38.35),
   MILWAUKEE_WI(-87.90, 43.05),
 
-  /* Alaska (26) */
-  ADAK_AK(-176.65, 51.9),
-  ANCHORAGE_AK(-149.90, 61.2),
-  BARROW_AK(-156.75, 71.3),
-  BETHEL_AK(-161.80, 60.8),
-  DELTA_JUNCTION_AK(-145.70, 64),
-  DILLINGHAM_AK(-158.45, 59.05),
-  DUTCH_HARBOR_AK(-166.55, 53.9),
-  EVANSVILLE_AK(-151.50, 66.9),
-  FAIRBANKS_AK(-147.70, 64.85),
-  GLENNALLEN_AK(-145.55, 62.1),
-  HAINES_AK(-135.45, 59.25),
-  HOMER_AK(-151.50, 59.65),
-  JUNEAU_AK(-134.40, 58.3),
-  KENAI_AK(-151.25, 60.55),
-  KETCHIKAN_AK(-131.65, 55.35),
-  KODIAK_AK(-152.40, 57.8),
-  KOTZEBUE_AK(-162.60, 66.9),
-  MCGRATH_AK(-155.60, 62.95),
-  NOME_AK(-165.40, 64.5),
-  PAXSON_AK(-145.50, 63.05),
-  PRUDHOE_BAY_AK(-148.35, 70.25),
-  SITKA_AK(-135.35, 57.05),
-  TOK_AK(-143.00, 63.3),
-  VALDEZ_AK(-146.35, 61.15),
-  WASILLA_AK(-149.45, 61.6),
-  YAKUTAT_AK(-139.70, 59.55),
+  /* Alaska (35) */
+  ADAK_AK(-176.7, 51.9),
+  ANCHORAGE_AK(-149.9, 61.2),
+  ANCHORAGE_ATC_AK(-149.9, 61.2),
+  BARROW_AK(-156.8, 71.3),
+  BETHEL_AK(-161.8, 60.8),
+  CHITINA_AK(-144.5, 61.5),
+  DELTA_JUNCTION_AK(-145.7, 64.0),
+  DILLINGHAM_AK(-158.5, 59.1),
+  DUTCH_HARBOR_AK(-166.6, 53.9),
+  EVANSVILLE_AK(-151.5, 66.9),
+  FAIRBANKS_AK(-147.7, 64.9),
+  FAIRBANKS_ATC_AK(-147.7, 64.9),
+  GAKONA_AK(-145.3, 62.3),
+  GALENA_AK(-156.9, 64.8),
+  GLENNALLEN_AK(-145.6, 62.1),
+  HAINES_AK(-135.5, 59.3),
+  HOMER_AK(-151.5, 59.7),
+  JUNEAU_AK(-134.4, 58.3),
+  KENAI_AK(-151.3, 60.6),
+  KETCHIKAN_AK(-131.7, 55.4),
+  KNIK_FAIRVIEW_AK(-149.7, 61.5),
+  KODIAK_AK(-152.4, 57.8),
+  KOTZEBUE_AK(-162.6, 66.9),
+  LAKES_AK(-149.4, 61.6),
+  MCGRATH_AK(-155.6, 63.0),
+  NOME_AK(-165.4, 64.5),
+  PAXSON_AK(-145.5, 63.1),
+  PRUDHOE_BAY_AK(-148.4, 70.3),
+  SITKA_AK(-135.4, 57.1),
+  SLEETMUTE_AK(-157.2, 61.7),
+  TOK_AK(-143.0, 63.3),
+  VALDEZ_AK(-146.4, 61.2),
+  UNALASKA_AK(-166.6, 53.9),
+  WASILLA_AK(-149.5, 61.6),
+  YAKUTAT_AK(-139.7, 59.6),
 
-  /* Hawaii (26) */
-  BRADSHAW_AIRFIELD_HI(-155.55, 19.75), // Hawai'i
-  HILO_HI(-155.05, 19.7),
-  KAILUA_KONA_HI(-156, 19.65),
-  KILAUEA_HI(-155.25, 19.4),
-  MAUNA_KEA_HI(-155.45, 19.8),
-  OCEAN_VIEW_HI(-155.75, 19.1),
-  WAIMEA_HI(-155.7, 20),
-  KAHEAWA_WIND_HI(-156.55, 20.8), // Maui
-  KAHULUI_HI(-156.5, 20.9),
-  HALEAKALA_CRATER_HI(-156.25, 20.70),
-  LANAI_CITY_HI(-156.95, 20.8), // Lanai
-  KAUNAKAKAI_HI(-157, 21.1), // Moloka'i
-  BARBERS_POINT_HI(-158.1, 21.3), // O'ahu
-  DIAMOND_HEAD_HI(-157.8, 21.25),
-  HONOLULU_HI(-157.85, 21.3),
-  KANEOHE_HI(-157.8, 21.4),
-  LAIE_HI(-157.95, 21.65),
-  MARINE_CORPS_BASE_HI(-157.75, 21.45),
-  PEARL_HARBOR_HI(-157.95, 21.35),
-  WAHIAWA_HI(-158, 21.5),
-  WAIANAE_HI(-158.2, 21.45),
-  WAIPAHU_HI(-158, 21.4),
-  BARKING_SANDS_HI(-159.75, 22.05), // Kauai
-  HANAPEPE_HI(-159.6, 21.9),
-  LIHUE_HI(-159.35, 21.95),
-  PUUWAI_HI(-160.2, 21.9); // Ni'ihau
+  /* Hawaii (37) */
+  BARBERS_POINT_HI(-158.10, 21.30),
+  BARKING_SANDS_HI(-159.76, 22.06),
+  BRADSHAW_AIRFIELD_HI(-155.56, 19.76),
+  DIAMOND_HEAD_HI(-157.80, 21.26),
+  HALEAKALA_CRATER_HI(-156.26, 20.70),
+  HANA_HI(-155.98, 20.76),
+  HANAPEPE_HI(-159.60, 21.90),
+  HAWAIIAN_OCEAN_VIEW_HI(-155.78, 19.10),
+  HILO_HI(-155.06, 19.70),
+  HILO_ATC_HI(-155.10, 19.70),
+  HONOLULU_HI(-157.86, 21.30),
+  HONOLULU_ATC_HI(-157.86, 21.30),
+  KAHEAWA_WIND_HI(-156.56, 20.80),
+  KAHUKU_HI(-157.94, 21.68),
+  KAHULUI_HI(-156.50, 20.90),
+  KAILUA_KONA_HI(-156.00, 19.66),
+  KANEOHE_HI(-157.80, 21.40),
+  KAUNAKAKAI_HI(-157.00, 21.10),
+  KIHEI_HI(-156.46, 20.78),
+  KILAUEA_HI(-155.26, 19.40),
+  LAHAINA_HI(-156.68, 20.88),
+  LAIE_HI(-157.96, 21.66),
+  LANAI_CITY_HI(-156.96, 20.80),
+  LIHUE_HI(-159.36, 21.96),
+  MARINE_CORPS_BASE_HI(-157.76, 21.46),
+  MAUNA_KEA_HI(-155.46, 19.80),
+  OCEAN_VIEW_HI(-155.76, 19.10),
+  PEARL_HARBOR_HI(-157.96, 21.36),
+  PEPEEKEO_HI(-155.10, 19.84),
+  PRINCEVILLE_HI(-159.48, 22.22),
+  PUUWAI_HI(-160.20, 21.90),
+  VOLCANO_HI(-155.22, 19.44),
+  WAHIAWA_HI(-158.00, 21.50),
+  WAIANAE_HI(-158.20, 21.46),
+  WAIKOLOA_VILLAGE_HI(-155.78, 19.94),
+  WAIMEA_HI(-155.70, 20.00),
+  WAIPAHU_HI(-158.00, 21.40),
+
+  /* American Samoa (8) */
+  APIA_UPOLU_SAMOA_AS(-171.8, -13.8),
+  AUA_AS(-170.7, -14.3),
+  FUTIGA_AS(-170.8, -14.4),
+  LEONE_AS(-170.8, -14.3),
+  TUTUILA_CENTRAL_AS(-170.7, -14.3),
+  TUTUILA_SOUTHWEST_AS(-170.8, -14.3),
+  VAILOATAI_AS(-170.8, -14.4),
+  VAITOGI_AS(-170.7, -14.4),
+
+  /* Guam and Northern Mariana Islands (11) */
+  ANDERSON_AFB_ATC_GU(144.9, 13.6),
+  CENTRAL_GU(144.8, 13.5),
+  NORTHEAST_GU(144.9, 13.6),
+  SOUTHWEST_GU(144.7, 13.3),
+  DEDEDO_GU(144.9, 13.5),
+  SANTA_RITA_GU(144.7, 13.4),
+  SAIPAN_MP(145.8, 15.2),
+  SAIPAN_CENTRAL_MP(145.7, 15.2),
+  TINIAN_MP(145.6, 15.0),
+  YIGO_GU(144.9, 13.5),
+  YONA_GU(144.8, 13.4),
+
+  /* Puerto Rico and U.S. Virgin Islands (16) */
+  ARECIBO_PR(-66.72, 18.47),
+  BAYAMON_PR(-66.16, 18.40),
+  CAGUAS_PR(-66.04, 18.24),
+  CHARLOTTE_AMALIE_1_VI(-64.93, 18.34),
+  CHARLOTTE_AMALIE_2_VI(-64.95, 18.35),
+  CHRISTIANSTED_VI(-64.70, 17.75),
+  CRUZ_BAY_VI(-64.79, 18.33),
+  CULEBRA_BARRIO_PR(-65.30, 18.30),
+  FAJARDO_PR(-65.65, 18.34),
+  ISABEL_II_PR(-65.44, 18.15),
+  MAYAGUEZ_PR(-67.14, 18.20),
+  PONCE_PR(-66.62, 18.00),
+  SAN_JUAN_PR(-66.12, 18.47),
+  SAN_JUAN_ATC_PR(-66.10, 18.45),
+  UTUADO_PR(-66.70, 18.27),
+  YABUCOA_PR(-65.88, 18.05);
 
   private final Location location;
   private final UsRegion state;
@@ -301,8 +362,12 @@ public enum NshmpSite implements NamedLocation {
    * includes all NSHMP sites east of -115.0°.
    */
   public static EnumSet<NshmpSite> ceus() {
+    LocationList coords = NshmpPolygon.CEUS_CLIP.coordinates();
     return filteredSet(
-        site -> site.location.lon() >= -115.0);
+        site -> site.location.lon() >= coords.get(0).lon() &&
+            site.location.lon() <= coords.get(1).lon() &&
+            site.location.lat() >= coords.get(0).lat() &&
+            site.location.lat() <= coords.get(1).lat());
   }
 
   private static EnumSet<NshmpSite> filteredSet(Predicate<NshmpSite> filter) {
@@ -371,8 +436,8 @@ public enum NshmpSite implements NamedLocation {
    *
    * <p>This is a list of 34 city sites in the United States with high seismic
    * risk as specified in the 2009 edition of the <a
-   * href="http://www.fema.gov/library/viewRecord.do?id=4103"
-   * target=_top">NEHRP Recommended Seismic Provisions</a>.
+   * href="http://www.fema.gov/library/viewRecord.do?id=4103" target=_top">NEHRP
+   * Recommended Seismic Provisions</a>.
    */
   public static EnumSet<NshmpSite> nehrp() {
     return EnumSet.of(

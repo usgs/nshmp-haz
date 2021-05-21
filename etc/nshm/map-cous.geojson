@@ -9,17 +9,17 @@
         "coordinates": [
           [
             [-125.0, 24.4],
-            [ -65.0, 24.4],
-            [ -65.0, 50.0],
+            [-65.0, 24.4],
+            [-65.0, 50.0],
             [-125.0, 50.0],
             [-125.0, 24.4]
           ]
         ]
       },
       "properties": {
+        "title": "NSHMP Conterminous US Map Extents",
         "fill": "#AA0078",
-        "marker-color": "#AA0078",
-        "title": "NSHMP Conterminous US Map Extents"
+        "stroke": "#AA0078"
       }
     },
     {
@@ -108,7 +108,7 @@
         ]
       },
       "properties": {
-        "spacing": 0.1,
+        "spacing": 0.05,
         "title": "NSHMP Conterminous US"
       }
     }

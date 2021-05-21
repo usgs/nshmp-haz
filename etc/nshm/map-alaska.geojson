@@ -17,9 +17,9 @@
         ]
       },
       "properties": {
+        "title": "NSHMP Alaska Map Extents",
         "fill": "#AA0078",
-        "marker-color": "#AA0078",
-        "title": "Alaska Map Extents"
+        "stroke": "#AA0078"
       }
     },
     {
@@ -58,7 +58,7 @@
       },
       "properties": {
         "spacing": 0.1,
-        "title": "Alaska"
+        "title": "NSHMP Alaska"
       }
     }
   ]

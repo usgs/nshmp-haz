@@ -8,8 +8,8 @@
         "coordinates": [-122.0, 37.95]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Concord CA"
+        "title": "Concord CA",
+        "marker-size": "small"
       }
     },
     {
@@ -19,8 +19,8 @@
         "coordinates": [-121.9, 36.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Monterey CA"
+        "title": "Monterey CA",
+        "marker-size": "small"
       }
     },
     {
@@ -30,8 +30,8 @@
         "coordinates": [-122.25, 37.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Oakland CA"
+        "title": "Oakland CA",
+        "marker-size": "small"
       }
     },
     {
@@ -41,8 +41,8 @@
         "coordinates": [-121.5, 38.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Sacramento CA"
+        "title": "Sacramento CA",
+        "marker-size": "small"
       }
     },
     {
@@ -52,8 +52,8 @@
         "coordinates": [-122.4, 37.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "San Francisco CA"
+        "title": "San Francisco CA",
+        "marker-size": "small"
       }
     },
     {
@@ -63,8 +63,8 @@
         "coordinates": [-121.9, 37.35]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "San Jose CA"
+        "title": "San Jose CA",
+        "marker-size": "small"
       }
     },
     {
@@ -74,8 +74,8 @@
         "coordinates": [-122.3, 37.55]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "San Mateo CA"
+        "title": "San Mateo CA",
+        "marker-size": "small"
       }
     },
     {
@@ -85,8 +85,8 @@
         "coordinates": [-122.05, 36.95]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Santa Cruz CA"
+        "title": "Santa Cruz CA",
+        "marker-size": "small"
       }
     },
     {
@@ -96,8 +96,8 @@
         "coordinates": [-122.7, 38.45]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Santa Rosa CA"
+        "title": "Santa Rosa CA",
+        "marker-size": "small"
       }
     },
     {
@@ -107,8 +107,8 @@
         "coordinates": [-122.25, 38.1]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Vallejo CA"
+        "title": "Vallejo CA",
+        "marker-size": "small"
       }
     },
     {
@@ -118,8 +118,8 @@
         "coordinates": [-118.4, 34.05]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Century City CA"
+        "title": "Century City CA",
+        "marker-size": "small"
       }
     },
     {
@@ -129,8 +129,8 @@
         "coordinates": [-117.8, 33.65]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Irvine CA"
+        "title": "Irvine CA",
+        "marker-size": "small"
       }
     },
     {
@@ -140,8 +140,8 @@
         "coordinates": [-118.2, 33.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Long Beach CA"
+        "title": "Long Beach CA",
+        "marker-size": "small"
       }
     },
     {
@@ -151,8 +151,8 @@
         "coordinates": [-118.25, 34.05]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Los Angeles CA"
+        "title": "Los Angeles CA",
+        "marker-size": "small"
       }
     },
     {
@@ -162,8 +162,8 @@
         "coordinates": [-118.55, 34.2]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Northridge CA"
+        "title": "Northridge CA",
+        "marker-size": "small"
       }
     },
     {
@@ -173,8 +173,8 @@
         "coordinates": [-117.4, 33.95]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Riverside CA"
+        "title": "Riverside CA",
+        "marker-size": "small"
       }
     },
     {
@@ -184,8 +184,8 @@
         "coordinates": [-117.3, 34.1]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "San Bernardino CA"
+        "title": "San Bernardino CA",
+        "marker-size": "small"
       }
     },
     {
@@ -195,8 +195,8 @@
         "coordinates": [-117.15, 32.7]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "San Diego CA"
+        "title": "San Diego CA",
+        "marker-size": "small"
       }
     },
     {
@@ -206,8 +206,8 @@
         "coordinates": [-120.65, 35.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "San Luis Obispo CA"
+        "title": "San Luis Obispo CA",
+        "marker-size": "small"
       }
     },
     {
@@ -217,8 +217,8 @@
         "coordinates": [-119.7, 34.45]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Santa Barbara CA"
+        "title": "Santa Barbara CA",
+        "marker-size": "small"
       }
     },
     {
@@ -228,8 +228,8 @@
         "coordinates": [-119.3, 34.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Ventura CA"
+        "title": "Ventura CA",
+        "marker-size": "small"
       }
     },
     {
@@ -239,8 +239,8 @@
         "coordinates": [-116.2, 43.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Boise ID"
+        "title": "Boise ID",
+        "marker-size": "small"
       }
     },
     {
@@ -250,8 +250,8 @@
         "coordinates": [-115.15, 36.2]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Las Vegas NV"
+        "title": "Las Vegas NV",
+        "marker-size": "small"
       }
     },
     {
@@ -261,8 +261,8 @@
         "coordinates": [-119.8, 39.55]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Reno NV"
+        "title": "Reno NV",
+        "marker-size": "small"
       }
     },
     {
@@ -272,8 +272,8 @@
         "coordinates": [-111.9, 40.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Salt Lake City UT"
+        "title": "Salt Lake City UT",
+        "marker-size": "small"
       }
     },
     {
@@ -283,8 +283,8 @@
         "coordinates": [-122.65, 45.5]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Portland OR"
+        "title": "Portland OR",
+        "marker-size": "small"
       }
     },
     {
@@ -294,8 +294,8 @@
         "coordinates": [-122.2, 48.0]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Everett WA"
+        "title": "Everett WA",
+        "marker-size": "small"
       }
     },
     {
@@ -305,8 +305,8 @@
         "coordinates": [-122.3, 47.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Seattle WA"
+        "title": "Seattle WA",
+        "marker-size": "small"
       }
     },
     {
@@ -316,8 +316,8 @@
         "coordinates": [-122.45, 47.25]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Tacoma WA"
+        "title": "Tacoma WA",
+        "marker-size": "small"
       }
     },
     {
@@ -327,8 +327,8 @@
         "coordinates": [-87.65, 41.85]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Chicago IL"
+        "title": "Chicago IL",
+        "marker-size": "small"
       }
     },
     {
@@ -338,8 +338,8 @@
         "coordinates": [-90.2, 38.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "St Louis MO"
+        "title": "St Louis MO",
+        "marker-size": "small"
       }
     },
     {
@@ -349,8 +349,8 @@
         "coordinates": [-74.0, 40.75]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "New York NY"
+        "title": "New York NY",
+        "marker-size": "small"
       }
     },
     {
@@ -360,8 +360,8 @@
         "coordinates": [-79.95, 32.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Charleston SC"
+        "title": "Charleston SC",
+        "marker-size": "small"
       }
     },
     {
@@ -371,8 +371,8 @@
         "coordinates": [-90.05, 35.15]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Memphis TN"
+        "title": "Memphis TN",
+        "marker-size": "small"
       }
     }
   ]

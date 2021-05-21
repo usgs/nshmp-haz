@@ -8,8 +8,8 @@
         "coordinates": [-90.0, 40.0]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Central IL"
+        "title": "Central IL",
+        "marker-size": "small"
       }
     },
     {
@@ -19,8 +19,8 @@
         "coordinates": [-85.255, 35.064]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Chattanooga TN"
+        "title": "Chattanooga TN",
+        "marker-size": "small"
       }
     },
     {
@@ -30,8 +30,8 @@
         "coordinates": [-95.363, 29.76]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Houston TX"
+        "title": "Houston TX",
+        "marker-size": "small"
       }
     },
     {
@@ -41,8 +41,8 @@
         "coordinates": [-90.187, 32.312]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Jackson MS"
+        "title": "Jackson MS",
+        "marker-size": "small"
       }
     },
     {
@@ -52,8 +52,8 @@
         "coordinates": [-71.463, 42.991]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Manchester NH"
+        "title": "Manchester NH",
+        "marker-size": "small"
       }
     },
     {
@@ -63,8 +63,8 @@
         "coordinates": [-81.097, 32.082]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Savannah GA"
+        "title": "Savannah GA",
+        "marker-size": "small"
       }
     },
     {
@@ -74,8 +74,8 @@
         "coordinates": [-95.682, 39.047]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Topeka KS"
+        "title": "Topeka KS",
+        "marker-size": "small"
       }
     }
   ]

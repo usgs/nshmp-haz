@@ -8,18 +8,18 @@
         "type": "Polygon",
         "coordinates": [
           [
-            [-125.0, 24.6],
-            [-100.0, 24.6],
+            [-125.0, 24.4],
+            [-100.0, 24.4],
             [-100.0, 50.0],
             [-125.0, 50.0],
-            [-125.0, 24.6]
+            [-125.0, 24.4]
           ]
         ]
       },
       "properties": {
+        "title": "NSHMP Western US Map Extents",
         "fill": "#AA0078",
-        "marker-color": "#AA0078",
-        "title": "NSHMP Western US Map Extents"
+        "stroke": "#AA0078"
       }
     },
     {
@@ -108,7 +108,7 @@
         ]
       },
       "properties": {
-        "spacing": 0.1,
+        "spacing": 0.05,
         "title": "NSHMP Western US"
       }
     }
