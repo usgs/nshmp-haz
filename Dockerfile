@@ -25,6 +25,9 @@
 # OutOfMemoryError. Increase -Xmx to -Xmx16g or -Xmx24g, if available.
 ####
 
+ARG BUILD_IMAGE=usgs/amazoncorretto:8
+ARG FROM_IMAGE=usgs/amazoncorretto:8
+
 # Project
 ARG project=nshmp-haz
 
@@ -35,20 +38,20 @@ ARG builder_workdir=/app/${project}
 ARG jar_path=${builder_workdir}/build/libs/${project}.jar
 
 ####
-# Builder Image: Java 11 
+# Builder Image: Java 11
 #   - Install git
 #   - Build nshmp-haz
 ####
-FROM usgs/java:11 as builder
+FROM ${BUILD_IMAGE} as builder
 
 # Get builder workdir
 ARG builder_workdir
 
 # Set working directory
-WORKDIR ${builder_workdir} 
+WORKDIR ${builder_workdir}
 
 # Copy project over to container
-COPY . ${builder_workdir}/. 
+COPY . ${builder_workdir}/.
 
 # Build nshmp-haz
 RUN ./gradlew assemble
@@ -60,7 +63,7 @@ RUN ./gradlew assemble
 #   - Download model
 #   - Run nshmp-haz (docker-entrypoint.sh)
 ####
-FROM usgs/java:11
+FROM ${FROM_IMAGE}
 
 LABEL maintainer="Peter Powers <pmpowers@usgs.gov>"
 
