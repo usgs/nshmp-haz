@@ -16,8 +16,10 @@ import static java.lang.Math.sqrt;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.Beta;
@@ -424,13 +426,27 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
    * based; SP16 is added to the median ground motion array last. NOTE that the
    * model ignores the SP16 aleatory variability model for consistency with the
    * other seed models.
+   *
+   * PGV: rather than use averaged tables for seed that don't provide PGV tables
+   * (inital implementation), we delegate to UsgsPgvSupport. This requires quick
+   * short circuiting of those Gmms lacking support. In doing so we use the
+   * individual seed models which results in repeated position lookups. Needs
+   * improvement TODO. Both sigma models considered include coefficients for
+   * PGV.
    */
   static class UsgsSeeds extends NgaEastUsgs_2017 {
     static final String NAME = "NGA-East Updated Seed Tree";
     static final String SP16_ID = "SP16";
+    static final Set<Gmm> noPgvSeeds = EnumSet.of(
+        Gmm.NGA_EAST_SEED_PEER_GP,
+        Gmm.NGA_EAST_SEED_GRAIZER16,
+        Gmm.NGA_EAST_SEED_GRAIZER17,
+        Gmm.NGA_EAST_SEED_PZCT15_M1SS,
+        Gmm.NGA_EAST_SEED_PZCT15_M2ES);
 
     /* ids for table based models only; skips SP16 */
     static final List<String> ids;
+    static final List<Gmm> enumIds; // pgv helper
     /* includes SP16 as last entry */
     static final double[] weights;
 
@@ -450,6 +466,10 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
           .addAll(wtList)
           .add(USGS_SEED_WEIGHTS.get(SP16_ID))
           .build());
+      enumIds = ids.stream()
+          .map(id -> "NGA_EAST_SEED_" + id.toUpperCase())
+          .map(Gmm::valueOf)
+          .collect(Collectors.toList());
     }
 
     UsgsSeeds(Imt imt) {
@@ -464,12 +484,20 @@ public abstract class NgaEastUsgs_2017 implements GroundMotionModel {
     public MultiScalarGroundMotion calc(GmmInput in) {
       Position p = tables[0].position(in.rRup, in.Mw);
       int seedCount = ids.size();
-      double[] μs = new double[seedCount + 1];
+      double[] μs = new double[seedCount + 1]; // +1 for SP_16
       for (int i = 0; i < ids.size(); i++) {
-        double μ = tables[i].get(p);
-        double μPga = exp(pgaTables[i].get(p));
-        SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
-        μs[i] = fSite.apply(μ);
+        Gmm seed = enumIds.get(i);
+        double μ;
+        if (imt == Imt.PGV && noPgvSeeds.contains(seed)) {
+          // site will be considered when using individual seed
+          μ = UsgsPgvSupport.calcAB20Pgv(seed, in).mean();
+        } else {
+          double μRock = tables[i].get(p);
+          double μPga = exp(pgaTables[i].get(p));
+          SiteAmp.Value fSite = siteAmp.calc(μPga, in.vs30);
+          μ = fSite.apply(μRock);
+        }
+        μs[i] = μ;
       }
       /* add SP16; already includes NGA-East site amp */
       μs[seedCount] = sp16.calc(in).mean();

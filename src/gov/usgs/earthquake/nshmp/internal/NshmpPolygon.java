@@ -5,17 +5,20 @@ import gov.usgs.earthquake.nshmp.geo.LocationList;
 /**
  * Geographic polygons commonly used by the NSHMP.
  *
- * @author Peter Powers
+ * @author U.S. Geological Survey
  */
 @SuppressWarnings("javadoc")
 public enum NshmpPolygon {
 
-  CEUS_CLIP(Data.CEUS_CLIP, "Central & Eastern US Map Extents"),
-  WUS_CLIP(Data.WUS_CLIP, "Western US Map Extents"),
-  AK_CLIP(Data.AK_CLIP, "Alaska Map Extents"),
+  CEUS_CLIP(Data.CEUS_CLIP, "NSHMP Central & Eastern US Map Extents"),
+  WUS_CLIP(Data.WUS_CLIP, "NSHMP Western US Map Extents"),
+  CONUS_CLIP(Data.CONUS_CLIP, "NSHMP Conterminous US Map Extents"),
+  ALASKA_CLIP(Data.ALASKA_CLIP, "NSHMP Alaska Map Extents"),
+  HAWAII_CLIP(Data.HAWAII_CLIP, "NSHMP Hawaii Map Extents"),
 
-  ALASKA(Data.ALASKA, "Alaska"),
-  CONTERMINOUS_US(Data.CONTERMINOUS, "Conterminous US"),
+  ALASKA(Data.ALASKA, "NSHMP Alaska"),
+  HAWAII(Data.HAWAII, "NSHMP Hawaii"),
+  CONTERMINOUS_US(Data.CONTERMINOUS, "NSHMP Conterminous US"),
 
   LA_BASIN(Data.WG_07_LA, "Los Angeles Basin – WGCEP 2007"),
   SF_BAY(Data.WG_02_SF, "San Francisco Bay Area – WGCEP 2002"),
@@ -60,17 +63,22 @@ public enum NshmpPolygon {
 
   private static class Data {
 
+    private static final double[][] CONUS_CLIP = {
+        { -125.0, 24.4 },
+        { -65.0, 50.0 }
+    };
+
     private static final double[][] CEUS_CLIP = {
-        { -115.0, 24.6 },
+        { -115.0, 24.4 },
         { -65.0, 50.0 }
     };
 
     private static final double[][] WUS_CLIP = {
-        { -125.0, 24.6 },
+        { -125.0, 24.4 },
         { -100.0, 50.0 }
     };
 
-    private static final double[][] AK_CLIP = {
+    private static final double[][] ALASKA_CLIP = {
         { -200.0, 48.0 },
         { -125.0, 72.0 }
     };
@@ -101,6 +109,72 @@ public enum NshmpPolygon {
         { -136.6, 60.7 },
         { -137.5, 61.4 },
         { -137.5, 70.6 }
+    };
+
+    private static final double[][] HAWAII_CLIP = {
+        { -160.5, 18.6 },
+        { -154.3, 22.5 }
+    };
+
+    private static final double[][] HAWAII = {
+        { -160.39, 21.74 },
+        { -160.07, 21.65 },
+        { -159.81, 21.90 },
+        { -159.49, 21.75 },
+        { -159.25, 21.82 },
+        { -158.39, 21.49 },
+        { -158.19, 21.22 },
+        { -157.69, 21.14 },
+        { -157.41, 21.03 },
+        { -157.12, 20.71 },
+        { -156.81, 20.46 },
+        { -156.60, 20.41 },
+        { -156.23, 20.47 },
+        { -156.05, 20.25 },
+        { -156.03, 20.03 },
+        { -156.14, 19.84 },
+        { -156.16, 19.67 },
+        { -156.09, 19.48 },
+        { -156.08, 19.29 },
+        { -156.08, 19.06 },
+        { -155.96, 18.89 },
+        { -155.81, 18.80 },
+        { -155.57, 18.72 },
+        { -155.36, 18.69 },
+        { -155.18, 18.69 },
+        { -155.00, 18.78 },
+        { -154.90, 18.92 },
+        { -154.78, 19.05 },
+        { -154.58, 19.15 },
+        { -154.47, 19.26 },
+        { -154.43, 19.42 },
+        { -154.48, 19.60 },
+        { -154.72, 19.76 },
+        { -154.87, 19.93 },
+        { -155.03, 20.14 },
+        { -155.34, 20.34 },
+        { -155.56, 20.46 },
+        { -155.71, 20.61 },
+        { -155.74, 20.78 },
+        { -155.82, 20.95 },
+        { -156.02, 21.07 },
+        { -156.29, 21.18 },
+        { -156.56, 21.30 },
+        { -156.84, 21.41 },
+        { -157.21, 21.44 },
+        { -157.46, 21.50 },
+        { -157.63, 21.69 },
+        { -157.86, 21.85 },
+        { -158.16, 21.84 },
+        { -158.35, 21.71 },
+        { -159.13, 21.96 },
+        { -159.15, 22.19 },
+        { -159.32, 22.35 },
+        { -159.63, 22.39 },
+        { -159.88, 22.23 },
+        { -160.15, 22.11 },
+        { -160.34, 21.99 },
+        { -160.39, 21.74 }
     };
 
     private static final double[][] CONTERMINOUS = {

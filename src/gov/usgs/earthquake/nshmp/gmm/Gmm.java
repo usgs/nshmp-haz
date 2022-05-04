@@ -573,10 +573,17 @@ public enum Gmm {
       GraizerKalkan_2015.CONSTRAINTS),
 
   /** @see WongEtAl_2015 */
+  WONG_15_428(
+      WongEtAl_2015.Site428.class,
+      WongEtAl_2015.Site428.NAME,
+      WongEtAl_2015.COEFFS_428,
+      WongEtAl_2015.CONSTRAINTS),
+
+  /** @see WongEtAl_2015 */
   WONG_15(
-      WongEtAl_2015.class,
-      WongEtAl_2015.NAME,
-      WongEtAl_2015.COEFFS,
+      WongEtAl_2015.Site.class,
+      WongEtAl_2015.Site.NAME,
+      WongEtAl_2015.COEFFS_760,
       WongEtAl_2015.CONSTRAINTS),
 
   /** @see ZhaoEtAl_2016 */
@@ -1288,6 +1295,7 @@ public enum Gmm {
     HI_20(
         "2020 Active Volcanic (HI)",
         ImmutableList.of(
+            WONG_15_428,
             WONG_15,
             ATKINSON_10,
             ATKINSON_10_CALDERA,

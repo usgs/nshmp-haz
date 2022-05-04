@@ -6,6 +6,7 @@ import static gov.usgs.earthquake.nshmp.internal.Parsing.readDouble;
 import static gov.usgs.earthquake.nshmp.internal.Parsing.readEnum;
 import static gov.usgs.earthquake.nshmp.internal.Parsing.readInt;
 import static gov.usgs.earthquake.nshmp.internal.Parsing.readString;
+import static gov.usgs.earthquake.nshmp.internal.Parsing.toMap;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.DEPTH;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.DIP;
 import static gov.usgs.earthquake.nshmp.internal.SourceAttribute.ID;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
@@ -31,6 +33,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.google.common.collect.Lists;
+
+import gov.usgs.earthquake.nshmp.eq.Earthquakes;
 import gov.usgs.earthquake.nshmp.eq.fault.surface.RuptureScaling;
 import gov.usgs.earthquake.nshmp.eq.model.MfdHelper.GR_Data;
 import gov.usgs.earthquake.nshmp.eq.model.MfdHelper.SingleData;
@@ -65,6 +70,11 @@ class InterfaceParser extends DefaultHandler {
 
   private RuptureScaling rupScaling;
 
+  // Data applying to all sourceSet
+  private MagUncertainty unc = null;
+  private Map<String, String> epiAtts = null;
+  private Map<String, String> aleaAtts = null;
+
   // Default MFD data
   private boolean parsingDefaultMFDs = false;
   private MfdHelper.Builder mfdHelperBuilder;
@@ -83,10 +93,10 @@ class InterfaceParser extends DefaultHandler {
   }
 
   InterfaceSourceSet parse(
-      InputStream in, 
-      GmmSet gmmSet, 
+      InputStream in,
+      GmmSet gmmSet,
       ModelConfig config) throws SAXException, IOException {
-    
+
     checkState(!used, "This parser has expired");
     this.gmmSet = gmmSet;
     this.config = config;
@@ -98,9 +108,9 @@ class InterfaceParser extends DefaultHandler {
 
   @Override
   public void startElement(
-      String uri, 
-      String localName, 
-      String qName, 
+      String uri,
+      String localName,
+      String qName,
       Attributes atts) throws SAXException {
 
     SourceElement e = null;
@@ -135,6 +145,14 @@ class InterfaceParser extends DefaultHandler {
 
         case DEFAULT_MFDS:
           parsingDefaultMFDs = true;
+          break;
+
+        case EPISTEMIC:
+          epiAtts = toMap(atts);
+          break;
+
+        case ALEATORY:
+          aleaAtts = toMap(atts);
           break;
 
         case SOURCE_PROPERTIES:
@@ -201,8 +219,8 @@ class InterfaceParser extends DefaultHandler {
 
   @Override
   public void endElement(
-      String uri, 
-      String localName, 
+      String uri,
+      String localName,
       String qName) throws SAXException {
 
     SourceElement e = null;
@@ -218,6 +236,15 @@ class InterfaceParser extends DefaultHandler {
         case DEFAULT_MFDS:
           parsingDefaultMFDs = false;
           mfdHelper = mfdHelperBuilder.build();
+          break;
+
+        case SETTINGS:
+          // may not have mag uncertainty element so create the
+          // uncertainty container upon leaving 'Settings'
+          unc = MagUncertainty.create(epiAtts, aleaAtts);
+          if (log.isLoggable(FINE)) {
+            log.fine(unc.toString());
+          }
           break;
 
         case TRACE:
@@ -282,24 +309,53 @@ class InterfaceParser extends DefaultHandler {
   private List<IncrementalMfd> buildGR(Attributes atts) {
     List<IncrementalMfd> mfdList = new ArrayList<>();
     for (GR_Data grData : mfdHelper.grData(atts)) {
-      mfdList.add(buildGR(grData));
+      mfdList.addAll(buildGR(grData));
     }
     return mfdList;
   }
 
-  private IncrementalMfd buildGR(GR_Data data) {
+  private List<IncrementalMfd> buildGR(GR_Data data) {
 
     int nMag = Mfds.magCount(data.mMin, data.mMax, data.dMag);
     checkState(nMag > 0, "GR MFD with no mags");
     double tmr = Mfds.totalMoRate(data.mMin, nMag, data.dMag, data.a, data.b);
+    List<IncrementalMfd> mfds = Lists.newArrayList();
 
-    IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag, nMag,
-        data.b, tmr * data.weight);
-    log.finer("   MFD type: GR");
-    if (log.isLoggable(FINEST)) {
-      log.finest(mfd.getMetadataString());
+    if (unc.hasEpistemic) {
+      for (int i = 0; i < unc.epiCount; i++) {
+        // update mMax and nMag
+        double mMaxEpi = data.mMax + unc.epiDeltas[i];
+        int nMagEpi = Mfds.magCount(data.mMin, mMaxEpi, data.dMag);
+        if (nMagEpi > 0) {
+          double weightEpi = data.weight * unc.epiWeights[i];
+
+          // epi branches preserve Mo between mMin and dMag(nMag-1),
+          // not mMax to ensure that Mo is 'spent' on earthquakes
+          // represented by the epi GR distribution with adj. mMax.
+
+          IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin,
+              data.dMag, nMagEpi, data.b, tmr * weightEpi);
+          mfds.add(mfd);
+          log.finer("   MFD type: GR [+epi -alea] " + epiBranch(i));
+          if (log.isLoggable(FINEST)) {
+            log.finest(mfd.getMetadataString());
+          }
+        } else {
+          log.warning("  GR MFD epi branch with no mags [" + sourceBuilder.name + "]");
+
+        }
+      }
+
+    } else {
+      IncrementalMfd mfd = Mfds.newGutenbergRichterMoBalancedMFD(data.mMin, data.dMag, nMag,
+          data.b, tmr * data.weight);
+      mfds.add(mfd);
+      log.finer("   MFD type: GR");
+      if (log.isLoggable(FINEST)) {
+        log.finest(mfd.getMetadataString());
+      }
     }
-    return mfd;
+    return mfds;
   }
 
   /* Build SINGLE MFDs. */
@@ -311,13 +367,37 @@ class InterfaceParser extends DefaultHandler {
     return mfdList;
   }
 
+  // only aleatory supported
   private IncrementalMfd buildSingle(SingleData data) {
+
+    if (unc.hasAleatory) {
+      double tmr = data.rate * Earthquakes.magToMoment(data.m);
+      if (!unc.moBalance) {
+        throw new RuntimeException("moBalance must be 'true'");
+      }
+      IncrementalMfd mfd = Mfds.newGaussianMoBalancedMFD(
+          data.m,
+          unc.aleaSigma,
+          unc.aleaCount,
+          data.weight * tmr,
+          data.floats);
+      log.finer("   MFD type: SINGLE [+alea]");
+      if (log.isLoggable(FINEST)) {
+        log.finest(mfd.getMetadataString());
+      }
+      return mfd;
+    }
+
     IncrementalMfd mfd = Mfds.newSingleMFD(data.m, data.weight * data.rate, data.floats);
     log.finer("   MFD type: SINGLE");
     if (log.isLoggable(FINEST)) {
       log.finest(mfd.getMetadataString());
     }
     return mfd;
+  }
+
+  private static String epiBranch(int i) {
+    return (i == 0) ? "(M-epi)" : (i == 2) ? "(M+epi)" : "(M)";
   }
 
 }

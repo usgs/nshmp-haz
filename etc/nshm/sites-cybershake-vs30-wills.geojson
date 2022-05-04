@@ -8,11 +8,11 @@
         "coordinates": [-118.41302, 34.05489]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.96,
         "title": "CCP",
         "vs30": 387.0,
-        "z1p0": 0.39,
-        "z2p5": 2.96
+        "marker-size": "small",
+        "z1p0": 0.39
       }
     },
     {
@@ -22,11 +22,11 @@
         "coordinates": [-118.21639, 33.89604]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 4.28,
         "title": "COO",
         "vs30": 280.0,
-        "z1p0": 0.73,
-        "z2p5": 4.28
+        "marker-size": "small",
+        "z1p0": 0.73
       }
     },
     {
@@ -36,11 +36,11 @@
         "coordinates": [-118.25713, 34.05204]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.08,
         "title": "LADT",
         "vs30": 390.0,
-        "z1p0": 0.31,
-        "z2p5": 2.08
+        "marker-size": "small",
+        "z1p0": 0.31
       }
     },
     {
@@ -50,11 +50,11 @@
         "coordinates": [-118.125, 34.557]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.0,
         "title": "LAPD",
         "vs30": 515.0,
-        "z1p0": 0.0,
-        "z2p5": 0.0
+        "marker-size": "small",
+        "z1p0": 0.0
       }
     },
     {
@@ -64,11 +64,11 @@
         "coordinates": [-118.56609, 34.18277]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.27,
         "title": "P22",
         "vs30": 280.0,
-        "z1p0": 0.22,
-        "z2p5": 2.27
+        "marker-size": "small",
+        "z1p0": 0.22
       }
     },
     {
@@ -78,11 +78,11 @@
         "coordinates": [-118.17119, 34.14843]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.31,
         "title": "PAS",
         "vs30": 748.0,
-        "z1p0": 0.01,
-        "z2p5": 0.31
+        "marker-size": "small",
+        "z1p0": 0.01
       }
     },
     {
@@ -92,11 +92,11 @@
         "coordinates": [-118.23333, 33.80858]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.83,
         "title": "S429",
         "vs30": 280.0,
-        "z1p0": 0.71,
-        "z2p5": 2.83
+        "marker-size": "small",
+        "z1p0": 0.71
       }
     },
     {
@@ -106,11 +106,11 @@
         "coordinates": [-117.53735, 34.10275]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.43,
         "title": "S603",
         "vs30": 354.0,
-        "z1p0": 0.19,
-        "z2p5": 0.43
+        "marker-size": "small",
+        "z1p0": 0.19
       }
     },
     {
@@ -120,11 +120,11 @@
         "coordinates": [-117.40266, 33.93515]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.31,
         "title": "S684",
         "vs30": 387.0,
-        "z1p0": 0.15,
-        "z2p5": 0.31
+        "marker-size": "small",
+        "z1p0": 0.15
       }
     },
     {
@@ -134,11 +134,11 @@
         "coordinates": [-117.53532, 33.37562]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.19,
         "title": "S758",
         "vs30": 390.0,
-        "z1p0": 0.0,
-        "z2p5": 1.19
+        "marker-size": "small",
+        "z1p0": 0.0
       }
     },
     {
@@ -148,11 +148,11 @@
         "coordinates": [-117.29201, 34.06499]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.77,
         "title": "SBSM",
         "vs30": 280.0,
-        "z1p0": 0.33,
-        "z2p5": 1.77
+        "marker-size": "small",
+        "z1p0": 0.33
       }
     },
     {
@@ -162,11 +162,11 @@
         "coordinates": [-118.48939, 34.00909]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.47,
         "title": "SMCA",
         "vs30": 387.0,
-        "z1p0": 0.59,
-        "z2p5": 2.47
+        "marker-size": "small",
+        "z1p0": 0.59
       }
     },
     {
@@ -176,11 +176,11 @@
         "coordinates": [-118.17881, 33.93088]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 5.57,
         "title": "STNI",
         "vs30": 280.0,
-        "z1p0": 0.88,
-        "z2p5": 5.57
+        "marker-size": "small",
+        "z1p0": 0.88
       }
     },
     {
@@ -190,11 +190,11 @@
         "coordinates": [-118.0653, 34.04182]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.44,
         "title": "WNGC",
         "vs30": 280.0,
-        "z1p0": 0.51,
-        "z2p5": 2.44
+        "marker-size": "small",
+        "z1p0": 0.51
       }
     },
     {
@@ -204,11 +204,11 @@
         "coordinates": [-118.39576, 33.93587]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.49,
         "title": "S344",
         "vs30": 387.0,
-        "z1p0": 0.69,
-        "z2p5": 2.49
+        "marker-size": "small",
+        "z1p0": 0.69
       }
     },
     {
@@ -218,11 +218,11 @@
         "coordinates": [-118.36942, 33.97525]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 3.01,
         "title": "S345",
         "vs30": 387.0,
-        "z1p0": 0.58,
-        "z2p5": 3.01
+        "marker-size": "small",
+        "z1p0": 0.58
       }
     },
     {
@@ -232,11 +232,11 @@
         "coordinates": [-118.34305, 34.01462]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 4.16,
         "title": "S346",
         "vs30": 280.0,
-        "z1p0": 0.65,
-        "z2p5": 4.16
+        "marker-size": "small",
+        "z1p0": 0.65
       }
     },
     {
@@ -246,11 +246,11 @@
         "coordinates": [-118.31666, 34.05399]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.05,
         "title": "S347",
         "vs30": 280.0,
-        "z1p0": 0.31,
-        "z2p5": 2.05
+        "marker-size": "small",
+        "z1p0": 0.31
       }
     },
     {
@@ -260,11 +260,11 @@
         "coordinates": [-118.29024, 34.09336]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.93,
         "title": "S348",
         "vs30": 387.0,
-        "z1p0": 0.31,
-        "z2p5": 1.93
+        "marker-size": "small",
+        "z1p0": 0.31
       }
     },
     {
@@ -274,11 +274,11 @@
         "coordinates": [-118.2638, 34.13272]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.49,
         "title": "S349",
         "vs30": 280.0,
-        "z1p0": 0.15,
-        "z2p5": 0.49
+        "marker-size": "small",
+        "z1p0": 0.15
       }
     },
     {
@@ -288,11 +288,11 @@
         "coordinates": [-118.21085, 34.21142]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.31,
         "title": "S351",
         "vs30": 349.0,
-        "z1p0": 0.09,
-        "z2p5": 0.31
+        "marker-size": "small",
+        "z1p0": 0.09
       }
     },
     {
@@ -302,11 +302,11 @@
         "coordinates": [-118.1578, 34.2901]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.31,
         "title": "S353",
         "vs30": 748.0,
-        "z1p0": 0.02,
-        "z2p5": 0.31
+        "marker-size": "small",
+        "z1p0": 0.02
       }
     },
     {
@@ -316,11 +316,11 @@
         "coordinates": [-118.38029, 33.77382]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.46,
         "title": "S383",
         "vs30": 390.0,
-        "z1p0": 0.0,
-        "z2p5": 1.46
+        "marker-size": "small",
+        "z1p0": 0.0
       }
     },
     {
@@ -330,11 +330,11 @@
         "coordinates": [-118.32766, 33.85257]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 3.14,
         "title": "S385",
         "vs30": 387.0,
-        "z1p0": 0.76,
-        "z2p5": 3.14
+        "marker-size": "small",
+        "z1p0": 0.76
       }
     },
     {
@@ -344,11 +344,11 @@
         "coordinates": [-118.27493, 33.9313]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 3.97,
         "title": "S387",
         "vs30": 387.0,
-        "z1p0": 0.66,
-        "z2p5": 3.97
+        "marker-size": "small",
+        "z1p0": 0.66
       }
     },
     {
@@ -358,11 +358,11 @@
         "coordinates": [-118.24853, 33.97065]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 5.61,
         "title": "S388",
         "vs30": 280.0,
-        "z1p0": 0.83,
-        "z2p5": 5.61
+        "marker-size": "small",
+        "z1p0": 0.83
       }
     },
     {
@@ -372,11 +372,11 @@
         "coordinates": [-118.22211, 34.01]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 3.98,
         "title": "S389",
         "vs30": 280.0,
-        "z1p0": 0.6,
-        "z2p5": 3.98
+        "marker-size": "small",
+        "z1p0": 0.6
       }
     },
     {
@@ -386,11 +386,11 @@
         "coordinates": [-118.16919, 34.08869]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.11,
         "title": "S391",
         "vs30": 390.0,
-        "z1p0": 0.31,
-        "z2p5": 2.11
+        "marker-size": "small",
+        "z1p0": 0.31
       }
     },
     {
@@ -400,11 +400,11 @@
         "coordinates": [-118.11618, 34.16735]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.27,
         "title": "S393",
         "vs30": 387.0,
-        "z1p0": 0.15,
-        "z2p5": 1.27
+        "marker-size": "small",
+        "z1p0": 0.15
       }
     },
     {
@@ -414,11 +414,11 @@
         "coordinates": [-118.06307, 34.24599]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.0,
         "title": "S395",
         "vs30": 748.0,
-        "z1p0": 0.0,
-        "z2p5": 0.0
+        "marker-size": "small",
+        "z1p0": 0.0
       }
     },
     {
@@ -428,11 +428,11 @@
         "coordinates": [-118.1391, 33.76452]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.93,
         "title": "S470",
         "vs30": 387.0,
-        "z1p0": 0.64,
-        "z2p5": 2.93
+        "marker-size": "small",
+        "z1p0": 0.64
       }
     },
     {
@@ -442,11 +442,11 @@
         "coordinates": [-118.08625, 33.84317]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 4.79,
         "title": "S472",
         "vs30": 280.0,
-        "z1p0": 0.82,
-        "z2p5": 4.79
+        "marker-size": "small",
+        "z1p0": 0.82
       }
     },
     {
@@ -456,11 +456,11 @@
         "coordinates": [-118.03331, 33.9218]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 3.36,
         "title": "S474",
         "vs30": 387.0,
-        "z1p0": 0.63,
-        "z2p5": 3.36
+        "marker-size": "small",
+        "z1p0": 0.63
       }
     },
     {
@@ -470,11 +470,11 @@
         "coordinates": [-117.98027, 34.00041]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.96,
         "title": "S476",
         "vs30": 390.0,
-        "z1p0": 0.31,
-        "z2p5": 1.96
+        "marker-size": "small",
+        "z1p0": 0.31
       }
     },
     {
@@ -484,11 +484,11 @@
         "coordinates": [-117.92713, 34.07899]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.65,
         "title": "S478",
         "vs30": 280.0,
-        "z1p0": 0.26,
-        "z2p5": 2.65
+        "marker-size": "small",
+        "z1p0": 0.26
       }
     },
     {
@@ -498,11 +498,11 @@
         "coordinates": [-117.87389, 34.15755]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.25,
         "title": "S480",
         "vs30": 748.0,
-        "z1p0": 0.02,
-        "z2p5": 1.25
+        "marker-size": "small",
+        "z1p0": 0.02
       }
     },
     {
@@ -512,11 +512,11 @@
         "coordinates": [-117.83275, 34.0347]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.14,
         "title": "S518",
         "vs30": 390.0,
-        "z1p0": 0.15,
-        "z2p5": 1.14
+        "marker-size": "small",
+        "z1p0": 0.15
       }
     },
     {
@@ -526,11 +526,11 @@
         "coordinates": [-117.77945, 34.11322]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.31,
         "title": "S520",
         "vs30": 349.0,
-        "z1p0": 0.15,
-        "z2p5": 0.31
+        "marker-size": "small",
+        "z1p0": 0.15
       }
     },
     {
@@ -540,11 +540,11 @@
         "coordinates": [-118.35851, 34.17667]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.16,
         "title": "S311",
         "vs30": 280.0,
-        "z1p0": 0.33,
-        "z2p5": 1.16
+        "marker-size": "small",
+        "z1p0": 0.33
       }
     },
     {
@@ -554,11 +554,11 @@
         "coordinates": [-118.45331, 34.22055]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.85,
         "title": "S275",
         "vs30": 280.0,
-        "z1p0": 0.35,
-        "z2p5": 1.85
+        "marker-size": "small",
+        "z1p0": 0.35
       }
     },
     {
@@ -568,11 +568,11 @@
         "coordinates": [-118.42409, 34.24939]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.33,
         "title": "P3",
         "vs30": 280.0,
-        "z1p0": 0.35,
-        "z2p5": 2.33
+        "marker-size": "small",
+        "z1p0": 0.35
       }
     },
     {
@@ -582,11 +582,11 @@
         "coordinates": [-118.54821, 34.26435]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.62,
         "title": "S238",
         "vs30": 387.0,
-        "z1p0": 0.15,
-        "z2p5": 2.62
+        "marker-size": "small",
+        "z1p0": 0.15
       }
     },
     {
@@ -596,11 +596,11 @@
         "coordinates": [-118.46393, 34.28563]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 3.5,
         "title": "P2",
         "vs30": 455.0,
-        "z1p0": 0.15,
-        "z2p5": 3.5
+        "marker-size": "small",
+        "z1p0": 0.15
       }
     },
     {
@@ -610,11 +610,11 @@
         "coordinates": [-118.58717, 34.20995]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.36,
         "title": "P21",
         "vs30": 280.0,
-        "z1p0": 0.22,
-        "z2p5": 2.36
+        "marker-size": "small",
+        "z1p0": 0.22
       }
     },
     {
@@ -624,11 +624,11 @@
         "coordinates": [-118.04497, 33.72038]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 3.16,
         "title": "S510",
         "vs30": 387.0,
-        "z1p0": 0.58,
-        "z2p5": 3.16
+        "marker-size": "small",
+        "z1p0": 0.58
       }
     },
     {
@@ -638,11 +638,11 @@
         "coordinates": [-117.99206, 33.79899]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 4.72,
         "title": "S512",
         "vs30": 280.0,
-        "z1p0": 0.72,
-        "z2p5": 4.72
+        "marker-size": "small",
+        "z1p0": 0.72
       }
     },
     {
@@ -652,11 +652,11 @@
         "coordinates": [-117.93905, 33.87758]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 4.24,
         "title": "S514",
         "vs30": 387.0,
-        "z1p0": 0.62,
-        "z2p5": 4.24
+        "marker-size": "small",
+        "z1p0": 0.62
       }
     },
     {
@@ -666,11 +666,11 @@
         "coordinates": [-117.88595, 33.95615]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.21,
         "title": "S516",
         "vs30": 390.0,
-        "z1p0": 0.31,
-        "z2p5": 2.21
+        "marker-size": "small",
+        "z1p0": 0.31
       }
     },
     {
@@ -680,11 +680,11 @@
         "coordinates": [-117.95093, 33.67617]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 4.04,
         "title": "S550",
         "vs30": 280.0,
-        "z1p0": 0.44,
-        "z2p5": 4.04
+        "marker-size": "small",
+        "z1p0": 0.44
       }
     },
     {
@@ -694,11 +694,11 @@
         "coordinates": [-117.89795, 33.75474]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 4.84,
         "title": "S552",
         "vs30": 280.0,
-        "z1p0": 0.47,
-        "z2p5": 4.84
+        "marker-size": "small",
+        "z1p0": 0.47
       }
     },
     {
@@ -708,11 +708,11 @@
         "coordinates": [-117.84489, 33.83329]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.26,
         "title": "S554",
         "vs30": 280.0,
-        "z1p0": 0.33,
-        "z2p5": 2.26
+        "marker-size": "small",
+        "z1p0": 0.33
       }
     },
     {
@@ -722,11 +722,11 @@
         "coordinates": [-117.79173, 33.91182]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.38,
         "title": "S556",
         "vs30": 390.0,
-        "z1p0": 0.18,
-        "z2p5": 2.38
+        "marker-size": "small",
+        "z1p0": 0.18
       }
     },
     {
@@ -736,11 +736,11 @@
         "coordinates": [-117.85698, 33.63189]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 2.27,
         "title": "S591",
         "vs30": 390.0,
-        "z1p0": 0.0,
-        "z2p5": 2.27
+        "marker-size": "small",
+        "z1p0": 0.0
       }
     },
     {
@@ -750,11 +750,11 @@
         "coordinates": [-117.80395, 33.71042]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.8,
         "title": "S593",
         "vs30": 280.0,
-        "z1p0": 0.31,
-        "z2p5": 1.8
+        "marker-size": "small",
+        "z1p0": 0.31
       }
     },
     {
@@ -764,11 +764,11 @@
         "coordinates": [-117.75082, 33.78893]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.54,
         "title": "S595",
         "vs30": 515.0,
-        "z1p0": 0.0,
-        "z2p5": 1.54
+        "marker-size": "small",
+        "z1p0": 0.0
       }
     },
     {
@@ -778,11 +778,11 @@
         "coordinates": [-117.64428, 33.94589]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.95,
         "title": "S599",
         "vs30": 387.0,
-        "z1p0": 0.19,
-        "z2p5": 0.95
+        "marker-size": "small",
+        "z1p0": 0.19
       }
     },
     {
@@ -792,11 +792,11 @@
         "coordinates": [-117.59086, 34.02433]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.31,
         "title": "S601",
         "vs30": 354.0,
-        "z1p0": 0.2,
-        "z2p5": 0.31
+        "marker-size": "small",
+        "z1p0": 0.2
       }
     },
     {
@@ -806,11 +806,11 @@
         "coordinates": [-117.48374, 34.18115]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.07,
         "title": "S605",
         "vs30": 748.0,
-        "z1p0": 0.02,
-        "z2p5": 1.07
+        "marker-size": "small",
+        "z1p0": 0.02
       }
     },
     {
@@ -820,11 +820,11 @@
         "coordinates": [-117.44314, 34.05816]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.31,
         "title": "S644",
         "vs30": 280.0,
-        "z1p0": 0.17,
-        "z2p5": 0.31
+        "marker-size": "small",
+        "z1p0": 0.17
       }
     },
     {
@@ -834,11 +834,11 @@
         "coordinates": [-117.38947, 34.13652]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.31,
         "title": "S646",
         "vs30": 280.0,
-        "z1p0": 0.16,
-        "z2p5": 0.31
+        "marker-size": "small",
+        "z1p0": 0.16
       }
     },
     {
@@ -848,11 +848,11 @@
         "coordinates": [-117.36259, 34.17569]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.22,
         "title": "S647",
         "vs30": 280.0,
-        "z1p0": 0.31,
-        "z2p5": 1.22
+        "marker-size": "small",
+        "z1p0": 0.31
       }
     },
     {
@@ -862,11 +862,11 @@
         "coordinates": [-117.2953, 34.09181]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 1.45,
         "title": "S688",
         "vs30": 280.0,
-        "z1p0": 0.29,
-        "z2p5": 1.45
+        "marker-size": "small",
+        "z1p0": 0.29
       }
     },
     {
@@ -876,11 +876,11 @@
         "coordinates": [-117.2684, 34.13096]
       },
       "properties": {
-        "marker-size": "small",
+        "z2p5": 0.31,
         "title": "S689",
         "vs30": 280.0,
-        "z1p0": 0.2,
-        "z2p5": 0.31
+        "marker-size": "small",
+        "z1p0": 0.2
       }
     }
   ]

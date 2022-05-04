@@ -1,0 +1,24 @@
+name: Build nshmp-haz Docker Image
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      -
+        name: Build the Docker image
+        run: docker build -t nshmp-haz .
+      -
+        name: Test nshmp-haz
+        run: |
+          docker run \
+            -e PROGRAM=hazard \
+            -e MODEL=WUS-2008 \
+            -v $(pwd)/etc/examples/3-sites-file/sites.geojson:/app/sites.geojson \
+            -v $(pwd)/etc/examples/3-sites-file/config.json:/app/config.json \
+            -v $(pwd)/hazout:/app/output \
+            nshmp-haz
+

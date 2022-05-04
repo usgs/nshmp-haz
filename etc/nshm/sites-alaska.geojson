@@ -5,11 +5,11 @@
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-176.65, 51.9]
+        "coordinates": [-176.7, 51.9]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Adak AK"
+        "title": "Adak AK",
+        "marker-size": "small"
       }
     },
     {
@@ -19,19 +19,30 @@
         "coordinates": [-149.9, 61.2]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Anchorage AK"
+        "title": "Anchorage AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-156.75, 71.3]
+        "coordinates": [-149.9, 61.2]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Barrow AK"
+        "title": "Anchorage Atc AK",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-156.8, 71.3]
+      },
+      "properties": {
+        "title": "Barrow AK",
+        "marker-size": "small"
       }
     },
     {
@@ -41,8 +52,19 @@
         "coordinates": [-161.8, 60.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Bethel AK"
+        "title": "Bethel AK",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-144.5, 61.5]
+      },
+      "properties": {
+        "title": "Chitina AK",
+        "marker-size": "small"
       }
     },
     {
@@ -52,30 +74,30 @@
         "coordinates": [-145.7, 64.0]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Delta Junction AK"
+        "title": "Delta Junction AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-158.45, 59.05]
+        "coordinates": [-158.5, 59.1]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Dillingham AK"
+        "title": "Dillingham AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-166.55, 53.9]
+        "coordinates": [-166.6, 53.9]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Dutch Harbor AK"
+        "title": "Dutch Harbor AK",
+        "marker-size": "small"
       }
     },
     {
@@ -85,52 +107,85 @@
         "coordinates": [-151.5, 66.9]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Evansville AK"
+        "title": "Evansville AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-147.7, 64.85]
+        "coordinates": [-147.7, 64.9]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Fairbanks AK"
+        "title": "Fairbanks AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-145.55, 62.1]
+        "coordinates": [-147.7, 64.9]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Glennallen AK"
+        "title": "Fairbanks Atc AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-135.45, 59.25]
+        "coordinates": [-145.3, 62.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Haines AK"
+        "title": "Gakona AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-151.5, 59.65]
+        "coordinates": [-156.9, 64.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Homer AK"
+        "title": "Galena AK",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-145.6, 62.1]
+      },
+      "properties": {
+        "title": "Glennallen AK",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-135.5, 59.3]
+      },
+      "properties": {
+        "title": "Haines AK",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-151.5, 59.7]
+      },
+      "properties": {
+        "title": "Homer AK",
+        "marker-size": "small"
       }
     },
     {
@@ -140,30 +195,41 @@
         "coordinates": [-134.4, 58.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Juneau AK"
+        "title": "Juneau AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-151.25, 60.55]
+        "coordinates": [-151.3, 60.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Kenai AK"
+        "title": "Kenai AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-131.65, 55.35]
+        "coordinates": [-131.7, 55.4]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Ketchikan AK"
+        "title": "Ketchikan AK",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-149.7, 61.5]
+      },
+      "properties": {
+        "title": "Knik Fairview AK",
+        "marker-size": "small"
       }
     },
     {
@@ -173,8 +239,8 @@
         "coordinates": [-152.4, 57.8]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Kodiak AK"
+        "title": "Kodiak AK",
+        "marker-size": "small"
       }
     },
     {
@@ -184,19 +250,30 @@
         "coordinates": [-162.6, 66.9]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Kotzebue AK"
+        "title": "Kotzebue AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-155.6, 62.95]
+        "coordinates": [-149.4, 61.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "McGrath AK"
+        "title": "Lakes AK",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-155.6, 63.0]
+      },
+      "properties": {
+        "title": "McGrath AK",
+        "marker-size": "small"
       }
     },
     {
@@ -206,41 +283,52 @@
         "coordinates": [-165.4, 64.5]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Nome AK"
+        "title": "Nome AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-145.5, 63.05]
+        "coordinates": [-145.5, 63.1]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Paxson AK"
+        "title": "Paxson AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-148.35, 70.25]
+        "coordinates": [-148.4, 70.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Prudhoe Bay AK"
+        "title": "Prudhoe Bay AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-135.35, 57.05]
+        "coordinates": [-135.4, 57.1]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Sitka AK"
+        "title": "Sitka AK",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-157.2, 61.7]
+      },
+      "properties": {
+        "title": "Sleetmute AK",
+        "marker-size": "small"
       }
     },
     {
@@ -250,41 +338,52 @@
         "coordinates": [-143.0, 63.3]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Tok AK"
+        "title": "Tok AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-146.35, 61.15]
+        "coordinates": [-166.6, 53.9]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Valdez AK"
+        "title": "Unalaska AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-149.45, 61.6]
+        "coordinates": [-146.4, 61.2]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Wasilla AK"
+        "title": "Valdez AK",
+        "marker-size": "small"
       }
     },
     {
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-139.7, 59.55]
+        "coordinates": [-149.5, 61.6]
       },
       "properties": {
-        "marker-size": "small",
-        "title": "Yakutat AK"
+        "title": "Wasilla AK",
+        "marker-size": "small"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-139.7, 59.6]
+      },
+      "properties": {
+        "title": "Yakutat AK",
+        "marker-size": "small"
       }
     }
   ]

@@ -312,7 +312,7 @@ class MfdHelper {
             mMin = readDouble(M_MIN, atts);
             break;
           case M_MAX:
-            mMax = readDouble(M_MAX, atts);
+            mMax = Math.min(mMax, readDouble(M_MAX, atts));
             break;
           case WEIGHT:
             weight = readDouble(WEIGHT, atts);
