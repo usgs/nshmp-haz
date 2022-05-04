@@ -78,6 +78,7 @@ ARG builder_workdir
 
 COPY --from=builder ${jar_path} .
 COPY scripts scripts
+COPY README.md .
 
 ENV CONFIG_FILE ""
 ENV DEBUG false
