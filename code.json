@@ -13,12 +13,12 @@
       "repositoryURL": "https://github.com/usgs/nshmp-haz",
       "homepageURL": "https://github.com/usgs/nshmp-haz/wiki",
       "downloadURL": "https://github.com/usgs/nshmp-haz/releases/tag/v1.0.0",
-      "disclaimerURL": "https://github.com/usgs/nshmp-haz/blob/master/DISCLAIMER.md",
+      "disclaimerURL": "https://github.com/usgs/nshmp-haz/blob/main/DISCLAIMER.md",
       "permissions": {
         "licenses": [
           {
             "name": "Public Domain",
-            "URL": "https://github.com/usgs/nshmp-haz/blob/master/LICENSE.md"
+            "URL": "https://github.com/usgs/nshmp-haz/blob/main/LICENSE.md"
           }
         ],
         "usageType": "openSource",
