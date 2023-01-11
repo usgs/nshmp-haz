@@ -70,8 +70,8 @@ LABEL maintainer="Peter Powers <pmpowers@usgs.gov>"
 WORKDIR /app
 
 RUN yum update -y
-RUN yum install -y file epel-release
-RUN yum install -y jq
+RUN yum install -y file epel-release && rm -rf /var/cache/yum
+RUN yum install -y jq && rm -rf /var/cache/yum
 
 ARG jar_path
 ARG builder_workdir
